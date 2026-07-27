@@ -9,6 +9,7 @@ interface ProductRow {
   original_name: string | null;
   description: string;
   ingredients: string | null;
+  note: string | null;
   serving_size_g: number;
   package_size_g: number | null;
   calories: number;
@@ -65,6 +66,7 @@ export function mapProductRow(row: ProductRow): Product {
     originalName: row.original_name,
     description: row.description,
     ingredients: row.ingredients,
+    note: row.note,
     servingSizeG: row.serving_size_g,
     packageSizeG: row.package_size_g,
     calories: row.calories,

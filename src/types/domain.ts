@@ -45,6 +45,7 @@ export interface Product {
   originalName: string | null;
   description: string;
   ingredients: string | null;
+  note?: string | null;
   servingSizeG: number;
   packageSizeG: number | null;
   calories: number;
