@@ -39,7 +39,22 @@
           }
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Разрешите «Точке Роста» сканировать QR-коды и штрихкоды продуктов.",
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Разрешите «Точке Роста» выбирать фотографии продуктов.",
+          "cameraPermission": "Разрешите «Точке Роста» фотографировать продукты.",
+          "microphonePermission": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

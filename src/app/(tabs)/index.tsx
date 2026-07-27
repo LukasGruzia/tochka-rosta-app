@@ -16,8 +16,9 @@ import { getDayGreeting } from '@/utils/date';
 import type { MealType } from '@/types/domain';
 
 export default function HomeScreen() {
-  const { profile, target, diary, refreshDiary } = useAppStore();
+  const { profile, target, diary, flow, refreshDiary, refreshFlow } = useAppStore();
   useFocusEffect(useCallback(() => { void refreshDiary(); }, [refreshDiary]));
+  useFocusEffect(useCallback(() => { void refreshFlow(); }, [refreshFlow]));
   if (!profile || !target) return <TabScreen title="Загружаем профиль…"><AppText tone="secondary">Данные появятся через мгновение.</AppText></TabScreen>;
   const rounded = roundNutrition(target);
   const consumed = Math.round(diary?.consumedCalories ?? 0);
@@ -32,11 +33,11 @@ export default function HomeScreen() {
     </GlassCard>
     <View style={styles.sectionTitle}><AppText variant="heading">Твой план на день</AppText></View>
     <GlassCard variant="default" style={styles.plan}>
-      {(Object.keys(mealLabels) as MealType[]).map((meal, index) => { const count = diary?.entries.filter((entry) => entry.mealType === meal).length ?? 0; return <View key={meal} style={[styles.meal, index > 0 && styles.divider]}><View><AppText style={styles.mealTitle}>{mealLabels[meal]}</AppText><AppText variant="caption" tone="muted">{count ? `${count} ${count === 1 ? 'блюдо' : 'блюда'}` : 'Ничего не добавлено'}</AppText></View><AppText tone="green">＋</AppText></View>; })}
+      {(Object.keys(mealLabels) as MealType[]).map((meal, index) => { const entries = diary?.entries.filter((entry) => entry.mealType === meal) ?? []; const mealCalories = entries.reduce((sum, entry) => sum + entry.calories, 0); return <Pressable key={meal} onPress={() => router.push({ pathname: '/(tabs)/catalog', params: { meal } })} style={[styles.meal, index > 0 && styles.divider]}><View><AppText style={styles.mealTitle}>{mealLabels[meal]}</AppText><AppText variant="caption" tone="muted">{entries.length ? `${entries.length} · ${Math.round(mealCalories)} ккал` : 'Ничего не добавлено'}</AppText></View><AppText tone="green">＋</AppText></Pressable>; })}
       <PrimaryButton label="Добавить блюдо" secondary onPress={() => router.push('/(tabs)/catalog')} />
     </GlassCard>
-    <GlassCard variant="compact" style={styles.flow}><View style={styles.fire}><AppIcon name="flow" size={34} color={colors.greenBright}/></View><View style={styles.flowCopy}><AppText style={styles.mealTitle}>Поток начат · 0 дней</AppText><AppText variant="caption" tone="secondary">Закрой первый день, чтобы начать серию</AppText></View></GlassCard>
-    <GlassCard variant="compact"><AppText variant="heading">Начни с малого</AppText><AppText tone="secondary">Добавь первый приём пищи и посмотри, как изменится дневной баланс.</AppText></GlassCard>
+    <GlassCard variant="compact" style={styles.flow} onPress={() => router.push('/(tabs)/flow')}><View style={styles.fire}><AppIcon name="flow" size={34} color={colors.greenBright}/></View><View style={styles.flowCopy}><AppText style={styles.mealTitle}>Поток · {flow?.currentStreak ?? 0} дней</AppText><AppText variant="caption" tone="secondary">{flow?.currentStreak ? `Лучшая серия — ${flow.longestStreak}` : 'Закрой первый день, чтобы начать серию'}</AppText></View></GlassCard>
+    <GlassCard variant="compact" onPress={() => router.push('/meal-plan' as never)}><AppText variant="heading">Рацион на день</AppText><AppText tone="secondary">Собрать локальную рекомендацию из доступных блюд.</AppText></GlassCard>
   </TabScreen>;
 }
 function Macro({ label, value }: { label: string; value: number }) { return <View style={styles.macro}><AppText variant="caption" tone="secondary">{label}</AppText><AppText style={styles.macroValue}>{value} г</AppText></View>; }

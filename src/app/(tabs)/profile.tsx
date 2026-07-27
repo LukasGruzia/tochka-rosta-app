@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import { AppText } from '@/components/AppText';
 import { GlassCard } from '@/components/GlassCard';
@@ -25,8 +25,10 @@ export default function ProfileScreen() {
       <Row label="Ограничения" value={profile.restrictions.length ? profile.restrictions.map((item) => restrictionLabels[item]).join(', ') : 'Нет'}/>
     </GlassCard>
     <GlassCard variant="compact"><AppText variant="heading">КБЖУ</AppText><View style={styles.macro}><AppText tone="secondary">Белки {rounded.proteinG} г</AppText><AppText tone="secondary">Жиры {rounded.fatG} г</AppText><AppText tone="secondary">Углеводы {rounded.carbsG} г</AppText></View></GlassCard>
+    <GlassCard variant="compact"><AppText variant="heading">Приложение</AppText><MenuRow label="Источники данных" onPress={() => router.push('/data-sources' as never)}/><MenuRow label="Резервная копия" onPress={() => router.push('/data-management' as never)}/><MenuRow label="История и аналитика" onPress={() => router.push('/analytics' as never)}/><MenuRow label="Диагностика" onPress={() => router.push('/developer' as never)}/></GlassCard>
     <View style={styles.actions}><PrimaryButton label="Изменить данные" onPress={() => router.push('/edit-profile')} /><PrimaryButton label="Пересчитать норму" secondary onPress={doRecalculate} /><PrimaryButton label="Сбросить приложение" secondary onPress={confirmReset} /></View>
   </TabScreen>;
 }
 function Row({ label, value }: { label: string; value: string }) { return <View style={styles.row}><AppText variant="caption" tone="secondary">{label}</AppText><AppText style={styles.value}>{value}</AppText></View>; }
-const styles = StyleSheet.create({ target: { alignItems: 'center', gap: 3 }, row: { paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.glassBorder, gap: 4 }, value: { fontWeight: '700' }, macro: { gap: spacing.xs, marginTop: spacing.sm }, actions: { gap: spacing.sm } });
+function MenuRow({ label, onPress }: { label: string; onPress: () => void }) { return <Pressable onPress={onPress} style={styles.menuRow}><AppText>{label}</AppText><AppText tone="muted">›</AppText></Pressable>; }
+const styles = StyleSheet.create({ target: { alignItems: 'center', gap: 3 }, row: { paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.glassBorder, gap: 4 }, value: { fontWeight: '700' }, macro: { gap: spacing.xs, marginTop: spacing.sm }, actions: { gap: spacing.sm }, menuRow: { minHeight: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.glassBorder } });
