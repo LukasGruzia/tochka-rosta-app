@@ -1,3 +1,4 @@
-# Expo HAS CHANGED
+# Expo SDK baseline
 
-Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before writing any code.
+This app intentionally targets Expo SDK 54 for compatibility with Expo Go on physical devices.
+Read the exact versioned docs at https://docs.expo.dev/versions/v54.0.0/ before changing Expo APIs.
