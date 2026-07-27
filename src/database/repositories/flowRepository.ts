@@ -1,4 +1,5 @@
 import { calculateStreaks } from '@/services/flowCalculator';
+import { assertDayCompletable } from '@/services/diaryMath';
 import type { FlowState } from '@/types/domain';
 import { getLocalDateKey } from '@/utils/date';
 import { getDatabase } from '../database';
@@ -23,9 +24,8 @@ export async function completeDiaryDay(date: string) {
   await db.withExclusiveTransactionAsync(async (txn) => {
     const day = await txn.getFirstAsync<{ id: number; is_completed: number }>('SELECT id, is_completed FROM diary_days WHERE date=?', date);
     if (!day) throw new Error('День не найден');
-    if (day.is_completed) throw new Error('Этот день уже закрыт');
     const count = await txn.getFirstAsync<{ count: number }>('SELECT COUNT(*) AS count FROM diary_entries WHERE diary_day_id=?', day.id);
-    if (!count?.count) throw new Error('Добавь хотя бы одно блюдо перед закрытием дня');
+    assertDayCompletable({ date, isCompleted: day.is_completed === 1, entryCount: count?.count ?? 0 }, getLocalDateKey());
     const completedDates = await txn.getAllAsync<{ date: string }>('SELECT date FROM diary_days WHERE is_completed=1 UNION SELECT ? AS date ORDER BY date', date);
     const streaks = calculateStreaks(completedDates.map((item) => item.date), getLocalDateKey());
     const now = new Date().toISOString();

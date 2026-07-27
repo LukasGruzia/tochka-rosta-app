@@ -25,7 +25,7 @@ export default function ProfileScreen() {
       <Row label="Ограничения" value={profile.restrictions.length ? profile.restrictions.map((item) => restrictionLabels[item]).join(', ') : 'Нет'}/>
     </GlassCard>
     <GlassCard variant="compact"><AppText variant="heading">КБЖУ</AppText><View style={styles.macro}><AppText tone="secondary">Белки {rounded.proteinG} г</AppText><AppText tone="secondary">Жиры {rounded.fatG} г</AppText><AppText tone="secondary">Углеводы {rounded.carbsG} г</AppText></View></GlassCard>
-    <GlassCard variant="compact"><AppText variant="heading">Приложение</AppText><MenuRow label="Источники данных" onPress={() => router.push('/data-sources' as never)}/><MenuRow label="Резервная копия" onPress={() => router.push('/data-management' as never)}/><MenuRow label="История и аналитика" onPress={() => router.push('/analytics' as never)}/><MenuRow label="Диагностика" onPress={() => router.push('/developer' as never)}/></GlassCard>
+    <GlassCard variant="compact"><AppText variant="heading">Приложение</AppText><MenuRow label="Источники данных" onPress={() => router.push('/data-sources' as never)}/><MenuRow label="Резервная копия" onPress={() => router.push('/data-management' as never)}/><MenuRow label="История и аналитика" onPress={() => router.push('/analytics' as never)}/>{__DEV__ ? <MenuRow label="Диагностика" onPress={() => router.push('/developer' as never)}/> : null}</GlassCard>
     <View style={styles.actions}><PrimaryButton label="Изменить данные" onPress={() => router.push('/edit-profile')} /><PrimaryButton label="Пересчитать норму" secondary onPress={doRecalculate} /><PrimaryButton label="Сбросить приложение" secondary onPress={confirmReset} /></View>
   </TabScreen>;
 }

@@ -1,4 +1,5 @@
 import { calculateForWeight } from '@/services/foodMath';
+import { scaleDiarySnapshot } from '@/services/diaryMath';
 import type { DiaryEntry, DiaryEntryInput, DiarySummary, FoodSourceType, MealType, NutritionResult } from '@/types/domain';
 import { getLocalDateKey } from '@/utils/date';
 import { getDatabase } from '../database';
@@ -156,12 +157,11 @@ export async function updateDiaryEntry(entryId: number, changes: { mealType: Mea
   if (entry.day_completed) throw new Error('Закрытый день нельзя изменять');
   const servings = Math.min(10, Math.max(0.25, changes.servings));
   const quantityG = changes.quantityG ?? entry.serving_size_g * servings;
-  const factor = entry.quantity_g > 0 ? quantityG / entry.quantity_g : 1;
-  const scale = (value: number | null) => value == null ? null : value * factor;
+  const scaled = scaleDiarySnapshot({ calories: entry.calories, proteinG: entry.protein_g, fatG: entry.fat_g, carbsG: entry.carbs_g, quantityG: entry.quantity_g }, quantityG);
   await db.withExclusiveTransactionAsync(async (txn) => {
     await txn.runAsync(`UPDATE diary_entries SET meal_type=?, servings=?, quantity_g=?, calories=?, protein_g=?, fat_g=?, carbs_g=?, updated_at=? WHERE id=?`,
-      changes.mealType, servings, quantityG, entry.calories * factor, scale(entry.protein_g), scale(entry.fat_g),
-      scale(entry.carbs_g), new Date().toISOString(), entryId);
+      changes.mealType, servings, quantityG, scaled.calories, scaled.proteinG, scaled.fatG,
+      scaled.carbsG, new Date().toISOString(), entryId);
     await txn.runAsync(`UPDATE diary_days SET
       consumed_calories=COALESCE((SELECT SUM(calories) FROM diary_entries WHERE diary_day_id=?), 0),
       consumed_protein_g=COALESCE((SELECT SUM(protein_g) FROM diary_entries WHERE diary_day_id=?), 0),

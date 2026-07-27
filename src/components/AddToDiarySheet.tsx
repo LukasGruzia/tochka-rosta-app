@@ -4,6 +4,7 @@ import { AppText } from './AppText';
 import { FilterChip } from './FilterChip';
 import { PrimaryButton } from './PrimaryButton';
 import { calculateForWeight } from '@/services/foodMath';
+import { getNextMealType } from '@/services/diaryMath';
 import { colors, radii, spacing } from '@/theme/tokens';
 import type { MealType, Product } from '@/types/domain';
 
@@ -12,7 +13,7 @@ const meals: { value: MealType; label: string }[] = [
   { value: 'snack', label: 'Перекус' }, { value: 'dinner', label: 'Ужин' },
 ];
 
-export function AddToDiarySheet({ product, visible, initialMeal = 'snack', onClose, onAdd }: {
+export function AddToDiarySheet({ product, visible, initialMeal = getNextMealType(), onClose, onAdd }: {
   product: Product | null; visible: boolean; initialMeal?: MealType; onClose: () => void;
   onAdd: (meal: MealType, servings: number, quantityG: number) => Promise<void>;
 }) {

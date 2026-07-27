@@ -10,6 +10,7 @@ import { GlassCard } from '@/components/GlassCard';
 import { TabScreen } from '@/components/TabScreen';
 import { productAssets } from '@/constants/productAssets';
 import { searchProducts } from '@/services/productSearch';
+import { getNextMealType } from '@/services/diaryMath';
 import { useAppStore } from '@/store/appStore';
 import { colors, radii, spacing } from '@/theme/tokens';
 import type { Product } from '@/types/domain';
@@ -59,7 +60,7 @@ export default function CatalogScreen() {
         </GlassCard>;
       })}
     </TabScreen>
-    <AddToDiarySheet product={selected} visible={selected !== null} initialMeal={['breakfast', 'lunch', 'snack', 'dinner'].includes(params.meal ?? '') ? params.meal as never : 'snack'} onClose={() => setSelected(null)} onAdd={async (mealType, servings, quantityG) => {
+    <AddToDiarySheet product={selected} visible={selected !== null} initialMeal={['breakfast', 'lunch', 'snack', 'dinner'].includes(params.meal ?? '') ? params.meal as never : getNextMealType()} onClose={() => setSelected(null)} onAdd={async (mealType, servings, quantityG) => {
       if (!selected) return; await addToDiary({ product: selected, mealType, servings, quantityG }); Alert.alert('Готово', 'Продукт добавлен в дневник.');
     }}/>
   </>;

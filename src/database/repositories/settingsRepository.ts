@@ -24,8 +24,8 @@ export async function resetApplicationData() {
     DELETE FROM scan_history;
     DELETE FROM recipe_ingredients;
     DELETE FROM recipes;
-    DELETE FROM food_sources WHERE product_id IN (SELECT id FROM products WHERE is_user_created = 1);
-    DELETE FROM products WHERE is_user_created = 1;
+    DELETE FROM food_sources WHERE product_id IN (SELECT id FROM products WHERE is_user_created = 1 OR source_type = 'open_food_facts');
+    DELETE FROM products WHERE is_user_created = 1 OR source_type = 'open_food_facts';
     DELETE FROM external_food_cache;
     DELETE FROM nutrition_targets;
     DELETE FROM user_restrictions;

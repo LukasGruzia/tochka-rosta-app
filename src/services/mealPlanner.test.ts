@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { generateMealPlan } from './mealPlanner';
+import { generateMealPlan, scoreProductForMeal } from './mealPlanner';
 import type { NutritionResult, Product, ProfileDraft } from '@/types/domain';
 
 const profile: ProfileDraft = { name: 'Лука', age: 30, calculationSex: 'male', heightCm: 175, weightKg: 70, activityLevel: 'medium', goal: 'balance', dietPreference: 'all', restrictions: [] };
@@ -20,4 +20,5 @@ describe('meal planner', () => {
     expect(plan.items.map((item) => item.mealType)).toEqual(['breakfast', 'lunch', 'snack', 'dinner']);
     expect(new Set(plan.items.map((item) => item.product.id)).size).toBe(4);
   });
+  it('scores a matching meal tag above an unrelated product', () => { expect(scoreProductForMeal(makeProduct(1, ['breakfast']), 'breakfast', target, profile, new Set())).toBeGreaterThan(scoreProductForMeal(makeProduct(2, ['dinner']), 'breakfast', target, profile, new Set())); });
 });
