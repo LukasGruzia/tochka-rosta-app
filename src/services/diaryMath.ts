@@ -1,0 +1,7 @@
+import type { DiaryEntry, MealType } from '@/types/domain';
+
+type NutritionSnapshot = Pick<DiaryEntry, 'calories' | 'proteinG' | 'fatG' | 'carbsG' | 'quantityG'>;
+export function sumDiaryNutrition(entries: NutritionSnapshot[]) { return entries.reduce((total, entry) => ({ calories: total.calories + entry.calories, proteinG: total.proteinG + (entry.proteinG ?? 0), fatG: total.fatG + (entry.fatG ?? 0), carbsG: total.carbsG + (entry.carbsG ?? 0) }), { calories: 0, proteinG: 0, fatG: 0, carbsG: 0 }); }
+export function scaleDiarySnapshot(entry: NutritionSnapshot, quantityG: number) { const factor = entry.quantityG > 0 ? quantityG / entry.quantityG : 1; const scale = (value: number | null) => value == null ? null : value * factor; return { calories: entry.calories * factor, proteinG: scale(entry.proteinG), fatG: scale(entry.fatG), carbsG: scale(entry.carbsG) }; }
+export function getNextMealType(date = new Date()): MealType { const hour = date.getHours(); if (hour < 11) return 'breakfast'; if (hour < 15) return 'lunch'; if (hour < 18) return 'snack'; return 'dinner'; }
+export function assertDayCompletable(day: { date: string; isCompleted: boolean; entryCount: number }, today: string) { if (day.date > today) throw new Error('Будущий день закрыть нельзя'); if (day.isCompleted) throw new Error('Этот день уже закрыт'); if (!day.entryCount) throw new Error('Добавь хотя бы одно блюдо перед закрытием дня'); }
