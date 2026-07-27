@@ -1,56 +1,85 @@
-# Welcome to your Expo app 👋
+# Точка Роста — мобильное приложение
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+MVP нативного приложения для iOS и Android на Expo SDK 57. Онбординг рассчитывает ориентировочную дневную норму, сохраняет профиль в SQLite и открывает рабочую главную с локальным каталогом и дневником.
 
-## Get started
+## Запуск
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Требования: Node.js 20+ и npm. Для телефона установите совместимую с Expo SDK 57 версию Expo Go или используйте development build.
 
 ```bash
-npm run reset-project
+npm install
+npm start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+После запуска отсканируйте QR-код:
 
-### Other setup steps
+- на Android — камерой внутри Expo Go;
+- на iPhone — системной камерой;
+- если телефон и компьютер не видят друг друга в локальной сети, запустите `npx expo start --tunnel`.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Другие команды:
 
-## Learn more
+```bash
+npm run android    # открыть Android-эмулятор
+npm run ios        # открыть iOS Simulator (только macOS)
+npm run web        # вспомогательный web-режим
+npm run typecheck  # строгая проверка TypeScript
+npm run lint       # ESLint
+npm test           # unit-тесты калькулятора
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+`expo-sqlite` входит в Expo Go. Для полноценной проверки нативного splash screen и будущих нативных модулей рекомендуется development build: `npx expo run:android` или EAS Build.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Что реализовано
 
-## Join the community
+- фирменный нативный и анимированный in-app splash screen с reduced-motion режимом;
+- приветствие и четыре свайпа знакомства с приложением;
+- формы имени, пола для расчёта, возраста, роста, веса, активности, цели, типа питания и ограничений;
+- восстановление незавершённого онбординга с последнего экранного шага;
+- расчёт Mifflin–St Jeor, TDEE, безопасная корректировка цели и КБЖУ 25/30/45;
+- результат с исходными значениями в базе и округлением только в UI;
+- рабочая главная, локальный каталог из 6 блюд, добавление блюда в перекус и дневник;
+- профиль, локальное редактирование, пересчёт и подтверждаемый полный сброс;
+- подготовленные вкладки «Дневник», «Каталог», «Поток» и плавающая нижняя навигация.
 
-Join our community of developers creating universal apps.
+Все изображения лежат внутри проекта в `assets/brand` и `assets/food`; приложение не зависит от лендинга во время сборки.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Архитектура
+
+- `src/app` — маршруты Expo Router;
+- `src/components` — переиспользуемые UI-компоненты, включая `GlassCard`;
+- `src/features` — маршрутизация и feature-логика онбординга;
+- `src/store` — текущее Zustand-состояние и оркестрация действий;
+- `src/services` — независимый калькулятор питания и unit-тесты;
+- `src/database/migrations` — версионируемые миграции;
+- `src/database/repositories` — SQL-доступ без SQL в компонентах;
+- `src/theme` — единые цвета, размеры, радиусы и типографика;
+- `src/types` — общие доменные типы.
+
+## SQLite
+
+База `tochka-rosta.db` включается в WAL-режиме и сохраняется между перезапусками. Версия хранится в `PRAGMA user_version`. Первая миграция создаёт:
+
+- `app_settings`;
+- `user_profile`;
+- `user_restrictions`;
+- `nutrition_targets`;
+- `products`;
+- `diary_days`;
+- `diary_entries`;
+- `flow_state`.
+
+Ключи `onboarding_completed`, `onboarding_step` и сериализованный черновик онбординга лежат в `app_settings`. Seed-продукты помечены `data_status = 'demo'`. В development-режиме базу можно открыть через Expo CLI: `Shift+M` → `Open expo-sqlite`.
+
+## Расчёт
+
+`src/services/nutritionCalculator.ts` использует формулу Mifflin–St Jeor и коэффициенты активности 1.2 / 1.375 / 1.55 / 1.725 / 1.9. Для взрослых цель меняет TDEE на −10% / 0% / +10%; до 18 лет — не более 5%. Защитный минимум: 1200 ккал для женской и 1500 ккал для мужской расчётной формулы. Результат является стартовой оценкой, а не медицинской рекомендацией.
+
+## Следующий этап
+
+- выбор приёма пищи, порций, удаление и редактирование записей;
+- полный каталог с фильтрами и подтверждёнными технологическими картами;
+- настоящий QR-сканер;
+- закрытие дня, серии, награды и история «Потока»;
+- интеграционные тесты SQLite на физических устройствах и E2E-проверки;
+- production-иконки и store-сборки после финального бренд-аудита.
