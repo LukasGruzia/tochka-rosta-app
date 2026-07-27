@@ -1,0 +1,51 @@
+{
+  "sourceFiles": [
+    "C:\\Users\\lukac\\AppData\\Local\\Temp\\tochka-rosta-usda\\foundation\\FoodData_Central_foundation_food_json_2026-04-30.json",
+    "C:\\Users\\lukac\\AppData\\Local\\Temp\\tochka-rosta-usda\\extract\\surveyDownload.json"
+  ],
+  "generatedAt": "2026-07-27T22:34:10.438Z",
+  "rawRecords": 5795,
+  "normalizedRecords": 5042,
+  "exportedRecords": 650,
+  "categories": {
+    "Бобовые": 36,
+    "Готовые блюда": 20,
+    "Зелень": 20,
+    "Картофель": 32,
+    "Кисломолочные продукты": 20,
+    "Крупы": 36,
+    "Макароны": 20,
+    "Масла": 24,
+    "Молоко": 20,
+    "Морепродукты": 20,
+    "Мука": 20,
+    "Мясо": 36,
+    "Напитки": 20,
+    "Овощи": 36,
+    "Орехи": 25,
+    "Птица": 30,
+    "Рыба": 21,
+    "Сахар и подсластители": 20,
+    "Семена": 20,
+    "Соусы": 20,
+    "Сыры": 36,
+    "Фрукты": 36,
+    "Хлеб": 33,
+    "Ягоды": 17,
+    "Яйца": 32
+  },
+  "nutrientIds": {
+    "calories": [
+      1008,
+      2047,
+      2048
+    ],
+    "protein": 1003,
+    "fat": 1004,
+    "carbs": 1005,
+    "fiber": 1079,
+    "sugar": 2000,
+    "sodium": 1093
+  },
+  "translation": "Контролируемые правила и словарь; непереведённое оригинальное название хранится отдельно."
+}
