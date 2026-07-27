@@ -4,27 +4,220 @@ export type Goal = 'loss' | 'balance' | 'gain';
 export type DietPreference = 'all' | 'meat' | 'fish' | 'vegetarian';
 export type Restriction = 'lactoseFree' | 'glutenFree' | 'sugarFree' | 'nutFree';
 export type MealType = 'breakfast' | 'lunch' | 'snack' | 'dinner';
-export type DataStatus = 'demo' | 'verified';
+export type DataStatus = 'verified' | 'imported' | 'community' | 'custom' | 'demo';
+export type FoodSourceType = 'tochka_rosta' | 'usda' | 'open_food_facts' | 'user_product' | 'user_recipe';
+export type NutritionBasis = 'per100g' | 'serving' | 'package';
+export type BasisUnit = 'g' | 'ml' | 'piece' | 'serving';
 
 export interface ProfileDraft {
-  name: string; age: number; calculationSex: CalculationSex; heightCm: number; weightKg: number;
-  activityLevel: ActivityLevel; goal: Goal; dietPreference: DietPreference; restrictions: Restriction[];
+  name: string;
+  age: number;
+  calculationSex: CalculationSex;
+  heightCm: number;
+  weightKg: number;
+  activityLevel: ActivityLevel;
+  goal: Goal;
+  dietPreference: DietPreference;
+  restrictions: Restriction[];
 }
+
 export interface NutritionResult {
-  bmr: number; tdee: number; calories: number; proteinG: number; fatG: number; carbsG: number;
-  goal: Goal; activityFactor: number;
+  bmr: number;
+  tdee: number;
+  calories: number;
+  proteinG: number;
+  fatG: number;
+  carbsG: number;
+  goal: Goal;
+  activityFactor: number;
 }
-export interface SavedProfile extends ProfileDraft { id: number; createdAt: string; updatedAt: string; }
+
+export interface SavedProfile extends ProfileDraft {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Product {
-  id: number; slug: string; name: string; description: string; servingSizeG: number; calories: number;
-  proteinG: number; fatG: number; carbsG: number; price: number; imageKey: string; category: string;
-  isAvailable: boolean; dataStatus: DataStatus;
+  id: number;
+  slug: string;
+  name: string;
+  originalName: string | null;
+  description: string;
+  ingredients: string | null;
+  servingSizeG: number;
+  packageSizeG: number | null;
+  calories: number;
+  proteinG: number | null;
+  fatG: number | null;
+  carbsG: number | null;
+  caloriesPer100g: number;
+  proteinPer100g: number | null;
+  fatPer100g: number | null;
+  carbsPer100g: number | null;
+  fiberPer100g: number | null;
+  sugarPer100g: number | null;
+  sodiumPer100g: number | null;
+  price: number;
+  imageKey: string;
+  imageUri: string | null;
+  category: string;
+  mealTags: MealType[];
+  goalTags: Goal[];
+  dietTags: string[];
+  allergens: string[];
+  aliases: string[];
+  barcode: string | null;
+  qrCode: string | null;
+  isAvailable: boolean;
+  dataStatus: DataStatus;
+  sourceType: FoodSourceType;
+  sourceId: string | null;
+  sourceName: string;
+  sourceVersion: string | null;
+  locale: string;
+  isUserCreated: boolean;
+  isFavorite: boolean;
+  createdAt: string | null;
+  updatedAt: string | null;
 }
+
+export interface ProductDraft {
+  id?: number;
+  name: string;
+  brand?: string;
+  category: string;
+  description?: string;
+  ingredients?: string;
+  note?: string;
+  basisType: NutritionBasis;
+  basisAmount: number;
+  basisUnit: BasisUnit;
+  servingSizeG: number;
+  packageSizeG?: number | null;
+  calories: number;
+  proteinG: number | null;
+  fatG: number | null;
+  carbsG: number | null;
+  fiberG?: number | null;
+  sugarG?: number | null;
+  sodiumMg?: number | null;
+  allergens: string[];
+  barcode?: string | null;
+  imageUri?: string | null;
+}
+
 export interface DiaryEntry {
-  id: number; productId: number; productName: string; mealType: MealType; servings: number;
-  calories: number; proteinG: number; fatG: number; carbsG: number;
+  id: number;
+  productId: number | null;
+  productName: string;
+  imageKey: string;
+  imageUri: string | null;
+  sourceType: FoodSourceType;
+  mealType: MealType;
+  servings: number;
+  servingSizeG: number;
+  quantityG: number;
+  calories: number;
+  proteinG: number | null;
+  fatG: number | null;
+  carbsG: number | null;
+  createdAt: string;
 }
+
 export interface DiarySummary {
-  dayId: number; date: string; targetCalories: number; consumedCalories: number;
-  isCompleted: boolean; entries: DiaryEntry[];
+  dayId: number;
+  date: string;
+  targetCalories: number;
+  targetProteinG: number;
+  targetFatG: number;
+  targetCarbsG: number;
+  consumedCalories: number;
+  consumedProteinG: number;
+  consumedFatG: number;
+  consumedCarbsG: number;
+  isCompleted: boolean;
+  completedAt: string | null;
+  entries: DiaryEntry[];
+}
+
+export interface DiaryEntryInput {
+  date: string;
+  product: Product;
+  mealType: MealType;
+  servings: number;
+  quantityG?: number;
+}
+
+export interface FlowState {
+  currentStreak: number;
+  longestStreak: number;
+  completedDays: number;
+  completedDates: string[];
+  lastCompletedDate: string | null;
+}
+
+export interface MealPlanItem {
+  id?: number;
+  date: string;
+  product: Product;
+  mealType: MealType;
+  servings: number;
+  isAddedToDiary: boolean;
+}
+
+export interface MealPlan {
+  date: string;
+  items: MealPlanItem[];
+  calories: number;
+  proteinG: number;
+  fatG: number;
+  carbsG: number;
+  price: number;
+}
+
+export interface RecipeIngredientDraft {
+  product: Product;
+  amountG: number;
+}
+
+export interface RecipeDraft {
+  id?: number;
+  name: string;
+  description: string;
+  category: string;
+  imageUri: string | null;
+  servings: number;
+  finalWeightG: number | null;
+  ingredients: RecipeIngredientDraft[];
+}
+
+export interface HistoryAnalytics {
+  periodDays: 7 | 30;
+  averageCalories: number;
+  averageProteinG: number;
+  completedDays: number;
+  longestStreak: number;
+  entryCount: number;
+  mostFrequentProduct: string | null;
+  caloriesByDay: { date: string; calories: number; completed: boolean }[];
+  mealDistribution: Record<MealType, number>;
+}
+
+export interface ExternalFoodPreview {
+  barcode: string;
+  name: string;
+  brand: string | null;
+  quantity: string | null;
+  servingSize: string | null;
+  caloriesPer100g: number | null;
+  proteinPer100g: number | null;
+  fatPer100g: number | null;
+  carbsPer100g: number | null;
+  ingredients: string | null;
+  allergens: string[];
+  imageUrl: string | null;
+  countries: string | null;
+  sourceUpdatedAt: string | null;
+  payload: string;
 }

@@ -1,11 +1,15 @@
 import { create } from 'zustand';
 import { initializeDatabase } from '@/database/database';
-import { addProductToToday, ensureTodayDiary, loadTodayDiary } from '@/database/repositories/diaryRepository';
-import { loadProducts } from '@/database/repositories/productRepository';
+import { addDiaryEntry, deleteDiaryEntry, ensureDiaryDay, ensureTodayDiary, loadDiary, updateDiaryEntry } from '@/database/repositories/diaryRepository';
+import { completeDiaryDay, loadFlowState } from '@/database/repositories/flowRepository';
+import { clearMealPlan, loadMealPlan, saveMealPlan } from '@/database/repositories/mealPlanRepository';
+import { loadProducts, toggleFavorite as toggleFavoriteRepository } from '@/database/repositories/productRepository';
 import { loadProfileAndTarget, saveProfileAndTarget } from '@/database/repositories/profileRepository';
 import { getSetting, resetApplicationData, setSetting } from '@/database/repositories/settingsRepository';
+import { generateMealPlan } from '@/services/mealPlanner';
 import { calculateNutrition } from '@/services/nutritionCalculator';
-import type { DiarySummary, NutritionResult, Product, ProfileDraft, SavedProfile } from '@/types/domain';
+import type { DiaryEntryInput, DiarySummary, FlowState, MealPlan, MealType, NutritionResult, Product, ProfileDraft, SavedProfile } from '@/types/domain';
+import { getLocalDateKey } from '@/utils/date';
 
 export const defaultDraft: ProfileDraft = {
   name: '', age: 30, calculationSex: 'male', heightCm: 175, weightKg: 70,
@@ -22,15 +26,29 @@ interface AppState {
   profile: SavedProfile | null;
   target: NutritionResult | null;
   products: Product[];
+  diaryDate: string;
   diary: DiarySummary | null;
+  flow: FlowState | null;
+  mealPlan: MealPlan | null;
   initialize: () => Promise<void>;
   saveDraft: (patch: Partial<ProfileDraft>, completedStep?: string) => Promise<void>;
   setCalculatedTarget: (target: NutritionResult) => void;
   completeOnboarding: () => Promise<void>;
   updateProfile: (draft: ProfileDraft) => Promise<void>;
   recalculate: () => Promise<void>;
-  addProduct: (product: Product) => Promise<void>;
-  refreshDiary: () => Promise<void>;
+  refreshProducts: () => Promise<void>;
+  setDiaryDate: (date: string) => Promise<void>;
+  addToDiary: (input: Omit<DiaryEntryInput, 'date'> & { date?: string }) => Promise<void>;
+  addProduct: (product: Product, mealType?: MealType) => Promise<void>;
+  editDiaryEntry: (id: number, mealType: MealType, servings: number, quantityG?: number) => Promise<void>;
+  removeDiaryEntry: (id: number) => Promise<void>;
+  refreshDiary: (date?: string) => Promise<void>;
+  toggleFavorite: (productId: number) => Promise<void>;
+  closeDay: () => Promise<void>;
+  refreshFlow: () => Promise<void>;
+  generatePlan: (date?: string, replacements?: Partial<Record<MealType, number>>) => Promise<void>;
+  loadPlan: (date?: string) => Promise<void>;
+  resetPlan: (date?: string) => Promise<void>;
   reset: () => Promise<void>;
 }
 
@@ -42,22 +60,24 @@ function parseDraft(value: string | null): ProfileDraft {
 
 export const useAppStore = create<AppState>((set, get) => ({
   status: 'booting', error: null, onboardingCompleted: false, onboardingStep: 'welcome',
-  draft: defaultDraft, profile: null, target: null, products: [], diary: null,
+  draft: defaultDraft, profile: null, target: null, products: [], diaryDate: getLocalDateKey(), diary: null,
+  flow: null, mealPlan: null,
 
   initialize: async () => {
     try {
       await initializeDatabase();
-      const [completedValue, stepValue, draftValue, saved, products] = await Promise.all([
+      const [completedValue, stepValue, draftValue, saved, products, flow] = await Promise.all([
         getSetting('onboarding_completed'), getSetting('onboarding_step'), getSetting('onboarding_draft'),
-        loadProfileAndTarget(), loadProducts(),
+        loadProfileAndTarget(), loadProducts(), loadFlowState(),
       ]);
       const completed = completedValue === 'true' && saved !== null;
-      if (completed && saved) await ensureTodayDiary(saved.target.calories);
-      const diary = completed ? await loadTodayDiary() : null;
+      if (completed && saved) await ensureTodayDiary(saved.target);
+      const diaryDate = getLocalDateKey();
+      const [diary, mealPlan] = completed ? await Promise.all([loadDiary(diaryDate), loadMealPlan(diaryDate)]) : [null, null];
       set({
         status: 'ready', onboardingCompleted: completed, onboardingStep: stepValue ?? 'welcome',
         draft: saved?.profile ?? parseDraft(draftValue), profile: saved?.profile ?? null,
-        target: saved?.target ?? null, products, diary, error: null,
+        target: saved?.target ?? null, products, diaryDate, diary, flow, mealPlan, error: null,
       });
     } catch (error) {
       set({ status: 'error', error: error instanceof Error ? error.message : 'Не удалось открыть локальную базу' });
@@ -77,35 +97,89 @@ export const useAppStore = create<AppState>((set, get) => ({
     const draft = get().draft;
     const target = get().target ?? calculateNutrition(draft);
     await saveProfileAndTarget(draft, target);
-    await ensureTodayDiary(target.calories);
+    await ensureTodayDiary(target);
     await Promise.all([setSetting('onboarding_completed', 'true'), setSetting('onboarding_step', 'finish')]);
     const saved = await loadProfileAndTarget();
-    set({ onboardingCompleted: true, profile: saved?.profile ?? null, target: saved?.target ?? target, diary: await loadTodayDiary() });
+    set({ onboardingCompleted: true, profile: saved?.profile ?? null, target: saved?.target ?? target, diary: await loadDiary(getLocalDateKey()) });
   },
 
   updateProfile: async (draft) => {
     const target = calculateNutrition(draft);
     await saveProfileAndTarget(draft, target);
-    await ensureTodayDiary(target.calories);
+    await ensureTodayDiary(target);
     const saved = await loadProfileAndTarget();
-    set({ draft, profile: saved?.profile ?? null, target: saved?.target ?? target, diary: await loadTodayDiary() });
+    set({ draft, profile: saved?.profile ?? null, target: saved?.target ?? target });
+    await get().refreshDiary();
   },
 
   recalculate: async () => {
     const profile = get().profile;
-    if (!profile) return;
-    await get().updateProfile(profile);
+    if (profile) await get().updateProfile(profile);
   },
 
-  addProduct: async (product) => {
-    await addProductToToday(product);
-    set({ diary: await loadTodayDiary() });
+  refreshProducts: async () => set({ products: await loadProducts() }),
+
+  setDiaryDate: async (date) => {
+    const target = get().target;
+    if (target) await ensureDiaryDay(date, target);
+    set({ diaryDate: date, diary: await loadDiary(date), mealPlan: await loadMealPlan(date) });
   },
 
-  refreshDiary: async () => set({ diary: await loadTodayDiary() }),
+  addToDiary: async (input) => {
+    const date = input.date ?? get().diaryDate;
+    await addDiaryEntry({ ...input, date }, get().target ?? undefined);
+    if (date === get().diaryDate) set({ diary: await loadDiary(date) });
+  },
+
+  addProduct: async (product, mealType = 'snack') => get().addToDiary({ product, mealType, servings: 1 }),
+
+  editDiaryEntry: async (id, mealType, servings, quantityG) => {
+    await updateDiaryEntry(id, { mealType, servings, quantityG });
+    set({ diary: await loadDiary(get().diaryDate) });
+  },
+
+  removeDiaryEntry: async (id) => {
+    await deleteDiaryEntry(id);
+    set({ diary: await loadDiary(get().diaryDate) });
+  },
+
+  refreshDiary: async (date) => {
+    const selectedDate = date ?? get().diaryDate;
+    if (get().target) await ensureDiaryDay(selectedDate, get().target!);
+    set({ diaryDate: selectedDate, diary: await loadDiary(selectedDate) });
+  },
+
+  toggleFavorite: async (productId) => {
+    await toggleFavoriteRepository(productId);
+    set({ products: await loadProducts() });
+  },
+
+  closeDay: async () => {
+    const flow = await completeDiaryDay(get().diaryDate);
+    set({ flow, diary: await loadDiary(get().diaryDate) });
+  },
+
+  refreshFlow: async () => set({ flow: await loadFlowState() }),
+
+  generatePlan: async (date, replacements) => {
+    const selectedDate = date ?? get().diaryDate;
+    const { products, target, profile } = get();
+    if (!target || !profile) throw new Error('Сначала заполни профиль');
+    const plan = generateMealPlan(selectedDate, products.filter((product) => product.sourceType === 'tochka_rosta' || product.isUserCreated), target, profile, replacements);
+    await saveMealPlan(plan);
+    set({ mealPlan: plan });
+  },
+
+  loadPlan: async (date) => set({ mealPlan: await loadMealPlan(date ?? get().diaryDate) }),
+
+  resetPlan: async (date) => {
+    await clearMealPlan(date ?? get().diaryDate);
+    set({ mealPlan: null });
+  },
 
   reset: async () => {
     await resetApplicationData();
-    set({ onboardingCompleted: false, onboardingStep: 'welcome', draft: defaultDraft, profile: null, target: null, diary: null });
+    set({ onboardingCompleted: false, onboardingStep: 'welcome', draft: defaultDraft, profile: null, target: null,
+      diaryDate: getLocalDateKey(), diary: null, flow: await loadFlowState(), mealPlan: null, products: await loadProducts() });
   },
 }));
