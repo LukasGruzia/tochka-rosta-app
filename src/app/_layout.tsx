@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AppBackground } from '@/components/AppBackground';
 import { AppText } from '@/components/AppText';
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -17,11 +18,13 @@ export default function RootLayout() {
   const initialize = useAppStore((state) => state.initialize);
   useEffect(() => { void initialize().finally(() => SplashScreen.hideAsync()); }, [initialize]);
   return (
-    <SafeAreaProvider>
-      <ThemeProvider>
-        <ThemedStack />
-      </ThemeProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={styles.root}>
+      <SafeAreaProvider>
+        <ThemeProvider>
+          <ThemedStack />
+        </ThemeProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 
@@ -51,4 +54,4 @@ export function ErrorBoundary({ error, retry }: { error: Error; retry: () => voi
     </AppBackground>
   );
 }
-const styles = StyleSheet.create({ error: { flex: 1, justifyContent: 'center', gap: spacing.lg, padding: spacing.lg } });
+const styles = StyleSheet.create({ root:{flex:1},error: { flex: 1, justifyContent: 'center', gap: spacing.lg, padding: spacing.lg } });
