@@ -9,6 +9,7 @@ import { MacroProgress } from '@/components/MacroProgress';
 import { ProgressRing } from '@/components/ProgressRing';
 import { TabScreen } from '@/components/TabScreen';
 import { WaterCard } from '@/components/WaterCard';
+import { QuickAddSheet } from '@/components/QuickAddSheet';
 import { mealLabels } from '@/constants/options';
 import { roundNutrition } from '@/services/nutritionCalculator';
 import { rankPersonalRecommendations } from '@/services/personalRecommendations';
@@ -25,6 +26,7 @@ export default function HomeScreen() {
   const { profile, target, diary, flow, products, setDiaryDate, refreshFlow } = useAppStore();
   const { colors } = useTheme();
   const [details, setDetails] = useState(false);
+  const [quickAdd, setQuickAdd] = useState(false);
   useFocusEffect(useCallback(() => { void Promise.all([setDiaryDate(getLocalDateKey()), refreshFlow()]); }, [refreshFlow, setDiaryDate]));
   const next = getSmartNextStep(diary, new Date().getHours());
   const recommendation = useMemo(() => profile && target ? rankPersonalRecommendations(products, profile, Math.max(0, target.calories - (diary?.consumedCalories ?? 0)), next.meal)[0] : undefined, [diary?.consumedCalories, next.meal, products, profile, target]);
@@ -46,10 +48,10 @@ export default function HomeScreen() {
       </GlassCard>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickActions}>
-        <QuickAction icon="+" label="Добавить" onPress={() => router.push({ pathname: '/food-search' as never, params: { meal: next.meal } } as never)} />
-        <QuickAction icon="⌕" label="Поиск" onPress={() => router.push('/food-search' as never)} />
-        <QuickAction icon="◒" label="Вода" onPress={() => router.push('/water-tracker' as never)} />
-        <QuickAction icon="▦" label="Рацион" onPress={() => router.push('/meal-plan' as never)} />
+        <QuickAction icon="+" label="Добавить" onPress={() => setQuickAdd(true)} />
+        <QuickAction icon="◎" label="Закрыть остаток" onPress={() => router.push({ pathname: '/remainder-match' as never, params: { meal: next.meal } } as never)} />
+        <QuickAction icon="▦" label="План на неделю" onPress={() => router.push('/my-week' as never)} />
+        <QuickAction icon="✓" label="Список покупок" onPress={() => router.push('/shopping-list' as never)} />
       </ScrollView>
 
       <GlassCard variant="interactive" onPress={() => router.push({ pathname: '/food-search' as never, params: { meal: next.meal } } as never)} accessibilityLabel={next.title}>
@@ -57,6 +59,7 @@ export default function HomeScreen() {
       </GlassCard>
 
       <View style={styles.sectionTitle}><AppText variant="heading">Сегодня</AppText><Pressable onPress={() => router.push('/(tabs)/diary')}><AppText variant="caption" tone="green">Открыть дневник</AppText></Pressable></View>
+      {diary?.entries.length && remaining > 120 && remaining < 1200 ? <GlassCard variant="interactive" onPress={() => router.push({ pathname: '/remainder-match' as never, params: { meal: next.meal } } as never)}><View style={styles.next}><View style={[styles.nextIcon,{backgroundColor:colors.greenGlow}]}><AppText tone="green">◎</AppText></View><View style={styles.nextCopy}><AppText variant="heading">Закрыть остаток</AppText><AppText tone="secondary">Подобрать еду на оставшиеся {remaining} ккал и КБЖУ.</AppText></View><AppText tone="muted">›</AppText></View></GlassCard> : null}
       <GlassCard variant="default" style={styles.plan}>{meals.map((meal, index) => { const entries = diary?.entries.filter((entry) => entry.mealType === meal) ?? []; const calories = entries.reduce((sum, entry) => sum + entry.calories, 0); return <Pressable key={meal} onPress={() => router.push({ pathname: '/food-search' as never, params: { meal } } as never)} style={[styles.meal, index > 0 && { borderTopColor: colors.glassBorder, borderTopWidth: 1 }]}><View><AppText style={styles.bold}>{mealLabels[meal]}</AppText><AppText variant="caption" tone="muted">{entries.length ? `${entries.length} · ${Math.round(calories)} ккал` : 'Пока ничего не добавлено'}</AppText></View><AppText tone="green">+</AppText></Pressable>; })}</GlassCard>
 
       <WaterCard onOpen={() => router.push('/water-tracker' as never)} />
@@ -66,6 +69,7 @@ export default function HomeScreen() {
       {recommendation ? <GlassCard variant="compact" onPress={() => router.push(`/product/${recommendation.id}` as never)}><AppText variant="caption" tone="green">РЕКОМЕНДАЦИЯ ДНЯ</AppText><AppText variant="heading">{recommendation.name}</AppText><AppText tone="secondary">{Math.round(recommendation.caloriesPer100g)} ккал на 100 г · открыть карточку</AppText></GlassCard> : null}
     </TabScreen>
     <CalorieDetails visible={details} onClose={() => setDetails(false)} consumed={consumed} target={rounded.calories} bmr={target.bmr} tdee={target.tdee} />
+    <QuickAddSheet visible={quickAdd} onClose={() => setQuickAdd(false)} date={getLocalDateKey()} mealType={next.meal}/>
   </>;
 }
 

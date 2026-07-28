@@ -17,5 +17,6 @@ export const typography = { display: { fontSize: 36, lineHeight: 40, fontWeight:
 export const shadows = { card: { shadowOpacity: 0.22, shadowRadius: 18, shadowOffset: { width: 0, height: 8 }, elevation: 5 }, floating: { shadowOpacity: 0.28, shadowRadius: 24, shadowOffset: { width: 0, height: 12 }, elevation: 9 } } as const;
 export const glass = { blurIntensity: 22, blurElevated: 34, navigationBlur: 32 } as const;
 export const animations = { fast: 180, normal: 280, slow: 420, flameCycle: 3200 } as const;
+export const motion = { timing: { fast: 160, normal: 260, slow: 420 }, spring: { soft: { damping: 20, stiffness: 180 }, snappy: { damping: 18, stiffness: 300 }, liquid: { damping: 16, stiffness: 220, mass: 0.85 } }, pressScale: 0.97, cardEnter: 260, sheetEnter: 320, tabMorph: 240, successPulse: 520 } as const;
 export const sizes = { touch: 44, tabBarBase: 64, avatar: 104, productThumb: 76 } as const;
-export const theme = { colors, spacing, radii, typography, shadows, glass, animations, sizes } as const;
+export const theme = { colors, spacing, radii, typography, shadows, glass, animations, motion, sizes } as const;
