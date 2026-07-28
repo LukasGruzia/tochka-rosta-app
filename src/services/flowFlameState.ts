@@ -17,3 +17,7 @@ export const flowFlameConfig: Record<FlowFlameLevel, { scale: number; glow: numb
 export function shouldAnimateFlowFlame(reducedMotion: boolean, isVisible = true) {
   return isVisible && !reducedMotion;
 }
+
+export function getFlowFlameDimensions(height: number) {
+  return { width: Math.round(Math.max(0, height) * 0.68), height: Math.max(0, height) };
+}

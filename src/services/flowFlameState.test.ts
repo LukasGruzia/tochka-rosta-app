@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getFlowFlameLevel, shouldAnimateFlowFlame } from './flowFlameState';
+import { getFlowFlameDimensions, getFlowFlameLevel, shouldAnimateFlowFlame } from './flowFlameState';
 
 describe('FlowFlame states', () => {
   it('maps streak thresholds to stable visual levels', () => {
@@ -13,4 +13,5 @@ describe('FlowFlame states', () => {
     expect(getFlowFlameLevel(60)).toBe('legendary');
   });
   it('disables continuous motion for reduced-motion users', () => { expect(shouldAnimateFlowFlame(true)).toBe(false); expect(shouldAnimateFlowFlame(false)).toBe(true); expect(shouldAnimateFlowFlame(false, false)).toBe(false); });
+  it('keeps the premium flame tall and narrow', () => { expect(getFlowFlameDimensions(200)).toEqual({ width: 136, height: 200 }); });
 });
