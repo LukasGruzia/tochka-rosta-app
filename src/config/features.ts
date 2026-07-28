@@ -18,7 +18,7 @@ export interface FeatureFlags {
 
 export const defaultFeatureFlags: FeatureFlags = {
   enableLiquidTabAnimation: true,
-  enableLiquidTabDrag: false,
+  enableLiquidTabDrag: true,
   enableAdvancedGlassBlur: true,
   enableFlowFlameIdleAnimation: true,
   enableFlowFlameSuccessAnimation: true,

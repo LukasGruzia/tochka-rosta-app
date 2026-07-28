@@ -1,11 +1,11 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { router } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Modal, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { cancelAnimation, runOnJS, type SharedValue, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import { cancelAnimation, runOnJS, type SharedValue, useReducedMotion, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getTabRoute } from '@/config/routes';
 import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
@@ -22,41 +22,37 @@ import { AppPressable } from './AppPressable';
 import { AppText } from './AppText';
 import { LiquidTabSlider } from './LiquidTabSlider';
 
-function triggerSelectionHaptic() {
+let lastDragHapticAt = Number.NEGATIVE_INFINITY;
+
+function triggerDragSelectionHaptic() {
+  const now = Date.now();
+  if (now - lastDragHapticAt < 70) return;
+  lastDragHapticAt = now;
   void safelyRunHaptic('selection');
 }
 
-function TabItem({ focused, label, icon, index, position, hapticsEnabled, onPress, onLongPress }: { focused: boolean; label: string; icon: Parameters<typeof AppIcon>[0]['name']; index: number; position: SharedValue<number>; hapticsEnabled: boolean; onPress: () => void; onLongPress: () => void }) {
-  'use no memo';
+const TabItem = memo(function TabItem({ focused, label, icon, index, onSelect, onLongSelect }: { focused: boolean; label: string; icon: Parameters<typeof AppIcon>[0]['name']; index: number; onSelect: (index: number) => void; onLongSelect: (index: number) => void }) {
   const { colors } = useTheme();
-  const proximity = useAnimatedStyle(() => {
-    const distance = Math.min(1, Math.abs(position.get() - index));
-    return { opacity: 0.7 + (1 - distance) * 0.3, transform: [{ scale: 0.96 + (1 - distance) * 0.04 }] };
-  });
-  return <AppPressable
+  return <Pressable
     accessibilityRole="tab"
     accessibilityLabel={label}
     accessibilityState={{ selected: focused }}
-    actionLabel={`tab:${label}`}
-    onPress={onPress}
-    onLongPress={onLongPress}
+    onPress={() => onSelect(index)}
+    onLongPress={() => onLongSelect(index)}
     delayLongPress={420}
-    haptic={hapticsEnabled ? 'selection' : 'none'}
-    style={styles.item}
-    pressedStyle={styles.itemPressed}
+    style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
   >
-    <Animated.View style={[styles.itemInner, proximity]}>
+    <View style={styles.itemInner}>
       <AppIcon name={icon} size={24} color={focused ? colors.greenBright : colors.textSecondary} />
       <AppText numberOfLines={1} style={[styles.label, { color: focused ? colors.textPrimary : colors.textMuted }]}>{label}</AppText>
-    </Animated.View>
-  </AppPressable>;
-}
+    </View>
+  </Pressable>;
+});
 
 function DraggableSurface({ children, width, count, activeIndex, position, reducedMotion, hapticsEnabled, onSelect }: { children: ReactNode; width: number; count: number; activeIndex: number; position: SharedValue<number>; reducedMotion: boolean; hapticsEnabled: boolean; onSelect: (index: number) => void }) {
-  'use no memo';
   const lastHapticIndex = useSharedValue(activeIndex);
   const committed = useSharedValue(false);
-  const pan = Gesture.Pan()
+  const pan = useMemo(() => Gesture.Pan()
     .minDistance(10)
     .activeOffsetX([-10, 10])
     .failOffsetY([-10, 10])
@@ -72,7 +68,7 @@ function DraggableSurface({ children, width, count, activeIndex, position, reduc
       const nearest = Math.round(raw);
       if (hapticsEnabled && nearest !== lastHapticIndex.get()) {
         lastHapticIndex.set(nearest);
-        runOnJS(triggerSelectionHaptic)();
+        runOnJS(triggerDragSelectionHaptic)();
       }
     })
     .onEnd(() => {
@@ -84,12 +80,11 @@ function DraggableSurface({ children, width, count, activeIndex, position, reduc
     })
     .onFinalize((_event, success) => {
       if (!success) position.set(reducedMotion ? activeIndex : withSpring(activeIndex, motion.spring.soft));
-    });
+    }), [activeIndex, committed, count, hapticsEnabled, lastHapticIndex, onSelect, position, reducedMotion, width]);
   return <GestureDetector gesture={pan}>{children}</GestureDetector>;
 }
 
-export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
-  'use no memo';
+function LiquidTabBarComponent({ state, navigation }: BottomTabBarProps) {
   useRenderTracker('PremiumTabBar');
   const { colors, isDark } = useTheme();
   const { flags, resolvedPerformanceMode } = useFeatureFlags();
@@ -103,20 +98,26 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
   const tabCount = state.routes.length;
   const position = useSharedValue(activeIndex);
   const reducedMotion = useReducedMotion();
+  const pendingAnimationIndex = useRef<number | null>(null);
 
+  useEffect(() => () => cancelAnimation(position), [position]);
   useEffect(() => {
+    if (pendingAnimationIndex.current === activeIndex) {
+      pendingAnimationIndex.current = null;
+      return;
+    }
     cancelAnimation(position);
-    position.set(!flags.enableLiquidTabAnimation || reducedMotion ? activeIndex : withSpring(activeIndex, motion.spring.liquid));
-    return () => cancelAnimation(position);
+    position.set(!flags.enableLiquidTabAnimation || reducedMotion ? activeIndex : withTiming(activeIndex, { duration: motion.tabMorph }));
   }, [activeIndex, flags.enableLiquidTabAnimation, position, reducedMotion]);
 
-  const navigate = (index: number) => {
+  const navigate = useCallback((index: number) => {
     const route = state.routes[index];
     if (!route) {
       recordUiAction('error_occurred', 'tab_route_missing', String(index));
-      return;
+      return 'missing' as const;
     }
-    if (index !== activeIndex && !allowNavigation()) return;
+    if (index === activeIndex) return 'unchanged' as const;
+    if (!allowNavigation()) return 'blocked' as const;
     recordUiAction('navigation_requested', route.name);
     const result = performTabPress({
       routes: state.routes,
@@ -126,34 +127,60 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
       navigate: (route) => navigation.navigate(route.name, route.params),
     });
     if (result !== 'missing') recordUiAction('navigation_completed', route.name);
-  };
+    return result;
+  }, [activeIndex, allowNavigation, navigation, state.routes]);
 
-  const selectTab = (index: number) => {
+  const selectTab = useCallback((index: number) => {
     if (index < 0 || index >= tabCount) return;
+    const result = navigate(index);
+    if (result !== 'navigated') return;
+    pendingAnimationIndex.current = index;
     cancelAnimation(position);
     position.set(!flags.enableLiquidTabAnimation || reducedMotion ? index : withTiming(index, { duration: motion.tabMorph }));
-    navigate(index);
-  };
+    if (flags.enableHaptics) void safelyRunHaptic('selection');
+  }, [flags.enableHaptics, flags.enableLiquidTabAnimation, navigate, position, reducedMotion, tabCount]);
 
-  const chooseQuick = () => {
+  const selectDraggedTab = useCallback((index: number) => {
+    const result = navigate(index);
+    if (result === 'navigated') {
+      pendingAnimationIndex.current = index;
+      return;
+    }
+    cancelAnimation(position);
+    position.set(reducedMotion ? activeIndex : withTiming(activeIndex, { duration: motion.tabMorph }));
+  }, [activeIndex, navigate, position, reducedMotion]);
+
+  const longSelectTab = useCallback((index: number) => {
+    const route = state.routes[index];
+    if (!route) return;
+    navigation.emit({ type: 'tabLongPress', target: route.key });
+    if (flags.enableHaptics) void safelyRunHaptic('light');
+    setQuick(route.name);
+  }, [flags.enableHaptics, navigation, state.routes]);
+
+  const chooseQuick = useCallback(() => {
     const selected = quick;
     setQuick(null);
     const action = selected ? getTabRoute(selected)?.action : undefined;
     if (!action) return;
     recordUiAction('navigation_requested', action);
     router.push(action as never);
-  };
+  }, [quick]);
+
+  const onBarLayout = useCallback((event: Parameters<NonNullable<React.ComponentProps<typeof View>['onLayout']>>[0]) => {
+    setWidth(event.nativeEvent.layout.width);
+    setTabBarLayout(event.nativeEvent.layout.height, metrics.bottomOffset);
+  }, [metrics.bottomOffset, setTabBarLayout]);
+  const barThemeStyle = useMemo(() => ({ height: metrics.visualHeight, borderColor: colors.glassBorderStrong, backgroundColor: colors.surfaceStrong }), [colors.glassBorderStrong, colors.surfaceStrong, metrics.visualHeight]);
+  const specularStyle = useMemo(() => ({ backgroundColor: `${colors.textPrimary}32` }), [colors.textPrimary]);
 
   const glassSurface = <View
-    onLayout={(event) => {
-      setWidth(event.nativeEvent.layout.width);
-      setTabBarLayout(event.nativeEvent.layout.height, metrics.bottomOffset);
-    }}
-    style={[styles.bar, { height: metrics.visualHeight, borderColor: colors.glassBorderStrong, backgroundColor: colors.surfaceStrong }]}
+    onLayout={onBarLayout}
+    style={[styles.bar, barThemeStyle]}
   >
     {Platform.OS === 'ios' && flags.enableAdvancedGlassBlur ? <BlurView intensity={resolvedPerformanceMode === 'full' ? 30 : 18} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} /> : null}
     <LinearGradient colors={[`${colors.surfaceSolid}E8`, `${colors.greenDark}D8`]} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} style={StyleSheet.absoluteFill} />
-    <View style={[styles.specular, { backgroundColor: `${colors.textPrimary}32` }]} />
+    <View style={[styles.specular, specularStyle]} />
     <View style={styles.visual}>
       {width > 0 && flags.enableLiquidTabAnimation ? <LiquidTabSlider position={position} barWidth={width} count={tabCount} /> : null}
       <View style={styles.row}>{state.routes.map((route, index) => {
@@ -164,14 +191,8 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
           label={item.title}
           icon={item.icon}
           index={index}
-          position={position}
-          hapticsEnabled={flags.enableHaptics}
-          onPress={() => selectTab(index)}
-          onLongPress={() => {
-            navigation.emit({ type: 'tabLongPress', target: route.key });
-            if (flags.enableHaptics) void safelyRunHaptic('light');
-            setQuick(route.name);
-          }}
+          onSelect={selectTab}
+          onLongSelect={longSelectTab}
         />;
       })}</View>
     </View>
@@ -180,7 +201,7 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
   return <>
     <View pointerEvents="box-none" style={[styles.host, { height: metrics.visualHeight, bottom: metrics.bottomOffset }]}>
       {flags.enableLiquidTabDrag
-        ? <DraggableSurface width={width} count={tabCount} activeIndex={activeIndex} position={position} reducedMotion={reducedMotion} hapticsEnabled={flags.enableHaptics} onSelect={navigate}>{glassSurface}</DraggableSurface>
+        ? <DraggableSurface width={width} count={tabCount} activeIndex={activeIndex} position={position} reducedMotion={reducedMotion} hapticsEnabled={flags.enableHaptics} onSelect={selectDraggedTab}>{glassSurface}</DraggableSurface>
         : glassSurface}
     </View>
     <Modal visible={quick !== null} transparent animationType={reducedMotion ? 'none' : 'fade'} onRequestClose={() => setQuick(null)}>
@@ -195,6 +216,8 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
     </Modal>
   </>;
 }
+
+export const LiquidTabBar = memo(LiquidTabBarComponent);
 
 const styles = StyleSheet.create({
   host: { position: 'absolute', left: 12, right: 12 },

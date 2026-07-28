@@ -37,7 +37,7 @@ export function resolvePerformanceCapabilities(mode: PerformanceMode, environmen
     nativeBlur: environment.platform === 'ios' && (isFull || isBalanced),
     idleAnimations: motionAllowed,
     transitionAnimations: motionAllowed,
-    // Drag stays disabled until a physical-device endurance test succeeds.
+    // Drag is reserved for Full mode; Automatic/Balanced keep tap navigation lightweight.
     dragNavigation: isFull && environment.appActive,
   };
 }

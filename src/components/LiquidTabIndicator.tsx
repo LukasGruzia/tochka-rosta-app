@@ -13,7 +13,7 @@ export function LiquidTabIndicator({position,barWidth,count}:{position:SharedVal
   const animated = useAnimatedStyle(() => {
     const current = position.get();
     const distance = Math.abs(current - Math.round(current));
-    return { transform: [{ translateX: itemWidth * current }, { scaleX: 1 + distance * 0.32 }, { scaleY: 1 - distance * 0.04 }], opacity: 0.94 + distance * 0.06 };
+    return { transform: [{ translateX: itemWidth * current }, { scaleX: 1 + distance * 0.28 }], opacity: 0.94 + distance * 0.06 };
   });
   return <Animated.View pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[styles.indicator, { left: restingLeft, width: baseWidth, shadowColor: colors.greenPrimary, borderColor: colors.glassBorderStrong }, animated]}>
     <LinearGradient colors={[`${colors.greenBright}36`, `${colors.greenPrimary}72`]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFill, styles.gradient]} />
