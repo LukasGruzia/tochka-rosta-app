@@ -1,17 +1,21 @@
 import type { PropsWithChildren } from 'react';
-import { Platform, Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Platform, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { radii, spacing } from '@/theme/tokens';
+import { glass, radii, spacing } from '@/theme/tokens';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
+import { AppPressable } from './AppPressable';
 
 type Variant = 'default' | 'elevated' | 'interactive' | 'accent' | 'compact';
 interface Props extends PropsWithChildren { variant?: Variant; selected?: boolean; onPress?: () => void; style?: StyleProp<ViewStyle>; accessibilityLabel?: string; }
 
 export function GlassCard({ children, variant = 'default', selected, onPress, style, accessibilityLabel }: Props) {
   const { colors, isDark } = useTheme();
+  const { flags } = useFeatureFlags();
+  const glassLevel = variant === 'accent' ? glass.accent : variant === 'elevated' || variant === 'interactive' ? glass.raised : glass.base;
   const content = <>
-    {Platform.OS === 'ios' ? <BlurView intensity={variant === 'elevated' ? 32 : 20} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} /> : null}
+    {Platform.OS === 'ios' && flags.enableAdvancedGlassBlur ? <BlurView intensity={glassLevel.blur} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} /> : null}
     <LinearGradient colors={selected || variant === 'accent' ? [colors.greenGlow, colors.surfaceStrong] : [colors.surface, colors.surfaceStrong]} style={[styles.inner, variant === 'compact' && styles.compact]}>
       {children}
     </LinearGradient>
@@ -19,10 +23,10 @@ export function GlassCard({ children, variant = 'default', selected, onPress, st
   const baseStyle = [styles.card, variants[variant], { borderColor: selected ? colors.glassBorderStrong : colors.glassBorder, backgroundColor: colors.surface, shadowColor: colors.backgroundPrimary }, selected && { shadowColor: colors.greenPrimary, shadowOpacity: 0.18 }, style];
   if (onPress) {
     return (
-      <Pressable accessibilityRole="button" accessibilityLabel={accessibilityLabel} onPress={onPress}
-        style={({ pressed }) => [baseStyle, pressed && styles.pressed]}>
+      <AppPressable accessibilityRole="button" accessibilityLabel={accessibilityLabel} actionLabel={accessibilityLabel ?? 'glass_card'} onPress={onPress}
+        style={baseStyle} pressedStyle={styles.pressed}>
         {content}
-      </Pressable>
+      </AppPressable>
     );
   }
   return (

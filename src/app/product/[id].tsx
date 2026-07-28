@@ -20,10 +20,16 @@ import type { Product } from '@/types/domain';
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>(); const insets = useSafeAreaInsets(); const { colors } = useTheme();
   const addToDiary = useAppStore((state) => state.addToDiary); const diaryDate = useAppStore((state) => state.diaryDate); const refreshProducts = useAppStore((state) => state.refreshProducts); const toggleFavorite = useAppStore((state) => state.toggleFavorite);
-  const [product, setProduct] = useState<Product | null>(null); const [sheet, setSheet] = useState(false); const [basis, setBasis] = useState<'100' | 'serving'>('100');
-  useEffect(() => { if (id && id !== 'new') void getProductById(Number(id)).then(setProduct); }, [id]);
+  const [product, setProduct] = useState<Product | null>(null); const [loaded, setLoaded] = useState(false); const [loadError, setLoadError] = useState<string | null>(null); const [sheet, setSheet] = useState(false); const [basis, setBasis] = useState<'100' | 'serving'>('100');
+  useEffect(() => {
+    const productId = Number(id);
+    if (!id || id === 'new' || !Number.isInteger(productId) || productId <= 0) { setLoaded(true); setProduct(null); return; }
+    setLoaded(false); setLoadError(null);
+    void getProductById(productId).then(setProduct).catch((error) => setLoadError(error instanceof Error ? error.message : 'Не удалось загрузить продукт')).finally(() => setLoaded(true));
+  }, [id]);
   const weight = basis === '100' ? 100 : product?.servingSizeG ?? 100; const values = useMemo(() => product ? calculateForWeight(product, weight) : null, [product, weight]);
-  if (!product) return <AppBackground><SafeAreaView style={styles.loading}><AppText tone="secondary">Загружаем продукт…</AppText></SafeAreaView></AppBackground>;
+  if (!loaded) return <AppBackground><SafeAreaView style={styles.loading}><AppText tone="secondary">Загружаем продукт…</AppText></SafeAreaView></AppBackground>;
+  if (!product) return <AppBackground><SafeAreaView style={styles.loading}><AppText variant="heading">Продукт не найден или был удалён.</AppText>{loadError ? <AppText tone="secondary">{loadError}</AppText> : null}<PrimaryButton label="Вернуться назад" onPress={() => router.back()} /></SafeAreaView></AppBackground>;
   const imageSource = product.imageUri ? { uri: product.imageUri } : productAssets[product.imageKey];
   const status = product.dataStatus === 'verified' ? 'Проверено' : product.dataStatus === 'custom' ? 'Мои данные' : product.dataStatus === 'community' ? 'Сообщество' : 'Импортировано';
   const remove = () => Alert.alert('Удалить продукт?', 'Записи в дневнике сохранят снимок названия и КБЖУ.', [{ text: 'Отмена', style: 'cancel' }, { text: 'Удалить', style: 'destructive', onPress: async () => { await deleteCustomProduct(product.id); await refreshProducts(); router.back(); } }]);
@@ -50,7 +56,7 @@ function Macro({ label, value }: { label: string; value: number | null | undefin
 function Info({ label, value, unit, text }: { label: string; value?: number | null; unit?: string; text?: string }) { return <View style={styles.info}><AppText tone="secondary">{label}</AppText><AppText>{text ?? (value == null ? '—' : `${value.toFixed(1)} ${unit}`)}</AppText></View>; }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1 }, loading: { flex: 1, alignItems: 'center', justifyContent: 'center' }, topBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.md, paddingVertical: spacing.sm, gap: spacing.sm }, circle: { width: 44, height: 44, borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center' }, topTitle: { flex: 1, textAlign: 'center' },
+  safe: { flex: 1 }, loading: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.md, padding: spacing.lg }, topBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.md, paddingVertical: spacing.sm, gap: spacing.sm }, circle: { width: 44, height: 44, borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center' }, topTitle: { flex: 1, textAlign: 'center' },
   content: { paddingHorizontal: spacing.md, gap: spacing.md }, hero: { width: '100%', aspectRatio: 1.45, borderRadius: radii.xl }, placeholder: { alignItems: 'center', justifyContent: 'center' }, titleBlock: { gap: spacing.xs }, status: { alignSelf: 'flex-start', borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs }, chips: { flexDirection: 'row', gap: spacing.sm },
   calories: { alignItems: 'center', marginBottom: spacing.lg }, macros: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm }, macro: { flex: 1, alignItems: 'center', gap: spacing.xs }, sectionTitle: { marginTop: spacing.md, fontWeight: '700' }, info: { minHeight: 44, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md },
   sticky: { position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', gap: spacing.md, borderTopWidth: 1, paddingHorizontal: spacing.md, paddingTop: spacing.sm }, stickyCopy: { minWidth: 86 }, stickyButton: { flex: 1 }, bold: { fontWeight: '800' },

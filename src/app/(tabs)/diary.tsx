@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Alert, Modal, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
@@ -13,21 +13,26 @@ import { TabScreen } from '@/components/TabScreen';
 import { DiaryCalendarSheet } from '@/components/DiaryCalendarSheet';
 import { QuickAddButton, QuickAddSheet } from '@/components/QuickAddSheet';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { runOnJS, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { runOnJS, type SharedValue, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring } from 'react-native-reanimated';
 import { mealLabels } from '@/constants/options';
 import { useAppStore } from '@/store/appStore';
 import { radii, spacing } from '@/theme/tokens';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { DiaryEntry, MealType } from '@/types/domain';
 import { getLocalDateKey } from '@/utils/date';
+import { safelyRunHaptic } from '@/services/haptics';
+import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
 
 const mealOrder: MealType[] = ['breakfast', 'lunch', 'snack', 'dinner'];
 function shiftDate(date: string, amount: number) { const value = new Date(`${date}T12:00:00`); value.setDate(value.getDate() + amount); return getLocalDateKey(value); }
 function formatDate(date: string) { const today = getLocalDateKey(); if (date === today) return 'Сегодня'; if (date === shiftDate(today, -1)) return 'Вчера'; if (date === shiftDate(today, 1)) return 'Завтра'; return new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long' }).format(new Date(`${date}T12:00:00`)); }
 
+function DiaryDateSwipe({children,offset,onChangeDay}:{children:ReactNode;offset:SharedValue<number>;onChangeDay:(amount:number)=>void}){'use no memo';const gesture=Gesture.Pan().activeOffsetX([-22,22]).failOffsetY([-12,12]).onUpdate((event)=>{offset.set(event.translationX*.22);}).onEnd((event)=>{if(Math.abs(event.translationX)>60)runOnJS(onChangeDay)(event.translationX<0?1:-1);offset.set(withSpring(0,{damping:20,stiffness:220}));}).onFinalize(()=>{offset.set(withSpring(0,{damping:20,stiffness:220}));});return <GestureDetector gesture={gesture}>{children}</GestureDetector>;}
+
 export default function DiaryScreen() {
   const params=useLocalSearchParams<{calendar?:string}>();
   const { colors } = useTheme();
+  const { flags } = useFeatureFlags();
   const diary = useAppStore((state) => state.diary);
   const diaryDate = useAppStore((state) => state.diaryDate);
   const refresh = useAppStore((state) => state.refreshDiary);
@@ -43,13 +48,13 @@ export default function DiaryScreen() {
   useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
   const consumed = diary?.consumedCalories ?? 0; const target = diary?.targetCalories ?? 0;
   const remaining = Math.round(target - consumed);
-  const changeDay=async(amount:number)=>{await Haptics.selectionAsync();await setDate(shiftDate(diaryDate,amount));};
-  const daySwipe=Gesture.Pan().activeOffsetX([-22,22]).failOffsetY([-12,12]).onUpdate((event)=>{dragX.value=event.translationX*.22;}).onEnd((event)=>{if(Math.abs(event.translationX)>60)runOnJS(changeDay)(event.translationX<0?1:-1);dragX.value=withSpring(0,{damping:20,stiffness:220});}).onFinalize(()=>{dragX.value=withSpring(0,{damping:20,stiffness:220});});
-  const dateAnimated=useAnimatedStyle(()=>({transform:[{translateX:reduced?0:dragX.value}],opacity:reduced?1:1-Math.min(.16,Math.abs(dragX.value)/180)}));
+  const changeDay=async(amount:number)=>{void safelyRunHaptic('selection');await setDate(shiftDate(diaryDate,amount));};
+  const dateAnimated=useAnimatedStyle(()=>{const current=dragX.get();return{transform:[{translateX:reduced?0:current}],opacity:reduced?1:1-Math.min(.16,Math.abs(current)/180)};});
   const complete = () => Alert.alert('Закрыть день?', 'После закрытия записи этого дня нельзя будет изменить.', [{ text: 'Отмена', style: 'cancel' }, { text: 'Закрыть', onPress: async () => { try { await closeDay(); await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); Alert.alert('Поток продолжается', 'День закрыт, а огонёк стал ярче.'); } catch (error) { Alert.alert('Не удалось закрыть день', error instanceof Error ? error.message : 'Попробуй ещё раз'); } } }]);
+  const dateControl=<Animated.View style={[styles.dateNav,dateAnimated]}><Pressable accessibilityLabel="Предыдущий день" style={[styles.arrow, { backgroundColor: colors.surface }]} onPress={() => void changeDay(-1)}><AppText>‹</AppText></Pressable><Pressable accessibilityRole="button" accessibilityLabel="Открыть календарь" onPress={() => setCalendar(true)} style={styles.dateCopy}><AppText variant="heading">{formatDate(diaryDate)}　▣</AppText><AppText variant="caption" tone="muted">{new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date(`${diaryDate}T12:00:00`))}</AppText></Pressable><Pressable accessibilityLabel="Следующий день" style={[styles.arrow, { backgroundColor: colors.surface }]} onPress={() => void changeDay(1)}><AppText>›</AppText></Pressable></Animated.View>;
   return <>
     <TabScreen title="Дневник" subtitle="Питание и дневной баланс">
-      <GestureDetector gesture={daySwipe}><Animated.View style={[styles.dateNav,dateAnimated]}><Pressable accessibilityLabel="Предыдущий день" style={[styles.arrow, { backgroundColor: colors.surface }]} onPress={() => void changeDay(-1)}><AppText>‹</AppText></Pressable><Pressable accessibilityRole="button" accessibilityLabel="Открыть календарь" onPress={() => setCalendar(true)} style={styles.dateCopy}><AppText variant="heading">{formatDate(diaryDate)}　▣</AppText><AppText variant="caption" tone="muted">{new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date(`${diaryDate}T12:00:00`))}</AppText></Pressable><Pressable accessibilityLabel="Следующий день" style={[styles.arrow, { backgroundColor: colors.surface }]} onPress={() => void changeDay(1)}><AppText>›</AppText></Pressable></Animated.View></GestureDetector>
+      {flags.enableSheetGestures?<DiaryDateSwipe offset={dragX} onChangeDay={(amount)=>{void changeDay(amount);}}>{dateControl}</DiaryDateSwipe>:dateControl}
       <View style={styles.tools}><Pressable style={[styles.tool, { backgroundColor: colors.surface, borderColor: colors.glassBorder }]} onPress={() => setCopying(true)}><AppText tone="green">⇥</AppText><AppText variant="caption">Копировать</AppText></Pressable><Pressable style={[styles.tool, { backgroundColor: colors.surface, borderColor: colors.glassBorder }]} onPress={() => router.push('/meal-templates' as never)}><AppText tone="green">▦</AppText><AppText variant="caption">Наборы еды</AppText></Pressable></View>
       <GlassCard variant="accent" style={styles.hero}><ProgressRing size={144} progress={target ? consumed / target : 0} value={String(Math.round(consumed))} label={`из ${Math.round(target)} ккал`}/><AppText tone={remaining >= 0 ? 'secondary' : 'warning'}>{remaining >= 0 ? `Осталось ${remaining} ккал` : `Сверх цели ${Math.abs(remaining)} ккал`}</AppText><View style={styles.macroGrid}><MacroProgress label="Б" value={diary?.consumedProteinG ?? 0} target={diary?.targetProteinG ?? 0}/><MacroProgress label="Ж" value={diary?.consumedFatG ?? 0} target={diary?.targetFatG ?? 0} color={colors.gold}/><MacroProgress label="У" value={diary?.consumedCarbsG ?? 0} target={diary?.targetCarbsG ?? 0} color="#60A5FA"/></View></GlassCard>
       {diary?.isCompleted ? <GlassCard variant="compact" selected><AppText variant="heading" tone="green">✓ День закрыт</AppText><AppText tone="secondary">Записи сохранены в истории Потока.</AppText></GlassCard> : null}

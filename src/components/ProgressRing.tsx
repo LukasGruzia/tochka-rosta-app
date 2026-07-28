@@ -8,13 +8,14 @@ import { useTheme } from '@/theme/ThemeProvider';
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 interface Props { progress: number; size?: number; value: string; label: string; }
 export function ProgressRing({ progress, size = 190, value, label }: Props) {
+  'use no memo';
   const { colors } = useTheme();
   const reducedMotion = useReducedMotion();
   const radius = (size - 18) / 2;
   const circumference = 2 * Math.PI * radius;
   const animatedProgress = useSharedValue(0);
-  useEffect(() => { animatedProgress.value = reducedMotion ? progress : withTiming(progress, { duration: 700 }); }, [animatedProgress, progress, reducedMotion]);
-  const animatedProps = useAnimatedProps(() => ({ strokeDashoffset: circumference * (1 - Math.min(1, Math.max(0, animatedProgress.value))) }));
+  useEffect(() => { animatedProgress.set(reducedMotion ? progress : withTiming(progress, { duration: 700 })); }, [animatedProgress, progress, reducedMotion]);
+  const animatedProps = useAnimatedProps(() => ({ strokeDashoffset: circumference * (1 - Math.min(1, Math.max(0, animatedProgress.get()))) }));
   return (
     <View style={[styles.wrap, { width: size, height: size }]} accessibilityLabel={`${value}, ${label}`}>
       <Svg width={size} height={size} style={StyleSheet.absoluteFill}>

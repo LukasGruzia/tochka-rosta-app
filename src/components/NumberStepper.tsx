@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
-import * as Haptics from 'expo-haptics';
+import { safelyRunHaptic } from '@/services/haptics';
 import { AppText } from './AppText';
 import { radii, spacing } from '@/theme/tokens';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -7,7 +7,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 interface Props { label: string; value: number; unit: string; min: number; max: number; onChange: (value: number) => void; }
 export function NumberStepper({ label, value, unit, min, max, onChange }: Props) {
   const { colors } = useTheme();
-  const update = (next: number) => { void Haptics.selectionAsync(); onChange(Math.min(max, Math.max(min, next))); };
+  const update = (next: number) => { void safelyRunHaptic('selection'); onChange(Math.min(max, Math.max(min, next))); };
   return (
     <View style={styles.block}>
       <AppText tone="secondary">{label}</AppText>
