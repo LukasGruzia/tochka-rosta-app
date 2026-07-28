@@ -9,7 +9,7 @@ import { addWater as addWaterRepository, loadWaterSummary, removeWaterEntry } fr
 import { getSetting, resetApplicationData, setSetting } from '@/database/repositories/settingsRepository';
 import { generateMealPlan } from '@/services/mealPlanner';
 import { calculateNutrition } from '@/services/nutritionCalculator';
-import { deleteStoredAvatar } from '@/services/avatarStorage';
+import { deleteStoredAvatar, prepareStoredAvatar } from '@/services/avatarStorage';
 import { loadBudgetSettings } from '@/database/repositories/budgetRepository';
 import type { DailyPlanOptions } from '@/services/mealPlanner';
 import type { DiaryEntryInput, DiarySummary, FlowState, MealPlan, MealType, NutritionResult, Product, ProfileDraft, SavedProfile, ThemeMode, WaterSummary } from '@/types/domain';
@@ -24,6 +24,7 @@ export const defaultDraft: ProfileDraft = {
 };
 
 type AppStatus = 'booting' | 'ready' | 'error';
+export type AvatarStatus = 'loading' | 'ready' | 'missing' | 'empty';
 interface AppState {
   status: AppStatus;
   error: string | null;
@@ -41,6 +42,7 @@ interface AppState {
   themeMode: ThemeMode;
   performanceMode: PerformanceMode;
   water: WaterSummary | null;
+  avatarStatus: AvatarStatus;
   initialize: () => Promise<void>;
   saveDraft: (patch: Partial<ProfileDraft>, completedStep?: string) => Promise<void>;
   setCalculatedTarget: (target: NutritionResult) => void;
@@ -64,6 +66,7 @@ interface AppState {
   setThemeMode: (mode: ThemeMode) => Promise<void>;
   setPerformanceMode: (mode: PerformanceMode) => Promise<void>;
   setAvatar: (uri: string | null) => Promise<void>;
+  reloadProfile: () => Promise<void>;
   refreshWater: (date?: string) => Promise<void>;
   addWater: (amountMl: number, date?: string) => Promise<void>;
   removeWater: (id: number) => Promise<void>;
@@ -81,10 +84,28 @@ let fullProductsPromise: Promise<Product[]> | null = null;
 let initializationPromise: Promise<void> | null = null;
 let diaryLoadGeneration = 0;
 
+async function prepareProfileAvatar(saved: Awaited<ReturnType<typeof loadProfileAndTarget>>) {
+  if (!saved?.profile.avatarUri) return { saved, avatarStatus: 'empty' as const };
+  const previous = saved.profile.avatarUri;
+  const prepared = await prepareStoredAvatar(previous);
+  if (!prepared.available) return { saved, avatarStatus: 'missing' as const };
+  if (!prepared.migrated) return { saved, avatarStatus: 'ready' as const };
+  try {
+    const updatedAt = await updateProfileAvatar(prepared.uri);
+    return {
+      saved: { ...saved, profile: { ...saved.profile, avatarUri: prepared.uri, updatedAt } },
+      avatarStatus: 'ready' as const,
+    };
+  } catch (error) {
+    await deleteStoredAvatar(prepared.uri).catch(() => undefined);
+    throw error;
+  }
+}
+
 export const useAppStore = create<AppState>((set, get) => ({
   status: 'booting', error: null, onboardingCompleted: false, onboardingStep: 'welcome',
   draft: defaultDraft, profile: null, target: null, products: [], productsFullyLoaded: false, diaryDate: getLocalDateKey(), diary: null,
-  flow: null, mealPlan: null, themeMode: 'system', performanceMode: 'automatic', water: null,
+  flow: null, mealPlan: null, themeMode: 'system', performanceMode: 'automatic', water: null, avatarStatus: 'loading',
 
   initialize: async () => {
     if (initializationPromise) return initializationPromise;
@@ -96,14 +117,17 @@ export const useAppStore = create<AppState>((set, get) => ({
         getSetting('theme_mode'), getSetting('performance_mode'),
         loadProfileAndTarget(), loadProductsPage({ limit: PRODUCT_PAGE_SIZE }), loadFlowState(),
       ]);
-      const completed = completedValue === 'true' && saved !== null;
-      if (completed && saved) await ensureTodayDiary(saved.target);
+       const preparedProfile = await prepareProfileAvatar(saved);
+       const currentSaved = preparedProfile.saved;
+       const completed = completedValue === 'true' && currentSaved !== null;
+       if (completed && currentSaved) await ensureTodayDiary(currentSaved.target);
       const diaryDate = getLocalDateKey();
       const [diary, mealPlan, water] = completed ? await Promise.all([loadDiary(diaryDate), loadMealPlan(diaryDate), loadWaterSummary(diaryDate)]) : [null, null, null];
       set({
         status: 'ready', onboardingCompleted: completed, onboardingStep: stepValue ?? 'welcome',
-        draft: saved?.profile ?? parseDraft(draftValue), profile: saved?.profile ?? null,
-        target: saved?.target ?? null, products, productsFullyLoaded: false, diaryDate, diary, flow, mealPlan, water,
+         draft: currentSaved?.profile ?? parseDraft(draftValue), profile: currentSaved?.profile ?? null,
+         target: currentSaved?.target ?? null, products, productsFullyLoaded: false, diaryDate, diary, flow, mealPlan, water,
+         avatarStatus: preparedProfile.avatarStatus,
         themeMode: themeValue === 'dark' || themeValue === 'light' ? themeValue : 'system',
         performanceMode: isPerformanceMode(performanceValue) ? performanceValue : 'automatic', error: null,
       });
@@ -240,7 +264,32 @@ export const useAppStore = create<AppState>((set, get) => ({
   setThemeMode: async (mode) => { set({ themeMode: mode }); await setSetting('theme_mode', mode); },
   setPerformanceMode: async (mode) => { set({ performanceMode: mode }); await setSetting('performance_mode', mode); },
 
-  setAvatar: async (uri) => { const previous=get().profile?.avatarUri;await updateProfileAvatar(uri); const profile=get().profile; if(profile)set({profile:{...profile,avatarUri:uri},draft:{...get().draft,avatarUri:uri}});if(previous&&previous!==uri)void deleteStoredAvatar(previous).catch(()=>undefined); },
+  setAvatar: async (uri) => {
+    const previous = get().profile?.avatarUri;
+    const updatedAt = await updateProfileAvatar(uri);
+    const profile = get().profile;
+    if (profile) set({
+      profile: { ...profile, avatarUri: uri, updatedAt },
+      draft: { ...get().draft, avatarUri: uri },
+      avatarStatus: uri ? 'ready' : 'empty',
+    });
+    if (previous && previous !== uri) void deleteStoredAvatar(previous).catch(() => undefined);
+  },
+
+  reloadProfile: async () => {
+    set({ avatarStatus: 'loading' });
+    const prepared = await prepareProfileAvatar(await loadProfileAndTarget());
+    if (!prepared.saved) {
+      set({ profile: null, target: null, avatarStatus: 'empty' });
+      return;
+    }
+    set({
+      profile: prepared.saved.profile,
+      target: prepared.saved.target,
+      draft: prepared.saved.profile,
+      avatarStatus: prepared.avatarStatus,
+    });
+  },
 
   refreshWater: async (date) => set({ water: await loadWaterSummary(date ?? get().diaryDate) }),
   addWater: async (amountMl,date) => { const selected=date??get().diaryDate; await addWaterRepository(amountMl,selected); if(selected===get().diaryDate)set({water:await loadWaterSummary(selected)}); },
@@ -251,6 +300,6 @@ export const useAppStore = create<AppState>((set, get) => ({
     await deleteStoredAvatar(get().profile?.avatarUri);
     await resetApplicationData();
     set({ onboardingCompleted: false, onboardingStep: 'welcome', draft: defaultDraft, profile: null, target: null,
-      diaryDate: getLocalDateKey(), diary: null, flow: await loadFlowState(), mealPlan: null, products: await loadProductsPage({ limit: PRODUCT_PAGE_SIZE }), productsFullyLoaded: false, water:null, themeMode:'system', performanceMode:'automatic' });
+      diaryDate: getLocalDateKey(), diary: null, flow: await loadFlowState(), mealPlan: null, products: await loadProductsPage({ limit: PRODUCT_PAGE_SIZE }), productsFullyLoaded: false, water:null, themeMode:'system', performanceMode:'automatic', avatarStatus:'empty' });
   },
 }));

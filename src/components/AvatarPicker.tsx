@@ -1,9 +1,9 @@
 import { Alert, StyleSheet, View } from 'react-native';
-import { useEffect, useState } from 'react';
-import { Image } from 'expo-image';
+import { useMemo, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { AppText } from './AppText';
 import { AppPressable } from './AppPressable';
+import { UserAvatar } from './UserAvatar';
 import { deleteStoredAvatar, persistAvatar } from '@/services/avatarStorage';
 import { radii, sizes } from '@/theme/tokens';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -11,24 +11,27 @@ import { useTheme } from '@/theme/ThemeProvider';
 interface Props {
   name: string;
   uri?: string | null;
+  cacheKey?: string;
+  size?: number;
   onChange: (uri: string | null) => Promise<void>;
 }
 
-export function AvatarPicker({ name, uri, onChange }: Props) {
+export function AvatarPicker({ name, uri, cacheKey, size = 100, onChange }: Props) {
   const { colors } = useTheme();
-  const [imageFailed, setImageFailed] = useState(false);
-  const initials = name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || '•';
-
-  useEffect(() => setImageFailed(false), [uri]);
+  const [saving, setSaving] = useState(false);
+  const touchStyle = useMemo(() => ({ width: size + 12, height: size + 12 }), [size]);
 
   const commit = async (sourceUri: string) => {
     let nextUri: string | null = null;
     try {
+      setSaving(true);
       nextUri = await persistAvatar(sourceUri);
       await onChange(nextUri);
     } catch {
       if (nextUri) await deleteStoredAvatar(nextUri);
       Alert.alert('Не удалось сохранить фото', 'Попробуй выбрать другое изображение.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -52,27 +55,38 @@ export function AvatarPicker({ name, uri, onChange }: Props) {
     if (!result.canceled) await commit(result.assets[0].uri);
   };
 
+  const remove = async () => {
+    try {
+      setSaving(true);
+      await onChange(null);
+    } catch {
+      Alert.alert('Не удалось удалить фото', 'Текущее фото осталось без изменений.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const choose = () => Alert.alert('Фото профиля', 'Выбери источник', [
     { text: 'Камера', onPress: () => { void camera(); } },
     { text: 'Галерея', onPress: () => { void gallery(); } },
-    ...(uri ? [{ text: 'Удалить фото', style: 'destructive' as const, onPress: () => { void onChange(null); } }] : []),
+    ...(uri ? [{ text: 'Удалить фото', style: 'destructive' as const, onPress: () => { void remove(); } }] : []),
     { text: 'Отмена', style: 'cancel' },
   ]);
 
   return (
-    <AppPressable accessibilityRole="button" accessibilityLabel="Изменить фото профиля" haptic="light" onPress={choose} style={styles.touch} pressedStyle={styles.pressed}>
-      <View style={[styles.avatar, { backgroundColor: colors.greenGlow, borderColor: colors.glassBorderStrong }]}>
-        {uri && !imageFailed ? <Image source={{ uri }} style={StyleSheet.absoluteFill} contentFit="cover" cachePolicy="memory-disk" recyclingKey={uri} transition={80} onError={() => setImageFailed(true)} /> : <AppText variant="title" tone="green">{initials}</AppText>}
+    <AppPressable accessibilityRole="button" accessibilityLabel="Изменить фото профиля" haptic="light" loading={saving} onPress={choose} style={[styles.touch, touchStyle]} pressedStyle={styles.pressed}>
+      <View style={[styles.halo, { width: size + 8, height: size + 8, borderRadius: (size + 8) / 2, backgroundColor: colors.greenGlow, shadowColor: colors.greenPrimary }]}>
+        <UserAvatar name={name} uri={uri} cacheKey={cacheKey} size={size} borderWidth={2} />
       </View>
-      <View style={[styles.badge, { backgroundColor: colors.greenPrimary, borderColor: colors.backgroundPrimary }]}><AppText style={[styles.plus, { color: colors.backgroundPrimary }]}>+</AppText></View>
+      <View style={[styles.badge, { backgroundColor: colors.greenPrimary, borderColor: colors.backgroundPrimary }]}><AppText style={[styles.plus, { color: colors.backgroundPrimary }]}>{saving ? '·' : '+'}</AppText></View>
     </AppPressable>
   );
 }
 
 const styles = StyleSheet.create({
-  touch: { width: sizes.avatar + 8, height: sizes.avatar + 8 },
-  avatar: { width: sizes.avatar, height: sizes.avatar, borderRadius: sizes.avatar / 2, borderWidth: 2, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  badge: { position: 'absolute', right: 0, bottom: 4, width: 32, height: 32, borderRadius: radii.pill, borderWidth: 3, alignItems: 'center', justifyContent: 'center' },
-  plus: { fontSize: 21, lineHeight: 23, fontWeight: '800' },
+  touch: { minWidth: sizes.touch, minHeight: sizes.touch },
+  halo: { padding: 4, alignItems: 'center', justifyContent: 'center', shadowOpacity: 0.16, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } },
+  badge: { position: 'absolute', right: 0, bottom: 0, width: sizes.touch, height: sizes.touch, borderRadius: radii.pill, borderWidth: 3, alignItems: 'center', justifyContent: 'center' },
+  plus: { fontSize: 22, lineHeight: 24, fontWeight: '800' },
   pressed: { opacity: 0.78, transform: [{ scale: 0.98 }] },
 });

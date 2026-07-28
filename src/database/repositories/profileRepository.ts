@@ -61,7 +61,9 @@ export async function loadProfileAndTarget(): Promise<{ profile: SavedProfile; t
 
 export async function updateProfileAvatar(avatarUri: string | null) {
   const db = await getDatabase();
-  await db.runAsync('UPDATE user_profile SET avatar_uri=?, updated_at=? WHERE id=1', avatarUri, new Date().toISOString());
+  const updatedAt = new Date().toISOString();
+  await db.runAsync('UPDATE user_profile SET avatar_uri=?, updated_at=? WHERE id=1', avatarUri, updatedAt);
+  return updatedAt;
 }
 
 export async function updateWaterGoal(goalMl: number) {

@@ -82,7 +82,7 @@ export default function HomeScreen() {
   return <>
     <HomeBackground><SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.scroll, { paddingHorizontal: layout.horizontalPadding, paddingBottom: contentInset }]}>
-      <HomeHeader greeting={getDayGreeting()} name={profile.name} avatarUri={profile.avatarUri} onProfile={() => router.push('/(tabs)/profile')} />
+      <HomeHeader greeting={getDayGreeting()} onProfile={() => router.push('/(tabs)/profile')} />
       <AppText tone="secondary">Небольшие действия складываются в устойчивый результат.</AppText>
       <NutritionHeroCard
         compact={layout.compact}

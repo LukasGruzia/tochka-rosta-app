@@ -1,24 +1,21 @@
-import { Image } from 'expo-image';
-import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useUserProfile } from '@/hooks/useUserProfile';
 import { AppPressable } from './AppPressable';
 import { AppText } from './AppText';
 import { useTheme } from '@/theme/ThemeProvider';
-import { getProfileInitials } from '@/services/profileIdentity';
 import { sizes, spacing } from '@/theme/tokens';
+import { UserAvatar } from './UserAvatar';
 
-export function HomeHeader({ greeting, name, avatarUri, onProfile }: { greeting: string; name: string; avatarUri?: string | null; onProfile: () => void }) {
+export function HomeHeader({ greeting, onProfile }: { greeting: string; onProfile: () => void }) {
   const { colors } = useTheme();
-  const [imageFailed, setImageFailed] = useState(false);
-  const initials = getProfileInitials(name);
-  useEffect(() => setImageFailed(false), [avatarUri]);
+  const { avatarUri, avatarCacheKey, userName } = useUserProfile();
   return <View style={styles.root}>
     <View style={styles.copy}>
       <AppText variant="caption" tone="secondary">{greeting}</AppText>
-      <AppText variant="title" numberOfLines={2}>{name}</AppText>
+      <AppText variant="title" numberOfLines={2}>{userName}</AppText>
     </View>
-    <AppPressable accessibilityRole="button" accessibilityLabel="Открыть профиль" actionLabel="home_avatar" haptic="selection" onPress={onProfile} style={[styles.avatar, { borderColor: colors.glassBorderStrong, backgroundColor: colors.surfaceAccent }]}>
-      {avatarUri && !imageFailed ? <Image source={{ uri: avatarUri }} contentFit="cover" cachePolicy="memory-disk" recyclingKey={avatarUri} transition={80} style={StyleSheet.absoluteFill} onError={() => setImageFailed(true)} /> : <AppText tone="green" style={styles.initials}>{initials}</AppText>}
+    <AppPressable accessibilityRole="button" accessibilityLabel="Открыть профиль" actionLabel="home_avatar" haptic="selection" onPress={onProfile} style={[styles.avatarButton, { shadowColor: colors.greenPrimary }]}>
+      <UserAvatar name={userName} uri={avatarUri} cacheKey={avatarCacheKey} size={sizes.avatar} />
     </AppPressable>
   </View>;
 }
@@ -26,6 +23,5 @@ export function HomeHeader({ greeting, name, avatarUri, onProfile }: { greeting:
 const styles = StyleSheet.create({
   root: { minHeight: 76, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md },
   copy: { flex: 1, minWidth: 0, gap: 2 },
-  avatar: { width: sizes.avatar, height: sizes.avatar, borderRadius: sizes.avatar / 2, borderWidth: 1, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  initials: { fontWeight: '800', letterSpacing: 0.3 },
+  avatarButton: { width: sizes.avatar, height: sizes.avatar, borderRadius: sizes.avatar / 2, shadowOpacity: 0.16, shadowRadius: 8, shadowOffset: { width: 0, height: 3 } },
 });
