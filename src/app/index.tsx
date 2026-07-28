@@ -8,9 +8,11 @@ import { AppText } from '@/components/AppText';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { onboardingRouteByStep } from '@/features/onboarding/routes';
 import { useAppStore } from '@/store/appStore';
-import { colors, spacing } from '@/theme/tokens';
+import { spacing } from '@/theme/tokens';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function SplashRoute() {
+  const { colors } = useTheme();
   const { status, error, onboardingCompleted, onboardingStep, initialize } = useAppStore();
   const reducedMotion = useReducedMotion();
   useEffect(() => {
@@ -27,7 +29,7 @@ export default function SplashRoute() {
     <AppBackground>
       <View style={styles.root}>
         <Animated.View entering={reducedMotion ? undefined : FadeIn.duration(550)} style={styles.markWrap}>
-          <View style={styles.halo} />
+          <View style={[styles.halo, { borderColor: colors.greenBright, shadowColor: colors.greenBright }]} />
           <Image source={require('../../assets/brand/logo-mark.png')} contentFit="contain" style={styles.logo} accessibilityLabel="Логотип Точки Роста" />
         </Animated.View>
         <Animated.View entering={reducedMotion ? undefined : FadeInDown.delay(350).duration(500)} style={styles.copy}>
@@ -42,7 +44,7 @@ export default function SplashRoute() {
 }
 const styles = StyleSheet.create({
   root: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.lg }, markWrap: { width: 176, height: 176, alignItems: 'center', justifyContent: 'center' },
-  halo: { position: 'absolute', width: 152, height: 152, borderRadius: 76, borderWidth: 1, borderColor: colors.greenBright, shadowColor: colors.greenBright, shadowOpacity: 0.65, shadowRadius: 24 },
+  halo: { position: 'absolute', width: 152, height: 152, borderRadius: 76, borderWidth: 1, shadowOpacity: 0.65, shadowRadius: 24 },
   logo: { width: 174, height: 120 }, copy: { alignItems: 'center', gap: spacing.xs, marginTop: spacing.lg }, brand: { letterSpacing: 2.8 }, loader: { position: 'absolute', bottom: 70 },
   error: { position: 'absolute', left: spacing.lg, right: spacing.lg, bottom: 50, gap: spacing.md },
 });

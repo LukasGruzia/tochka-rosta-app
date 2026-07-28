@@ -4,8 +4,9 @@ import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppIcon, type IconName } from '@/components/AppIcon';
-import { radii, sizes } from '@/theme/tokens';
+import { radii } from '@/theme/tokens';
 import { useTheme } from '@/theme/ThemeProvider';
+import { getTabBarMetrics } from '@/services/tabBarMetrics';
 
 const items: { name: string; title: string; icon: IconName }[] = [
   { name: 'index', title: 'Главная', icon: 'home' }, { name: 'diary', title: 'Дневник', icon: 'diary' },
@@ -15,11 +16,11 @@ const items: { name: string; title: string; icon: IconName }[] = [
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
   const { colors, isDark } = useTheme();
-  const safeBottom = Math.max(insets.bottom, 6);
+  const metrics = getTabBarMetrics(insets.bottom);
   return <Tabs screenListeners={{ tabPress: () => { void Haptics.selectionAsync(); } }} screenOptions={{
     headerShown: false, tabBarActiveTintColor: colors.greenBright, tabBarInactiveTintColor: colors.textMuted,
     tabBarLabelStyle: styles.label,
-    tabBarStyle: [styles.bar, { bottom: safeBottom, height: sizes.tabBarBase + safeBottom, paddingBottom: safeBottom, borderColor: colors.glassBorder, backgroundColor: colors.surfaceStrong }],
+    tabBarStyle: [styles.bar, { ...metrics, borderColor: colors.glassBorder, backgroundColor: colors.surfaceStrong }],
     tabBarBackground: () => Platform.OS === 'ios'
       ? <BlurView intensity={32} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
       : <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.surfaceStrong }]} />,

@@ -1,6 +1,6 @@
 import type { WeightLog, WeightProgress } from '@/types/domain';
 import { getDatabase } from '../database';
-import { calculateWeightProgress } from '@/services/weightProgress';
+import { calculateWeightProgress } from '../../services/weightProgress';
 
 interface Row { id: number; date: string; weight_kg: number; note: string; created_at: string; updated_at: string; }
 const map = (row: Row): WeightLog => ({ id: row.id, date: row.date, weightKg: row.weight_kg, note: row.note, createdAt: row.created_at, updatedAt: row.updated_at });

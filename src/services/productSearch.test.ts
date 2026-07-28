@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { searchProducts } from './productSearch';
+import { groupProductsBySource, searchProducts } from './productSearch';
 import type { Product } from '@/types/domain';
 
 const base = { originalName: null, description: '', ingredients: null, servingSizeG: 100, packageSizeG: null,
@@ -19,4 +19,6 @@ describe('local product search', () => {
   it.each([['греча', 1], ['кур грудка', 2], ['творог 5', 3]])('finds %s using Russian names and aliases', (query, id) => {
     expect(searchProducts(products, query)[0]?.id).toBe(id);
   });
+  it('tolerates a small typo', () => { expect(searchProducts(products, 'гречкка')[0]?.id).toBe(1); });
+  it('groups favorites and source sections without losing products', () => { const groups = groupProductsBySource([{ ...products[0], isFavorite: true }, { ...products[1], sourceType: 'user_product', isUserCreated: true }]); expect(groups.my[0].id).toBe(2); expect(groups.common[0].isFavorite).toBe(true); });
 });

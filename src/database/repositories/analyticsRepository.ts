@@ -1,6 +1,7 @@
 import type { HistoryAnalytics, MealType } from '@/types/domain';
 import { getLocalDateKey } from '@/utils/date';
 import { getDatabase } from '../database';
+import { calculateHistoryAverages, type AnalyticsDay } from '@/services/historyAnalytics';
 
 function startDate(periodDays: number) {
   const date = new Date();
@@ -11,7 +12,7 @@ function startDate(periodDays: number) {
 export async function loadHistoryAnalytics(periodDays: 7 | 30 | 90 | 365): Promise<HistoryAnalytics> {
   const db = await getDatabase();
   const from = startDate(periodDays);
-  const days = await db.getAllAsync<{ date: string; consumed_calories: number; consumed_protein_g: number; consumed_fat_g: number; consumed_carbs_g: number; target_calories: number; is_completed: number }>(
+  const days = await db.getAllAsync<AnalyticsDay & { date: string }>(
     'SELECT date, consumed_calories, consumed_protein_g, consumed_fat_g, consumed_carbs_g, target_calories, is_completed FROM diary_days WHERE date>=? ORDER BY date', from);
   const summary = await db.getFirstAsync<{ entry_count: number; favorite_name: string | null }>(`SELECT COUNT(*) AS entry_count,
     (SELECT product_name_snapshot FROM diary_entries e2 JOIN diary_days d2 ON d2.id=e2.diary_day_id WHERE d2.date>=?
@@ -20,17 +21,12 @@ export async function loadHistoryAnalytics(periodDays: 7 | 30 | 90 | 365): Promi
   const mealRows = await db.getAllAsync<{ meal_type: MealType; count: number }>(`SELECT e.meal_type, COUNT(*) AS count
     FROM diary_entries e JOIN diary_days d ON d.id=e.diary_day_id WHERE d.date>=? GROUP BY e.meal_type`, from);
   const flow = await db.getFirstAsync<{ longest_streak: number }>('SELECT longest_streak FROM flow_state WHERE id=1');
-  const daysWithEntries = days.filter((day) => day.consumed_calories > 0);
+  const averages = calculateHistoryAverages(days);
   const mealDistribution: Record<MealType, number> = { breakfast: 0, lunch: 0, snack: 0, dinner: 0 };
   mealRows.forEach((row) => { mealDistribution[row.meal_type] = row.count; });
   return {
     periodDays,
-    averageCalories: daysWithEntries.length ? daysWithEntries.reduce((sum, day) => sum + day.consumed_calories, 0) / daysWithEntries.length : 0,
-    averageProteinG: daysWithEntries.length ? daysWithEntries.reduce((sum, day) => sum + day.consumed_protein_g, 0) / daysWithEntries.length : 0,
-    averageFatG: daysWithEntries.length ? daysWithEntries.reduce((sum, day) => sum + day.consumed_fat_g, 0) / daysWithEntries.length : 0,
-    averageCarbsG: daysWithEntries.length ? daysWithEntries.reduce((sum, day) => sum + day.consumed_carbs_g, 0) / daysWithEntries.length : 0,
-    averageTargetAccuracy: daysWithEntries.length ? daysWithEntries.reduce((sum, day) => sum + Math.max(0, 100 - Math.abs(day.consumed_calories - day.target_calories) / Math.max(1, day.target_calories) * 100), 0) / daysWithEntries.length : 0,
-    completedDays: days.filter((day) => day.is_completed === 1).length,
+    ...averages,
     longestStreak: flow?.longest_streak ?? 0,
     entryCount: summary?.entry_count ?? 0,
     mostFrequentProduct: summary?.favorite_name ?? null,

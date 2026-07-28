@@ -11,6 +11,7 @@ import { TabScreen } from '@/components/TabScreen';
 import { WaterCard } from '@/components/WaterCard';
 import { mealLabels } from '@/constants/options';
 import { roundNutrition } from '@/services/nutritionCalculator';
+import { rankPersonalRecommendations } from '@/services/personalRecommendations';
 import { getSmartNextStep } from '@/services/smartNextStep';
 import { useAppStore } from '@/store/appStore';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -25,14 +26,14 @@ export default function HomeScreen() {
   const { colors } = useTheme();
   const [details, setDetails] = useState(false);
   useFocusEffect(useCallback(() => { void Promise.all([setDiaryDate(getLocalDateKey()), refreshFlow()]); }, [refreshFlow, setDiaryDate]));
-  const recommendation = useMemo(() => products.find((product) => product.isFavorite) ?? products.find((product) => product.goalTags.includes(profile?.goal ?? 'balance')) ?? products[0], [products, profile?.goal]);
+  const next = getSmartNextStep(diary, new Date().getHours());
+  const recommendation = useMemo(() => profile && target ? rankPersonalRecommendations(products, profile, Math.max(0, target.calories - (diary?.consumedCalories ?? 0)), next.meal)[0] : undefined, [diary?.consumedCalories, next.meal, products, profile, target]);
 
   if (!profile || !target) return <TabScreen title="Загружаем профиль…"><AppText tone="secondary">Данные появятся через мгновение.</AppText></TabScreen>;
   const rounded = roundNutrition(target);
   const consumed = Math.round(diary?.consumedCalories ?? 0);
   const remaining = rounded.calories - consumed;
   const progress = rounded.calories ? consumed / rounded.calories : 0;
-  const next = getSmartNextStep(diary, new Date().getHours());
   const initials = profile.name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase();
 
   return <>

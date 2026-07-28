@@ -1,7 +1,7 @@
 import type { WaterEntry, WaterSummary } from '@/types/domain';
-import { getLocalDateKey } from '@/utils/date';
+import { getLocalDateKey } from '../../utils/date';
 import { getDatabase } from '../database';
-import { sumWater } from '@/services/waterMath';
+import { sumWater } from '../../services/waterMath';
 interface Row { id:number; date:string; amount_ml:number; created_at:string; }
 const map=(row:Row):WaterEntry=>({id:row.id,date:row.date,amountMl:row.amount_ml,createdAt:row.created_at});
 export async function addWater(amountMl:number,date=getLocalDateKey()){const amount=Math.round(amountMl);if(!Number.isFinite(amount)||amount<1||amount>5000)throw new Error('Проверь объём воды');const db=await getDatabase();const result=await db.runAsync('INSERT INTO water_entries(date,amount_ml,created_at) VALUES(?,?,?)',date,amount,new Date().toISOString());return Number(result.lastInsertRowId);}
