@@ -1,0 +1,3 @@
+import { getLocalDateKey } from '@/utils/date';
+export function getWeeklyFlowProgress(completedDates:string[],weekStart:string,goalDays:number){const end=new Date(`${weekStart}T12:00:00`);end.setDate(end.getDate()+6);const endKey=getLocalDateKey(end);const completed=new Set(completedDates.filter((date)=>date>=weekStart&&date<=endKey)).size;return{completed,goal:goalDays,remaining:Math.max(0,goalDays-completed),progress:Math.min(1,completed/Math.max(1,goalDays)),achieved:completed>=goalDays};}
+export function canUseFlowPause(date:string,existingDates:string[],tokens:number,today=getLocalDateKey()){return tokens>0&&date<=today&&!existingDates.includes(date);}

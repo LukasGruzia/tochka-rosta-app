@@ -9,6 +9,7 @@ export type FoodSourceType = 'tochka_rosta' | 'usda' | 'open_food_facts' | 'user
 export type NutritionBasis = 'per100g' | 'serving' | 'package';
 export type BasisUnit = 'g' | 'ml' | 'piece' | 'serving';
 export type ThemeMode = 'system' | 'dark' | 'light';
+export type SyncStatus = 'local' | 'pending' | 'synced' | 'conflict';
 
 export interface ProfileDraft {
   name: string;
@@ -236,3 +237,17 @@ export interface ExternalFoodPreview {
   sourceUpdatedAt: string | null;
   payload: string;
 }
+
+export interface BudgetSettings { perMealBudget: number | null; dailyBudget: number | null; weeklyBudget: number | null; currency: string; includeInRecommendations: boolean; showOnHome: boolean; }
+export interface WeeklyPlanSettings { mealsPerDay: 3 | 4 | 5; mode: 'tochka' | 'mixed' | 'home' | 'budget' | 'highProtein' | 'quick'; maxRepeats: number; trainingDays: string[]; awayDays: string[]; quickDays: string[]; }
+export interface WeeklyPlanItem { id?: number; uuid: string; date: string; product: Product; mealType: MealType; amountG: number; servings: number; estimatedCost: number; isAddedToDiary: boolean; }
+export interface WeeklyPlan { id?: number; uuid: string; weekStartDate: string; targetBudget: number | null; estimatedCost: number; status: 'draft' | 'planned' | 'active' | 'completed'; settings: WeeklyPlanSettings; items: WeeklyPlanItem[]; }
+export interface ShoppingListItem { id?: number; uuid: string; name: string; category: string; amount: number; unit: string; estimatedCost: number; sourceType: FoodSourceType | 'manual'; isChecked: boolean; isAtHome: boolean; }
+export interface ShoppingList { id?: number; uuid: string; weekStartDate: string; items: ShoppingListItem[]; }
+export interface DayBalanceItem { key: string; label: string; status: 'close' | 'enough' | 'supplement' | 'over' | 'noData'; detail: string; }
+export interface PersonalInsight { id?: number; uuid: string; type: string; title: string; observation: string; action: string; periodStart: string; periodEnd: string; isHidden: boolean; }
+export interface FlowPreferences { weeklyGoalDays: number; pauseTokens: number; totalPauses: number; }
+export interface FlowPause { id: number; date: string; reason: string; createdAt: string; }
+export type CalendarDayKind = 'completed' | 'filled' | 'missed' | 'future' | 'empty';
+export interface CalendarDayStatus { date: string; entryCount: number; isCompleted: boolean; isPaused: boolean; isMilestone: boolean; kind: CalendarDayKind; }
+export interface ResearchSession { id: number; uuid: string; startedAt: string; completedAt: string | null; durationSeconds: number | null; survey: Record<string, unknown> | null; }

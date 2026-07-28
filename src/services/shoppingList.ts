@@ -1,0 +1,6 @@
+import type { ShoppingList, ShoppingListItem, WeeklyPlan } from '@/types/domain';
+import { createStableUuid } from './uuid';
+
+export function buildShoppingList(plan:WeeklyPlan):ShoppingList { const map=new Map<string,ShoppingListItem>();for(const item of plan.items){const key=`${item.product.id}-${item.product.sourceType}`;const existing=map.get(key);if(existing){existing.amount+=item.amountG;existing.estimatedCost+=item.estimatedCost;}else map.set(key,{uuid:createStableUuid(),name:item.product.name,category:item.product.sourceType==='tochka_rosta'?'Купить в «Точке Роста»':item.product.category,amount:item.amountG,unit:'г',estimatedCost:item.estimatedCost,sourceType:item.product.sourceType,isChecked:false,isAtHome:false});}return{uuid:createStableUuid(),weekStartDate:plan.weekStartDate,items:[...map.values()].sort((a,b)=>a.category.localeCompare(b.category,'ru')||a.name.localeCompare(b.name,'ru'))};}
+export function toggleShoppingItem(items:ShoppingListItem[],uuid:string,field:'isChecked'|'isAtHome'){return items.map((item)=>item.uuid===uuid?{...item,[field]:!item[field]}:item);}
+export function shoppingListAsText(list:ShoppingList){return list.items.filter((item)=>!item.isChecked&&!item.isAtHome).map((item)=>`${item.category}: ${item.name} — ${Math.round(item.amount)} ${item.unit}`).join('\n');}

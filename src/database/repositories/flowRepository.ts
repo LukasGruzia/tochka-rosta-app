@@ -1,6 +1,8 @@
 import { calculateStreaks } from '@/services/flowCalculator';
 import { assertDayCompletable } from '@/services/diaryMath';
-import type { FlowState } from '@/types/domain';
+import type { FlowPreferences, FlowState, FlowPause } from '@/types/domain';
+import { canUseFlowPause } from '@/services/flowGoals';
+import { createStableUuid } from '@/services/uuid';
 import { getLocalDateKey } from '@/utils/date';
 import { getDatabase } from '../database';
 
@@ -44,3 +46,8 @@ export async function resetFlow() {
     UPDATE diary_days SET is_completed=0, completed_at=NULL;
     UPDATE flow_state SET current_streak=0, longest_streak=0, last_completed_date=NULL, updated_at=CURRENT_TIMESTAMP WHERE id=1;`);
 }
+
+export async function loadFlowPreferences():Promise<FlowPreferences>{const db=await getDatabase();const row=await db.getFirstAsync<{weekly_goal_days:number;pause_tokens:number;total_pauses:number}>('SELECT weekly_goal_days,pause_tokens,total_pauses FROM flow_state WHERE id=1');return{weeklyGoalDays:row?.weekly_goal_days??5,pauseTokens:row?.pause_tokens??0,totalPauses:row?.total_pauses??0};}
+export async function setWeeklyFlowGoal(days:number){if(days<1||days>7)throw new Error('Цель должна быть от 1 до 7 дней');const db=await getDatabase();await db.runAsync('UPDATE flow_state SET weekly_goal_days=?,updated_at=? WHERE id=1',days,new Date().toISOString());}
+export async function loadFlowPauses():Promise<FlowPause[]>{const db=await getDatabase();const rows=await db.getAllAsync<{id:number;date:string;reason:string;created_at:string}>('SELECT id,date,reason,created_at FROM flow_pauses ORDER BY date DESC');return rows.map((row)=>({id:row.id,date:row.date,reason:row.reason,createdAt:row.created_at}));}
+export async function useFlowPause(date:string,reason='День паузы'){const db=await getDatabase();const [preferences,existing]=await Promise.all([loadFlowPreferences(),loadFlowPauses()]);if(!canUseFlowPause(date,existing.map((item)=>item.date),preferences.pauseTokens))throw new Error('День паузы нельзя применить к этой дате');const now=new Date().toISOString();await db.withExclusiveTransactionAsync(async(txn)=>{await txn.runAsync('INSERT INTO flow_pauses(uuid,date,reason,created_at) VALUES(?,?,?,?)',createStableUuid(),date,reason,now);await txn.runAsync('UPDATE flow_state SET pause_tokens=pause_tokens-1,total_pauses=total_pauses+1,updated_at=? WHERE id=1',now);});}

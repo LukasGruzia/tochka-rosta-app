@@ -1,47 +1,16 @@
+import { currentDatabaseVersion } from '../schema';
 import { getDatabase } from '../database';
 
-const restoreOrder = ['app_settings', 'user_profile', 'user_restrictions', 'nutrition_targets', 'products', 'diary_days', 'diary_entries', 'favorites', 'flow_state', 'flow_history', 'meal_plan_items', 'scan_history', 'recipes', 'recipe_ingredients', 'food_sources', 'external_food_cache', 'weight_logs', 'water_entries', 'meal_templates', 'meal_template_items', 'search_history'] as const;
-const deleteOrder = [...restoreOrder].reverse();
-type TableName = typeof restoreOrder[number];
-type Row = Record<string, string | number | null>;
-export interface LocalBackup { format: 'tochka-rosta-local-backup'; version: 1; createdAt: string; tables: Partial<Record<TableName, Row[]>>; }
+export const backupTables = ['app_settings','user_profile','user_restrictions','nutrition_targets','products','diary_days','diary_entries','favorites','flow_state','flow_history','meal_plan_items','scan_history','recipes','recipe_ingredients','food_sources','external_food_cache','weight_logs','water_entries','meal_templates','meal_template_items','search_history','budget_settings','weekly_plans','weekly_plan_items','shopping_lists','shopping_list_items','user_insights','flow_pauses','achievements','research_sessions','research_events'] as const;
+const deleteOrder=[...backupTables].reverse();type TableName=typeof backupTables[number];type Row=Record<string,string|number|null>;
+export interface LocalBackup{format:'tochka-rosta-backup';version:1;schemaVersion:number;createdAt:string;avatarIncluded:false;tables:Partial<Record<TableName,Row[]>>;}
+interface LegacyBackup{format:'tochka-rosta-local-backup';version:1;createdAt:string;tables:Partial<Record<TableName,Row[]>>;}
+export interface BackupSummary{createdAt:string;schemaVersion:number;profile:number;customProducts:number;diaryEntries:number;waterEntries:number;weightEntries:number;weeklyPlans:number;shoppingItems:number;researchSessions:number;avatarIncluded:boolean;}
 
-export async function getLocalDataSummary() {
-  const db = await getDatabase();
-  const [products, custom, diary, recipes, scans, sources] = await Promise.all([
-    db.getFirstAsync<{ count: number }>('SELECT COUNT(*) AS count FROM products WHERE deleted_at IS NULL'),
-    db.getFirstAsync<{ count: number }>("SELECT COUNT(*) AS count FROM products WHERE is_user_created=1 AND deleted_at IS NULL"),
-    db.getFirstAsync<{ count: number }>('SELECT COUNT(*) AS count FROM diary_entries'),
-    db.getFirstAsync<{ count: number }>('SELECT COUNT(*) AS count FROM recipes WHERE deleted_at IS NULL'),
-    db.getFirstAsync<{ count: number }>('SELECT COUNT(*) AS count FROM scan_history'),
-    db.getAllAsync<{ source_type: string; count: number }>('SELECT source_type, COUNT(*) AS count FROM products WHERE deleted_at IS NULL GROUP BY source_type ORDER BY source_type'),
-  ]);
-  return { products: products?.count ?? 0, custom: custom?.count ?? 0, diary: diary?.count ?? 0, recipes: recipes?.count ?? 0, scans: scans?.count ?? 0, sources };
-}
-
-export async function createLocalBackup(): Promise<LocalBackup> {
-  const db = await getDatabase(); const tables: LocalBackup['tables'] = {};
-  for (const table of restoreOrder) tables[table] = await db.getAllAsync<Row>(`SELECT * FROM "${table}"`);
-  return { format: 'tochka-rosta-local-backup', version: 1, createdAt: new Date().toISOString(), tables };
-}
-
-export async function restoreLocalBackup(value: unknown) {
-  if (!value || typeof value !== 'object') throw new Error('Файл резервной копии повреждён');
-  const backup = value as Partial<LocalBackup>;
-  if (backup.format !== 'tochka-rosta-local-backup' || backup.version !== 1 || !backup.tables) throw new Error('Это не резервная копия «Точки Роста»');
-  const db = await getDatabase();
-  await db.withExclusiveTransactionAsync(async (txn) => {
-    for (const table of deleteOrder) await txn.runAsync(`DELETE FROM "${table}"`);
-    for (const table of restoreOrder) {
-      const rows = backup.tables?.[table] ?? [];
-      if (!Array.isArray(rows)) throw new Error(`Некорректная таблица ${table}`);
-      for (const row of rows) {
-        if (!row || typeof row !== 'object' || Array.isArray(row)) throw new Error(`Некорректная строка ${table}`);
-        const columns = Object.keys(row).filter((column) => /^[a-z_]+$/.test(column));
-        if (!columns.length) continue;
-        const placeholders = columns.map(() => '?').join(', ');
-        await txn.runAsync(`INSERT INTO "${table}" (${columns.map((column) => `"${column}"`).join(', ')}) VALUES (${placeholders})`, ...columns.map((column) => row[column]));
-      }
-    }
-  });
-}
+export async function getLocalDataSummary(){const db=await getDatabase();const[products,custom,diary,recipes,scans,sources]=await Promise.all([db.getFirstAsync<{count:number}>('SELECT COUNT(*) AS count FROM products WHERE deleted_at IS NULL'),db.getFirstAsync<{count:number}>("SELECT COUNT(*) AS count FROM products WHERE is_user_created=1 AND deleted_at IS NULL"),db.getFirstAsync<{count:number}>('SELECT COUNT(*) AS count FROM diary_entries WHERE deleted_at IS NULL'),db.getFirstAsync<{count:number}>('SELECT COUNT(*) AS count FROM recipes WHERE deleted_at IS NULL'),db.getFirstAsync<{count:number}>('SELECT COUNT(*) AS count FROM scan_history'),db.getAllAsync<{source_type:string;count:number}>('SELECT source_type,COUNT(*) AS count FROM products WHERE deleted_at IS NULL GROUP BY source_type ORDER BY source_type')]);return{products:products?.count??0,custom:custom?.count??0,diary:diary?.count??0,recipes:recipes?.count??0,scans:scans?.count??0,sources};}
+function sanitized(table:TableName,rows:Row[]){if(table!=='user_profile')return rows;return rows.map((row)=>({...row,avatar_uri:null}));}
+export async function createLocalBackup():Promise<LocalBackup>{const db=await getDatabase();const tables:LocalBackup['tables']={};for(const table of backupTables)tables[table]=sanitized(table,await db.getAllAsync<Row>(`SELECT * FROM "${table}"`));return{format:'tochka-rosta-backup',version:1,schemaVersion:currentDatabaseVersion,createdAt:new Date().toISOString(),avatarIncluded:false,tables};}
+function normalizeBackup(value:unknown):LocalBackup{if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('Файл резервной копии повреждён');const candidate=value as {format?:string;version?:number;schemaVersion?:number;createdAt?:string;avatarIncluded?:boolean;tables?:Partial<Record<TableName,Row[]>>};if(candidate.version!==1||!candidate.tables||typeof candidate.createdAt!=='string')throw new Error('Некорректная версия резервной копии');if(candidate.format==='tochka-rosta-local-backup')return{format:'tochka-rosta-backup',version:1,schemaVersion:3,createdAt:candidate.createdAt,avatarIncluded:false,tables:candidate.tables};if(candidate.format!=='tochka-rosta-backup')throw new Error('Это не резервная копия «Точки Роста»');const schemaVersion=Number(candidate.schemaVersion??0);if(schemaVersion<1||schemaVersion>currentDatabaseVersion)throw new Error('Версия резервной копии не поддерживается');return{format:'tochka-rosta-backup',version:1,schemaVersion,createdAt:candidate.createdAt,avatarIncluded:false,tables:candidate.tables};}
+export function summarizeBackup(value:unknown):BackupSummary{const backup=normalizeBackup(value);const count=(table:TableName)=>Array.isArray(backup.tables[table])?backup.tables[table]!.length:0;return{createdAt:backup.createdAt,schemaVersion:backup.schemaVersion,profile:count('user_profile'),customProducts:(backup.tables.products??[]).filter((row)=>row.is_user_created===1).length,diaryEntries:count('diary_entries'),waterEntries:count('water_entries'),weightEntries:count('weight_logs'),weeklyPlans:count('weekly_plans'),shoppingItems:count('shopping_list_items'),researchSessions:count('research_sessions'),avatarIncluded:backup.avatarIncluded};}
+function fingerprint(backup:LocalBackup){let hash=2166136261;const text=`${backup.createdAt}:${backup.schemaVersion}:${backupTables.map((table)=>backup.tables[table]?.length??0).join(':')}`;for(let i=0;i<text.length;i+=1){hash^=text.charCodeAt(i);hash=Math.imul(hash,16777619);}return(hash>>>0).toString(16);}
+export async function restoreLocalBackup(value:unknown){const backup=normalizeBackup(value);const db=await getDatabase();const mark=fingerprint(backup);const previous=await db.getFirstAsync<{value:string}>('SELECT value FROM app_settings WHERE key=?','last_import_fingerprint');if(previous?.value===mark)throw new Error('Эта резервная копия уже была восстановлена');await db.withExclusiveTransactionAsync(async(txn)=>{for(const table of deleteOrder)await txn.runAsync(`DELETE FROM "${table}"`);for(const table of backupTables){const rows=backup.tables[table]??[];if(!Array.isArray(rows))throw new Error(`Некорректная таблица ${table}`);for(const raw of rows){if(!raw||typeof raw!=='object'||Array.isArray(raw))throw new Error(`Некорректная строка ${table}`);const row=table==='user_profile'?{...raw,avatar_uri:null}:raw;const columns=Object.keys(row).filter((column)=>/^[a-z_]+$/.test(column));if(!columns.length)continue;await txn.runAsync(`INSERT INTO "${table}" (${columns.map((column)=>`"${column}"`).join(',')}) VALUES (${columns.map(()=>'?').join(',')})`,...columns.map((column)=>row[column]));}}const now=new Date().toISOString();await txn.runAsync(`INSERT INTO app_settings(key,value,updated_at) VALUES('last_import_fingerprint',?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at`,mark,now);});return summarizeBackup(backup);}
