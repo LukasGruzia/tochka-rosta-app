@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { IconName } from './AppIcon';
 import { AppIcon } from './AppIcon';
@@ -8,13 +9,15 @@ import { radii, spacing } from '@/theme/tokens';
 
 export interface HomeQuickAction { icon: IconName; label: string; onPress: () => void; }
 
-export function HomeQuickActions({ actions }: { actions: HomeQuickAction[] }) {
+function HomeQuickActionsComponent({ actions }: { actions: HomeQuickAction[] }) {
   const { colors } = useTheme();
   return <View style={styles.grid}>{actions.map((action) => <GlassSurface key={action.label} variant="interactive" accessibilityLabel={action.label} onPress={action.onPress} style={styles.item} contentStyle={styles.content}>
     <View style={[styles.icon, { backgroundColor: colors.greenGlow }]}><AppIcon name={action.icon} size={24} color={colors.greenBright} /></View>
     <AppText style={styles.label} numberOfLines={2}>{action.label}</AppText>
   </GlassSurface>)}</View>;
 }
+
+export const HomeQuickActions = memo(HomeQuickActionsComponent);
 
 const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },

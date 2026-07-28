@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { router } from 'expo-router';
 import { Alert, Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { runOnJS, type SharedValue, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { cancelAnimation, runOnJS, type SharedValue, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
 import { copyYesterdayMeal, repeatMostRecentMeal } from '@/database/repositories/diaryRepository';
 import { getSetting, setSetting } from '@/database/repositories/settingsRepository';
@@ -27,7 +27,9 @@ export function QuickAddButton({ onPress, label = 'Добавить' }: { onPres
 
 function SheetDragSurface({ children, translateY, onClose }: { children: ReactNode; translateY: SharedValue<number>; onClose: () => void }) {
   'use no memo';
-  const pan = Gesture.Pan().activeOffsetY(10).onUpdate((event) => {
+  const pan = Gesture.Pan().activeOffsetY(10).onBegin(() => {
+    cancelAnimation(translateY);
+  }).onUpdate((event) => {
     translateY.set(Math.max(0, event.translationY));
   }).onEnd((event) => {
     if (event.translationY > 80 || event.velocityY > 700) runOnJS(onClose)();
@@ -48,12 +50,21 @@ export function QuickAddSheet({ visible, onClose, date, mealType }: { visible: b
   const translateY = useSharedValue(0);
   const [last, setLast] = useState<QuickAddAction | null>(null);
   const [busy, setBusy] = useState<QuickAddAction | null>(null);
+  const alertTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (visible) {
       recordUiAction('bottom_sheet_opened', 'quick_add');
-      void getSetting('last_quick_action').then((value) => setLast(value as QuickAddAction | null));
+      let active = true;
+      void getSetting('last_quick_action').then((value) => {
+        if (active) setLast(value as QuickAddAction | null);
+      });
+      return () => { active = false; };
     }
   }, [visible]);
+  useEffect(() => () => {
+    cancelAnimation(translateY);
+    if (alertTimer.current) clearTimeout(alertTimer.current);
+  }, [translateY]);
   const options = useMemo(() => prioritizeQuickActions(last), [last]);
   const close = () => { translateY.set(0); onClose(); };
   const animated = useAnimatedStyle(() => ({ transform: [{ translateY: reduced ? 0 : translateY.get() }] }));
@@ -62,7 +73,7 @@ export function QuickAddSheet({ visible, onClose, date, mealType }: { visible: b
     if (busy) return;
     try {
       setBusy(action);
-      void safelyRunHaptic('selection');
+      if (flags.enableHaptics) void safelyRunHaptic('selection');
       await setSetting('last_quick_action', action);
       setLast(action);
       const meal = mealType ?? getSmartNextStep(diary, new Date().getHours()).meal;
@@ -78,11 +89,11 @@ export function QuickAddSheet({ visible, onClose, date, mealType }: { visible: b
         if (action === 'repeat') await repeatMostRecentMeal(date, target);
         else await copyYesterdayMeal(date, meal, target);
         await refresh(date);
-        void safelyRunHaptic('success');
+        if (flags.enableHaptics) void safelyRunHaptic('success');
       }
     } catch (error) {
       recordUiAction('error_occurred', 'quick_add', error instanceof Error ? error.message : 'Unknown quick add error');
-      setTimeout(() => Alert.alert('Не удалось добавить', error instanceof Error ? error.message : 'Попробуй ещё раз.'), 250);
+      alertTimer.current = setTimeout(() => Alert.alert('Не удалось добавить', error instanceof Error ? error.message : 'Попробуй ещё раз.'), 250);
     } finally {
       setBusy(null);
     }

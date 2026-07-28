@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { runOnJS, type SharedValue, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { cancelAnimation, runOnJS, type SharedValue, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
 import { loadCalendarMonth } from '@/database/repositories/calendarRepository';
@@ -38,7 +38,9 @@ export function MonthCalendar({ monthKey, selectedDate, statuses, onSelect, onMo
 
 function CalendarSheetDrag({ children, offset, onClose }: { children: ReactNode; offset: SharedValue<number>; onClose: () => void }) {
   'use no memo';
-  const drag = Gesture.Pan().activeOffsetY(12).onUpdate((event) => {
+  const drag = Gesture.Pan().activeOffsetY(12).onBegin(() => {
+    cancelAnimation(offset);
+  }).onUpdate((event) => {
     offset.set(Math.max(0, event.translationY));
   }).onEnd((event) => {
     if (event.translationY > 90 || event.velocityY > 750) runOnJS(onClose)();
@@ -64,6 +66,7 @@ export function DiaryCalendarSheet({ visible, selectedDate, onClose, onOpen }: {
   const [statuses, setStatuses] = useState<CalendarDayStatus[]>([]);
   const offset = useSharedValue(0);
   const reduced = useReducedMotion();
+  useEffect(() => () => cancelAnimation(offset), [offset]);
   useEffect(() => {
     if (visible) {
       recordUiAction('bottom_sheet_opened', 'diary_calendar');
@@ -73,14 +76,17 @@ export function DiaryCalendarSheet({ visible, selectedDate, onClose, onOpen }: {
   }, [selectedDate, visible]);
   useEffect(() => {
     if (!visible) return;
-    void loadCalendarMonth(month).then(setStatuses).catch((error) => {
+    let active = true;
+    void loadCalendarMonth(month).then((items) => { if (active) setStatuses(items); }).catch((error) => {
+      if (!active) return;
       setStatuses([]);
       recordUiAction('error_occurred', 'calendar_load', error instanceof Error ? error.message : 'Calendar load failed');
     });
+    return () => { active = false; };
   }, [month, visible]);
   const dismiss = () => { offset.set(0); onClose(); };
   const animated = useAnimatedStyle(() => ({ transform: [{ translateY: reduced ? 0 : offset.get() }] }));
-  const calendar = <MonthCalendar monthKey={month} selectedDate={selected} statuses={statuses} onSelect={(date) => { void safelyRunHaptic('selection'); setSelected(date); }} onMonthChange={setMonth} />;
+  const calendar = <MonthCalendar monthKey={month} selectedDate={selected} statuses={statuses} onSelect={(date) => { if (flags.enableHaptics) void safelyRunHaptic('selection'); setSelected(date); }} onMonthChange={setMonth} />;
   const sheet = <Animated.View style={[styles.sheet, { backgroundColor: colors.surfaceSolid, borderColor: colors.glassBorderStrong, paddingBottom: Math.max(24, insets.bottom + 16) }, animated]}>
     <View style={[styles.handle, { backgroundColor: colors.textMuted }]} />
     <View style={styles.header}>

@@ -1,8 +1,10 @@
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { AppText } from './AppText';
-import { persistAvatar } from '@/services/avatarStorage';
+import { AppPressable } from './AppPressable';
+import { deleteStoredAvatar, persistAvatar } from '@/services/avatarStorage';
 import { radii, sizes } from '@/theme/tokens';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -14,12 +16,18 @@ interface Props {
 
 export function AvatarPicker({ name, uri, onChange }: Props) {
   const { colors } = useTheme();
+  const [imageFailed, setImageFailed] = useState(false);
   const initials = name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || '•';
 
+  useEffect(() => setImageFailed(false), [uri]);
+
   const commit = async (sourceUri: string) => {
+    let nextUri: string | null = null;
     try {
-      await onChange(await persistAvatar(sourceUri, uri));
+      nextUri = await persistAvatar(sourceUri);
+      await onChange(nextUri);
     } catch {
+      if (nextUri) await deleteStoredAvatar(nextUri);
       Alert.alert('Не удалось сохранить фото', 'Попробуй выбрать другое изображение.');
     }
   };
@@ -52,12 +60,12 @@ export function AvatarPicker({ name, uri, onChange }: Props) {
   ]);
 
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel="Изменить фото профиля" onPress={choose} style={({ pressed }) => [styles.touch, pressed && styles.pressed]}>
+    <AppPressable accessibilityRole="button" accessibilityLabel="Изменить фото профиля" haptic="light" onPress={choose} style={styles.touch} pressedStyle={styles.pressed}>
       <View style={[styles.avatar, { backgroundColor: colors.greenGlow, borderColor: colors.glassBorderStrong }]}>
-        {uri ? <Image source={{ uri }} style={StyleSheet.absoluteFill} contentFit="cover" transition={180} /> : <AppText variant="title" tone="green">{initials}</AppText>}
+        {uri && !imageFailed ? <Image source={{ uri }} style={StyleSheet.absoluteFill} contentFit="cover" cachePolicy="memory-disk" recyclingKey={uri} transition={80} onError={() => setImageFailed(true)} /> : <AppText variant="title" tone="green">{initials}</AppText>}
       </View>
       <View style={[styles.badge, { backgroundColor: colors.greenPrimary, borderColor: colors.backgroundPrimary }]}><AppText style={[styles.plus, { color: colors.backgroundPrimary }]}>+</AppText></View>
-    </Pressable>
+    </AppPressable>
   );
 }
 

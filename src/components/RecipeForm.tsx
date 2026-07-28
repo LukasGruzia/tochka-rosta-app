@@ -18,10 +18,11 @@ import type { Product, RecipeDraft } from '@/types/domain';
 
 export function RecipeForm({ productId }: { productId?: number }) {
   const { colors } = useTheme();
-  const products = useAppStore((state) => state.products); const refreshProducts = useAppStore((state) => state.refreshProducts);
+  const products = useAppStore((state) => state.products); const refreshProducts = useAppStore((state) => state.refreshProducts); const ensureProductsLoaded = useAppStore((state) => state.ensureProductsLoaded);
   const [draft, setDraft] = useState<RecipeDraft>({ name: '', description: '', category: 'Мои рецепты', imageUri: null, servings: 2, finalWeightG: null, ingredients: [] });
   const [servings, setServings] = useState('2'); const [finalWeight, setFinalWeight] = useState(''); const [picker, setPicker] = useState(false); const [query, setQuery] = useState(''); const [saving, setSaving] = useState(false);
   useEffect(() => { if (productId) void loadRecipe(productId).then((recipe) => { if (recipe) { setDraft(recipe); setServings(String(recipe.servings)); setFinalWeight(recipe.finalWeightG ? String(recipe.finalWeightG) : ''); } }); }, [productId]);
+  useEffect(() => { if (picker) void ensureProductsLoaded(); }, [ensureProductsLoaded, picker]);
   const calculation = useMemo(() => { try { return draft.ingredients.length ? calculateRecipe(draft.ingredients, Number(finalWeight) || null, Math.max(1, Number(servings) || 1)) : null; } catch { return null; } }, [draft.ingredients, finalWeight, servings]);
   const pickImage = async () => { const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, aspect: [1, 1], quality: 0.8 }); if (!result.canceled) setDraft({ ...draft, imageUri: result.assets[0].uri }); };
   const addIngredient = (product: Product) => { const existing = draft.ingredients.find((item) => item.product.id === product.id); setDraft({ ...draft, ingredients: existing ? draft.ingredients : [...draft.ingredients, { product, amountG: 100 }] }); setPicker(false); setQuery(''); };

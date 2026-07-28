@@ -5,15 +5,16 @@ import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Modal, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { runOnJS, type SharedValue, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { cancelAnimation, runOnJS, type SharedValue, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getTabRoute } from '@/config/routes';
 import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
 import { useTabBarLayout } from '@/contexts/TabBarLayoutContext';
 import { safelyRunHaptic } from '@/services/haptics';
 import { getTabBarMetrics } from '@/services/tabBarMetrics';
-import { clampTabIndex, performTabPress } from '@/services/tabNavigation';
+import { clampTabIndex, createTabNavigationGate, performTabPress } from '@/services/tabNavigation';
 import { recordUiAction } from '@/services/uiDiagnostics';
+import { useRenderTracker } from '@/performance/renderTracker';
 import { useTheme } from '@/theme/ThemeProvider';
 import { motion, radii } from '@/theme/tokens';
 import { AppIcon } from './AppIcon';
@@ -25,7 +26,7 @@ function triggerSelectionHaptic() {
   void safelyRunHaptic('selection');
 }
 
-function TabItem({ focused, label, icon, index, position, onPress, onLongPress }: { focused: boolean; label: string; icon: Parameters<typeof AppIcon>[0]['name']; index: number; position: SharedValue<number>; onPress: () => void; onLongPress: () => void }) {
+function TabItem({ focused, label, icon, index, position, hapticsEnabled, onPress, onLongPress }: { focused: boolean; label: string; icon: Parameters<typeof AppIcon>[0]['name']; index: number; position: SharedValue<number>; hapticsEnabled: boolean; onPress: () => void; onLongPress: () => void }) {
   'use no memo';
   const { colors } = useTheme();
   const proximity = useAnimatedStyle(() => {
@@ -40,7 +41,7 @@ function TabItem({ focused, label, icon, index, position, onPress, onLongPress }
     onPress={onPress}
     onLongPress={onLongPress}
     delayLongPress={420}
-    haptic="selection"
+    haptic={hapticsEnabled ? 'selection' : 'none'}
     style={styles.item}
     pressedStyle={styles.itemPressed}
   >
@@ -51,7 +52,7 @@ function TabItem({ focused, label, icon, index, position, onPress, onLongPress }
   </AppPressable>;
 }
 
-function DraggableSurface({ children, width, count, activeIndex, position, reducedMotion, onSelect }: { children: ReactNode; width: number; count: number; activeIndex: number; position: SharedValue<number>; reducedMotion: boolean; onSelect: (index: number) => void }) {
+function DraggableSurface({ children, width, count, activeIndex, position, reducedMotion, hapticsEnabled, onSelect }: { children: ReactNode; width: number; count: number; activeIndex: number; position: SharedValue<number>; reducedMotion: boolean; hapticsEnabled: boolean; onSelect: (index: number) => void }) {
   'use no memo';
   const lastHapticIndex = useSharedValue(activeIndex);
   const committed = useSharedValue(false);
@@ -60,6 +61,7 @@ function DraggableSurface({ children, width, count, activeIndex, position, reduc
     .activeOffsetX([-10, 10])
     .failOffsetY([-10, 10])
     .onBegin(() => {
+      cancelAnimation(position);
       committed.set(false);
       lastHapticIndex.set(activeIndex);
     })
@@ -68,7 +70,7 @@ function DraggableSurface({ children, width, count, activeIndex, position, reduc
       const raw = clampTabIndex(event.x / (width / count) - 0.5, count);
       position.set(raw);
       const nearest = Math.round(raw);
-      if (nearest !== lastHapticIndex.get()) {
+      if (hapticsEnabled && nearest !== lastHapticIndex.get()) {
         lastHapticIndex.set(nearest);
         runOnJS(triggerSelectionHaptic)();
       }
@@ -88,20 +90,24 @@ function DraggableSurface({ children, width, count, activeIndex, position, reduc
 
 export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
   'use no memo';
+  useRenderTracker('PremiumTabBar');
   const { colors, isDark } = useTheme();
-  const { flags } = useFeatureFlags();
+  const { flags, resolvedPerformanceMode } = useFeatureFlags();
   const { setTabBarLayout } = useTabBarLayout();
   const insets = useSafeAreaInsets();
   const metrics = getTabBarMetrics(insets.bottom);
   const [width, setWidth] = useState(0);
   const [quick, setQuick] = useState<string | null>(null);
+  const [allowNavigation] = useState(() => createTabNavigationGate());
   const activeIndex = state.index;
   const tabCount = state.routes.length;
   const position = useSharedValue(activeIndex);
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
+    cancelAnimation(position);
     position.set(!flags.enableLiquidTabAnimation || reducedMotion ? activeIndex : withSpring(activeIndex, motion.spring.liquid));
+    return () => cancelAnimation(position);
   }, [activeIndex, flags.enableLiquidTabAnimation, position, reducedMotion]);
 
   const navigate = (index: number) => {
@@ -110,6 +116,7 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
       recordUiAction('error_occurred', 'tab_route_missing', String(index));
       return;
     }
+    if (index !== activeIndex && !allowNavigation()) return;
     recordUiAction('navigation_requested', route.name);
     const result = performTabPress({
       routes: state.routes,
@@ -123,6 +130,7 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
 
   const selectTab = (index: number) => {
     if (index < 0 || index >= tabCount) return;
+    cancelAnimation(position);
     position.set(!flags.enableLiquidTabAnimation || reducedMotion ? index : withTiming(index, { duration: motion.tabMorph }));
     navigate(index);
   };
@@ -143,7 +151,7 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
     }}
     style={[styles.bar, { height: metrics.visualHeight, borderColor: colors.glassBorderStrong, backgroundColor: colors.surfaceStrong }]}
   >
-    {Platform.OS === 'ios' && flags.enableAdvancedGlassBlur ? <BlurView intensity={30} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} /> : null}
+    {Platform.OS === 'ios' && flags.enableAdvancedGlassBlur ? <BlurView intensity={resolvedPerformanceMode === 'full' ? 30 : 18} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} /> : null}
     <LinearGradient colors={[`${colors.surfaceSolid}E8`, `${colors.greenDark}D8`]} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} style={StyleSheet.absoluteFill} />
     <View style={[styles.specular, { backgroundColor: `${colors.textPrimary}32` }]} />
     <View style={styles.visual}>
@@ -157,10 +165,11 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
           icon={item.icon}
           index={index}
           position={position}
+          hapticsEnabled={flags.enableHaptics}
           onPress={() => selectTab(index)}
           onLongPress={() => {
             navigation.emit({ type: 'tabLongPress', target: route.key });
-            void safelyRunHaptic('light');
+            if (flags.enableHaptics) void safelyRunHaptic('light');
             setQuick(route.name);
           }}
         />;
@@ -171,7 +180,7 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
   return <>
     <View pointerEvents="box-none" style={[styles.host, { height: metrics.visualHeight, bottom: metrics.bottomOffset }]}>
       {flags.enableLiquidTabDrag
-        ? <DraggableSurface width={width} count={tabCount} activeIndex={activeIndex} position={position} reducedMotion={reducedMotion} onSelect={navigate}>{glassSurface}</DraggableSurface>
+        ? <DraggableSurface width={width} count={tabCount} activeIndex={activeIndex} position={position} reducedMotion={reducedMotion} hapticsEnabled={flags.enableHaptics} onSelect={navigate}>{glassSurface}</DraggableSurface>
         : glassSurface}
     </View>
     <Modal visible={quick !== null} transparent animationType={reducedMotion ? 'none' : 'fade'} onRequestClose={() => setQuick(null)}>

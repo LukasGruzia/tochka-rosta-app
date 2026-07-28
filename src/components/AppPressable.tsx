@@ -1,10 +1,11 @@
-import { useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Pressable, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { cancelAnimation, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { safelyRunHaptic, type AppHaptic } from '@/services/haptics';
 import { recordUiAction } from '@/services/uiDiagnostics';
 import { canRunPressAction, createPressController } from '@/services/pressController';
 import { motion } from '@/theme/tokens';
+import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
 
 interface AppPressableProps extends Omit<PressableProps, 'children' | 'onPress' | 'style'> {
   children: ReactNode;
@@ -20,20 +21,26 @@ interface AppPressableProps extends Omit<PressableProps, 'children' | 'onPress' 
 export function AppPressable({ children, onPress, style, pressedStyle, disabled, loading = false, haptic = 'none', actionLabel, onError, ...props }: AppPressableProps) {
   'use no memo';
   const scale = useSharedValue(1);
+  const { flags, resolvedPerformanceMode } = useFeatureFlags();
   const [pressController] = useState(createPressController);
   const longPressTriggered = useRef(false);
   const [pressed, setPressed] = useState(false);
   const unavailable = Boolean(disabled || loading);
   const { onLongPress, ...pressableProps } = props;
   const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.get() }] }));
+  const animatePress = resolvedPerformanceMode !== 'safe' && resolvedPerformanceMode !== 'reduced';
+
+  useEffect(() => () => cancelAnimation(scale), [scale]);
 
   const handlePressIn = () => {
     setPressed(true);
-    scale.set(withTiming(motion.press.scale, { duration: motion.fast }));
+    cancelAnimation(scale);
+    scale.set(animatePress ? withTiming(motion.press.scale, { duration: motion.fast }) : 1);
   };
   const handlePressOut = () => {
     setPressed(false);
-    scale.set(withSpring(1, motion.spring.snappy));
+    cancelAnimation(scale);
+    scale.set(animatePress ? withSpring(1, motion.spring.snappy) : 1);
   };
   const handlePress = async () => {
     if (longPressTriggered.current) {
@@ -43,7 +50,7 @@ export function AppPressable({ children, onPress, style, pressedStyle, disabled,
     if (!canRunPressAction({ disabled: Boolean(disabled), loading, hasAction: Boolean(onPress) }) || !onPress || pressController.isRunning()) return;
     const label = actionLabel ?? props.accessibilityLabel ?? 'button';
     recordUiAction('button_pressed', String(label));
-    void safelyRunHaptic(haptic);
+    void safelyRunHaptic(flags.enableHaptics ? haptic : 'none');
     await pressController.run(onPress, (error) => {
       recordUiAction('error_occurred', String(label), error instanceof Error ? error.message : 'Unknown press error');
       onError?.(error);

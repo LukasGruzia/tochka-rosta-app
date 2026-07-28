@@ -7,15 +7,17 @@ import { MacroProgress } from './MacroProgress';
 import { ProgressRing } from './ProgressRing';
 import { useTheme } from '@/theme/ThemeProvider';
 import { radii, spacing } from '@/theme/tokens';
+import { useRenderTracker } from '@/performance/renderTracker';
 
 export function NutritionHeroCard({ compact, consumed, target, remaining, progress, protein, proteinTarget, fat, fatTarget, carbs, carbsTarget, onAdd, onDetails }: {
   compact: boolean; consumed: number; target: number; remaining: number; progress: number;
   protein: number; proteinTarget: number; fat: number; fatTarget: number; carbs: number; carbsTarget: number;
   onAdd: () => void; onDetails: () => void;
 }) {
+  useRenderTracker('NutritionHeroCard');
   const { colors } = useTheme();
   const ringSize = compact ? 128 : 142;
-  return <GlassSurface variant="accent" style={styles.shell} contentStyle={styles.content}>
+  return <GlassSurface variant="accent" nativeBlur style={styles.shell} contentStyle={styles.content}>
     <AppPressable accessibilityRole="button" accessibilityLabel="Добавить приём пищи" actionLabel="nutrition_quick_add" onPress={onAdd} haptic="selection" style={styles.addArea} pressedStyle={styles.pressed}>
     <View style={styles.primaryRow}>
       <ProgressRing progress={progress} size={ringSize} strokeWidth={8} value={consumed.toLocaleString('ru-RU')} label="ккал съедено" />

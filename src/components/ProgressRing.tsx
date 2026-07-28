@@ -1,9 +1,10 @@
 import { StyleSheet, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-import Animated, { useAnimatedProps, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { cancelAnimation, useAnimatedProps, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useEffect } from 'react';
 import { AppText } from './AppText';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useScreenActivity } from '@/hooks/useScreenActivity';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 interface Props { progress: number; size?: number; strokeWidth?: number; value: string; label: string; }
@@ -11,10 +12,15 @@ export function ProgressRing({ progress, size = 190, strokeWidth = 10, value, la
   'use no memo';
   const { colors } = useTheme();
   const reducedMotion = useReducedMotion();
+  const activity = useScreenActivity();
   const radius = (size - strokeWidth * 2) / 2;
   const circumference = 2 * Math.PI * radius;
   const animatedProgress = useSharedValue(0);
-  useEffect(() => { animatedProgress.set(reducedMotion ? progress : withTiming(progress, { duration: 700 })); }, [animatedProgress, progress, reducedMotion]);
+  useEffect(() => {
+    cancelAnimation(animatedProgress);
+    animatedProgress.set(reducedMotion || !activity.canAnimate ? progress : withTiming(progress, { duration: 700 }));
+    return () => cancelAnimation(animatedProgress);
+  }, [activity.canAnimate, animatedProgress, progress, reducedMotion]);
   const animatedProps = useAnimatedProps(() => ({ strokeDashoffset: circumference * (1 - Math.min(1, Math.max(0, animatedProgress.get()))) }));
   return (
     <View style={[styles.wrap, { width: size, height: size }]} accessibilityLabel={`${value}, ${label}`}>
