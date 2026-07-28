@@ -3,7 +3,7 @@ import { getLocalDateKey } from '@/utils/date';
 import { getDatabase } from '../database';
 import { seedDatabase } from '../seed';
 
-export async function createTestStreak(days: 3 | 7 | 14) {
+export async function createTestStreak(days: 3 | 7 | 14 | 30) {
   const db = await getDatabase(); const today = new Date(); const now = new Date().toISOString(); const dates = Array.from({ length: days }, (_, index) => { const date = new Date(today); date.setDate(date.getDate() - index); return getLocalDateKey(date); }).reverse();
   await db.withExclusiveTransactionAsync(async (txn) => { for (const date of dates) { await txn.runAsync(`INSERT INTO diary_days (date, target_calories, consumed_calories, is_completed, created_at, updated_at, target_protein_g, target_fat_g, target_carbs_g, consumed_protein_g, consumed_fat_g, consumed_carbs_g, completed_at) VALUES (?, 0, 0, 1, ?, ?, 0, 0, 0, 0, 0, 0, ?) ON CONFLICT(date) DO UPDATE SET is_completed=1, completed_at=excluded.completed_at, updated_at=excluded.updated_at`, date, now, now, now); await txn.runAsync(`INSERT INTO flow_history (date, was_completed, streak_after_completion, created_at) VALUES (?, 1, ?, ?) ON CONFLICT(date) DO UPDATE SET was_completed=1, streak_after_completion=excluded.streak_after_completion`, date, dates.indexOf(date) + 1, now); } const streak = calculateStreaks(dates, getLocalDateKey()); await txn.runAsync('UPDATE flow_state SET current_streak=?, longest_streak=MAX(longest_streak, ?), last_completed_date=?, updated_at=? WHERE id=1', streak.currentStreak, streak.longestStreak, streak.lastCompletedDate, now); });
 }

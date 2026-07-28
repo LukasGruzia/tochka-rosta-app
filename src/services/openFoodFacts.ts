@@ -1,7 +1,7 @@
 import type { ExternalFoodPreview } from '@/types/domain';
 
 const endpoint = 'https://world.openfoodfacts.org/api/v3.6/product';
-const userAgent = 'TochkaRosta/0.2 (https://github.com/LukasGruzia/tochka-rosta-app)';
+const userAgent = 'TochkaRosta/0.3 (https://github.com/LukasGruzia/tochka-rosta-app)';
 const fields = ['code', 'product_name', 'brands', 'quantity', 'serving_size', 'nutriments', 'ingredients_text', 'allergens', 'image_front_url', 'countries', 'last_modified_t'];
 
 function numberOrNull(value: unknown) {
