@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getTabIndexFromPosition, getTabIndicatorMetrics, performTabPress, resolveTabGesture, shouldActivateTabDrag, shouldCommitTabNavigation } from './tabNavigation';
+import { createTabNavigationGate, getTabIndexFromPosition, getTabIndicatorMetrics, performTabPress, resolveTabGesture, shouldActivateTabDrag, shouldCommitTabNavigation } from './tabNavigation';
 
 describe('liquid tab navigation', () => {
   it('maps taps and drags to the nearest visible tab', () => {
@@ -36,5 +36,12 @@ describe('liquid tab navigation', () => {
     expect(performTabPress({ routes, activeIndex: 0, targetIndex: 9, emit: () => ({}), navigate: () => { throw new Error('must not navigate'); } })).toBe('missing');
     expect(shouldCommitTabNavigation(false)).toBe(true);
     expect(shouldCommitTabNavigation(true)).toBe(false);
+  });
+
+  it('rejects rapid duplicate navigation requests', () => {
+    const allowNavigation = createTabNavigationGate(90);
+    expect(allowNavigation(1_000)).toBe(true);
+    expect(allowNavigation(1_040)).toBe(false);
+    expect(allowNavigation(1_091)).toBe(true);
   });
 });
