@@ -8,8 +8,8 @@ import { getDatabase } from '../database';
 
 export async function loadFlowState(): Promise<FlowState> {
   const db = await getDatabase();
-  const dates = await db.getAllAsync<{ date: string }>('SELECT date FROM diary_days WHERE is_completed=1 ORDER BY date');
-  const calculated = calculateStreaks(dates.map((item) => item.date));
+  const [dates,pauses] = await Promise.all([db.getAllAsync<{ date: string }>('SELECT date FROM diary_days WHERE is_completed=1 ORDER BY date'),db.getAllAsync<{date:string}>('SELECT date FROM flow_pauses ORDER BY date')]);
+  const calculated = calculateStreaks(dates.map((item) => item.date),getLocalDateKey(),pauses.map((item)=>item.date));
   const row = await db.getFirstAsync<{ longest_streak: number; last_completed_date: string | null }>('SELECT longest_streak, last_completed_date FROM flow_state WHERE id=1');
   return {
     currentStreak: calculated.currentStreak,
@@ -28,8 +28,8 @@ export async function completeDiaryDay(date: string) {
     if (!day) throw new Error('День не найден');
     const count = await txn.getFirstAsync<{ count: number }>('SELECT COUNT(*) AS count FROM diary_entries WHERE diary_day_id=?', day.id);
     assertDayCompletable({ date, isCompleted: day.is_completed === 1, entryCount: count?.count ?? 0 }, getLocalDateKey());
-    const completedDates = await txn.getAllAsync<{ date: string }>('SELECT date FROM diary_days WHERE is_completed=1 UNION SELECT ? AS date ORDER BY date', date);
-    const streaks = calculateStreaks(completedDates.map((item) => item.date), getLocalDateKey());
+    const completedDates = await txn.getAllAsync<{ date: string }>('SELECT date FROM diary_days WHERE is_completed=1 UNION SELECT ? AS date ORDER BY date', date);const pauses=await txn.getAllAsync<{date:string}>('SELECT date FROM flow_pauses ORDER BY date');
+    const streaks = calculateStreaks(completedDates.map((item) => item.date), getLocalDateKey(),pauses.map((item)=>item.date));
     const now = new Date().toISOString();
     await txn.runAsync('UPDATE diary_days SET is_completed=1, completed_at=?, updated_at=? WHERE id=?', now, now, day.id);
     await txn.runAsync(`INSERT INTO flow_history (date, was_completed, streak_after_completion, created_at) VALUES (?, 1, ?, ?)
@@ -50,4 +50,4 @@ export async function resetFlow() {
 export async function loadFlowPreferences():Promise<FlowPreferences>{const db=await getDatabase();const row=await db.getFirstAsync<{weekly_goal_days:number;pause_tokens:number;total_pauses:number}>('SELECT weekly_goal_days,pause_tokens,total_pauses FROM flow_state WHERE id=1');return{weeklyGoalDays:row?.weekly_goal_days??5,pauseTokens:row?.pause_tokens??0,totalPauses:row?.total_pauses??0};}
 export async function setWeeklyFlowGoal(days:number){if(days<1||days>7)throw new Error('Цель должна быть от 1 до 7 дней');const db=await getDatabase();await db.runAsync('UPDATE flow_state SET weekly_goal_days=?,updated_at=? WHERE id=1',days,new Date().toISOString());}
 export async function loadFlowPauses():Promise<FlowPause[]>{const db=await getDatabase();const rows=await db.getAllAsync<{id:number;date:string;reason:string;created_at:string}>('SELECT id,date,reason,created_at FROM flow_pauses ORDER BY date DESC');return rows.map((row)=>({id:row.id,date:row.date,reason:row.reason,createdAt:row.created_at}));}
-export async function useFlowPause(date:string,reason='День паузы'){const db=await getDatabase();const [preferences,existing]=await Promise.all([loadFlowPreferences(),loadFlowPauses()]);if(!canUseFlowPause(date,existing.map((item)=>item.date),preferences.pauseTokens))throw new Error('День паузы нельзя применить к этой дате');const now=new Date().toISOString();await db.withExclusiveTransactionAsync(async(txn)=>{await txn.runAsync('INSERT INTO flow_pauses(uuid,date,reason,created_at) VALUES(?,?,?,?)',createStableUuid(),date,reason,now);await txn.runAsync('UPDATE flow_state SET pause_tokens=pause_tokens-1,total_pauses=total_pauses+1,updated_at=? WHERE id=1',now);});}
+export async function applyFlowPause(date:string,reason='День паузы'){const db=await getDatabase();const [preferences,existing]=await Promise.all([loadFlowPreferences(),loadFlowPauses()]);if(!canUseFlowPause(date,existing.map((item)=>item.date),preferences.pauseTokens))throw new Error('День паузы нельзя применить к этой дате');const now=new Date().toISOString();await db.withExclusiveTransactionAsync(async(txn)=>{await txn.runAsync('INSERT INTO flow_pauses(uuid,date,reason,created_at) VALUES(?,?,?,?)',createStableUuid(),date,reason,now);await txn.runAsync('UPDATE flow_state SET pause_tokens=pause_tokens-1,total_pauses=total_pauses+1,updated_at=? WHERE id=1',now);});}
