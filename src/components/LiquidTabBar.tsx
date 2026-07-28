@@ -1,130 +1,198 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { router } from 'expo-router';
 import { BlurView } from 'expo-blur';
-import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Modal, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { runOnJS, type SharedValue, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import { runOnJS, type SharedValue, useReducedMotion, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getTabRoute } from '@/config/routes';
+import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
+import { useTabBarLayout } from '@/contexts/TabBarLayoutContext';
+import { safelyRunHaptic } from '@/services/haptics';
 import { getTabBarMetrics } from '@/services/tabBarMetrics';
-import { clampTabIndex } from '@/services/tabNavigation';
+import { clampTabIndex, performTabPress } from '@/services/tabNavigation';
+import { recordUiAction } from '@/services/uiDiagnostics';
 import { useTheme } from '@/theme/ThemeProvider';
 import { motion, radii } from '@/theme/tokens';
-import { AppIcon, type IconName } from './AppIcon';
+import { AppIcon } from './AppIcon';
+import { AppPressable } from './AppPressable';
 import { AppText } from './AppText';
 import { LiquidTabIndicator } from './LiquidTabIndicator';
 
-const meta: Record<string, { title: string; icon: IconName; action: string }> = {
-  index: { title: 'Главная', icon: 'home', action: 'Добавить еду' },
-  diary: { title: 'Дневник', icon: 'diary', action: 'Открыть календарь' },
-  catalog: { title: 'Каталог', icon: 'catalog', action: 'Начать поиск' },
-  flow: { title: 'Поток', icon: 'flow', action: 'Сегодняшний прогресс' },
-  profile: { title: 'Профиль', icon: 'profile', action: 'Сменить тему' },
-};
-
 function triggerSelectionHaptic() {
-  void Haptics.selectionAsync();
+  void safelyRunHaptic('selection');
 }
 
-function TabItem({ index, position, focused, label, icon, onPress, onLongPress }: { index: number; position: SharedValue<number>; focused: boolean; label: string; icon: IconName; onPress: () => void; onLongPress: () => void }) {
+function TabItem({ focused, label, icon, onPress, onLongPress }: { focused: boolean; label: string; icon: Parameters<typeof AppIcon>[0]['name']; onPress: () => void; onLongPress: () => void }) {
   const { colors } = useTheme();
-  const animated = useAnimatedStyle(() => {
-    const closeness = Math.max(0, 1 - Math.abs(position.value - index));
-    return { opacity: 0.62 + closeness * 0.38, transform: [{ translateY: -closeness * 2 }, { scale: 0.98 + closeness * 0.04 }] };
-  });
-  return <Pressable accessibilityRole="tab" accessibilityLabel={label} accessibilityState={{ selected: focused }} onPress={onPress} onLongPress={onLongPress} delayLongPress={420} style={styles.item}>
-    <Animated.View style={[styles.itemInner, animated]}><AppIcon name={icon} size={22} color={focused ? colors.greenBright : colors.textSecondary} /><AppText numberOfLines={1} style={[styles.label, { color: focused ? colors.textPrimary : colors.textMuted }]}>{label}</AppText></Animated.View>
-  </Pressable>;
+  return <AppPressable
+    accessibilityRole="tab"
+    accessibilityLabel={label}
+    accessibilityState={{ selected: focused }}
+    actionLabel={`tab:${label}`}
+    onPress={onPress}
+    onLongPress={onLongPress}
+    delayLongPress={420}
+    haptic="selection"
+    style={styles.item}
+    pressedStyle={styles.itemPressed}
+  >
+    <View style={styles.itemInner}>
+      <AppIcon name={icon} size={24} color={focused ? colors.greenBright : colors.textSecondary} />
+      <AppText numberOfLines={1} style={[styles.label, { color: focused ? colors.textPrimary : colors.textMuted }]}>{label}</AppText>
+    </View>
+  </AppPressable>;
 }
 
-export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
-  const { colors, isDark } = useTheme();
-  const insets = useSafeAreaInsets();
-  const metrics = getTabBarMetrics(insets.bottom);
-  const [width, setWidth] = useState(0);
-  const activeIndex = state.index;
-  const position = useSharedValue(activeIndex);
+function DraggableSurface({ children, width, count, activeIndex, position, reducedMotion, onSelect }: { children: ReactNode; width: number; count: number; activeIndex: number; position: SharedValue<number>; reducedMotion: boolean; onSelect: (index: number) => void }) {
+  'use no memo';
   const lastHapticIndex = useSharedValue(activeIndex);
-  const reduced = useReducedMotion();
-  const [quick, setQuick] = useState<string | null>(null);
-  const tabCount = state.routes.length;
-
-  useEffect(() => {
-    position.value = reduced ? activeIndex : withSpring(activeIndex, motion.spring.liquid);
-    lastHapticIndex.value = activeIndex;
-  }, [activeIndex, lastHapticIndex, position, reduced]);
-
-  const navigate = (index: number) => {
-    const route = state.routes[index];
-    if (!route) return;
-    const focused = activeIndex === index;
-    const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-    if (!focused && !event.defaultPrevented) navigation.navigate(route.name, route.params);
-  };
-
+  const committed = useSharedValue(false);
   const pan = Gesture.Pan()
-    .minDistance(8)
-    .activeOffsetX([-8, 8])
-    .failOffsetY([-12, 12])
-    .onBegin((event) => {
-      if (width > 0) position.value = clampTabIndex(event.x / (width / tabCount) - 0.5, tabCount);
+    .minDistance(10)
+    .activeOffsetX([-10, 10])
+    .failOffsetY([-10, 10])
+    .onBegin(() => {
+      committed.set(false);
+      lastHapticIndex.set(activeIndex);
     })
     .onUpdate((event) => {
       if (width <= 0) return;
-      const raw = Math.max(0, Math.min(tabCount - 1, event.x / (width / tabCount) - 0.5));
-      position.value = raw;
+      const raw = clampTabIndex(event.x / (width / count) - 0.5, count);
+      position.set(raw);
       const nearest = Math.round(raw);
-      if (nearest !== lastHapticIndex.value) {
-        lastHapticIndex.value = nearest;
+      if (nearest !== lastHapticIndex.get()) {
+        lastHapticIndex.set(nearest);
         runOnJS(triggerSelectionHaptic)();
       }
     })
     .onEnd(() => {
-      const nearest = clampTabIndex(Math.round(position.value), tabCount);
-      position.value = reduced ? nearest : withSpring(nearest, motion.spring.liquid);
-      runOnJS(navigate)(nearest);
+      if (committed.get()) return;
+      committed.set(true);
+      const nearest = clampTabIndex(Math.round(position.get()), count);
+      position.set(reducedMotion ? nearest : withSpring(nearest, motion.spring.liquid));
+      runOnJS(onSelect)(nearest);
     })
     .onFinalize((_event, success) => {
-      if (!success) position.value = reduced ? activeIndex : withSpring(activeIndex, motion.spring.soft);
+      if (!success) position.set(reducedMotion ? activeIndex : withSpring(activeIndex, motion.spring.soft));
     });
+  return <GestureDetector gesture={pan}>{children}</GestureDetector>;
+}
+
+export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
+  'use no memo';
+  const { colors, isDark } = useTheme();
+  const { flags } = useFeatureFlags();
+  const { setTabBarHeight } = useTabBarLayout();
+  const insets = useSafeAreaInsets();
+  const metrics = getTabBarMetrics(insets.bottom);
+  const [width, setWidth] = useState(0);
+  const [quick, setQuick] = useState<string | null>(null);
+  const activeIndex = state.index;
+  const tabCount = state.routes.length;
+  const position = useSharedValue(activeIndex);
+  const reducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    position.set(!flags.enableLiquidTabAnimation || reducedMotion ? activeIndex : withSpring(activeIndex, motion.spring.liquid));
+  }, [activeIndex, flags.enableLiquidTabAnimation, position, reducedMotion]);
+
+  const navigate = (index: number) => {
+    const route = state.routes[index];
+    if (!route) {
+      recordUiAction('error_occurred', 'tab_route_missing', String(index));
+      return;
+    }
+    recordUiAction('navigation_requested', route.name);
+    const result = performTabPress({
+      routes: state.routes,
+      activeIndex,
+      targetIndex: index,
+      emit: (route) => navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true }),
+      navigate: (route) => navigation.navigate(route.name, route.params),
+    });
+    if (result !== 'missing') recordUiAction('navigation_completed', route.name);
+  };
+
+  const selectTab = (index: number) => {
+    if (index < 0 || index >= tabCount) return;
+    position.set(!flags.enableLiquidTabAnimation || reducedMotion ? index : withTiming(index, { duration: motion.tabMorph }));
+    navigate(index);
+  };
 
   const chooseQuick = () => {
-    const route = quick;
+    const selected = quick;
     setQuick(null);
-    if (route === 'index') router.push('/food-search' as never);
-    else if (route === 'diary') router.push({ pathname: '/(tabs)/diary', params: { calendar: '1' } } as never);
-    else if (route === 'catalog') router.push('/food-search' as never);
-    else if (route === 'flow') router.push('/(tabs)/flow' as never);
-    else if (route === 'profile') router.push('/appearance' as never);
+    const action = selected ? getTabRoute(selected)?.action : undefined;
+    if (!action) return;
+    recordUiAction('navigation_requested', action);
+    router.push(action as never);
   };
+
+  const glassSurface = <View
+    onLayout={(event) => {
+      setWidth(event.nativeEvent.layout.width);
+      setTabBarHeight(event.nativeEvent.layout.height);
+    }}
+    style={[styles.bar, { height: metrics.height, borderColor: colors.glassBorderStrong, backgroundColor: colors.surfaceStrong }]}
+  >
+    {Platform.OS === 'ios' && flags.enableAdvancedGlassBlur ? <BlurView intensity={30} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} /> : null}
+    <LinearGradient colors={[`${colors.surfaceSolid}E8`, `${colors.greenDark}D8`]} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} style={StyleSheet.absoluteFill} />
+    <View style={[styles.specular, { backgroundColor: `${colors.textPrimary}32` }]} />
+    <View style={[styles.visual, { height: metrics.visualHeight }]}>
+      {width > 0 && flags.enableLiquidTabAnimation ? <LiquidTabIndicator position={position} barWidth={width} count={tabCount} /> : null}
+      <View style={styles.row}>{state.routes.map((route, index) => {
+        const item = getTabRoute(route.name) ?? getTabRoute('index')!;
+        return <TabItem
+          key={route.key}
+          focused={activeIndex === index}
+          label={item.title}
+          icon={item.icon}
+          onPress={() => selectTab(index)}
+          onLongPress={() => {
+            navigation.emit({ type: 'tabLongPress', target: route.key });
+            void safelyRunHaptic('light');
+            setQuick(route.name);
+          }}
+        />;
+      })}</View>
+    </View>
+    <View pointerEvents="none" style={{ height: metrics.safeAreaHeight }} />
+  </View>;
 
   return <>
     <View pointerEvents="box-none" style={[styles.host, { height: metrics.height }]}>
-      <GestureDetector gesture={pan}><View onLayout={(event) => setWidth(event.nativeEvent.layout.width)} style={[styles.bar, { height: metrics.height, paddingBottom: metrics.paddingBottom, borderColor: colors.glassBorderStrong, backgroundColor: colors.surfaceStrong }]}>
-        {Platform.OS === 'ios' ? <BlurView intensity={34} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} /> : null}
-        {width > 0 ? <LiquidTabIndicator position={position} barWidth={width} count={tabCount} /> : null}
-        <View style={styles.row}>{state.routes.map((route, index) => {
-          const item = meta[route.name] ?? { title: route.name, icon: 'home' as IconName, action: '' };
-          return <TabItem key={route.key} index={index} position={position} focused={activeIndex === index} label={item.title} icon={item.icon} onPress={() => { triggerSelectionHaptic(); position.value = reduced ? index : withTiming(index, { duration: motion.tabMorph }); navigate(index); }} onLongPress={() => { navigation.emit({ type: 'tabLongPress', target: route.key }); void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setQuick(route.name); }} />;
-        })}</View>
-      </View></GestureDetector>
+      {flags.enableLiquidTabDrag
+        ? <DraggableSurface width={width} count={tabCount} activeIndex={activeIndex} position={position} reducedMotion={reducedMotion} onSelect={selectTab}>{glassSurface}</DraggableSurface>
+        : glassSurface}
     </View>
-    <Modal visible={quick !== null} transparent animationType={reduced ? 'none' : 'fade'} onRequestClose={() => setQuick(null)}>
+    <Modal visible={quick !== null} transparent animationType={reducedMotion ? 'none' : 'fade'} onRequestClose={() => setQuick(null)}>
       <Pressable style={[styles.scrim, { backgroundColor: colors.blackScrim }]} onPress={() => setQuick(null)} />
-      <View style={[styles.quickSheet, { backgroundColor: colors.surfaceSolid, borderColor: colors.glassBorderStrong }]}><AppText variant="caption" tone="green">БЫСТРОЕ ДЕЙСТВИЕ</AppText><AppText variant="heading">{quick ? meta[quick]?.action : ''}</AppText><Pressable accessibilityRole="button" onPress={chooseQuick} style={[styles.quickButton, { backgroundColor: colors.greenGlow }]}><AppText tone="green">Открыть</AppText></Pressable></View>
+      <View style={[styles.quickSheet, { backgroundColor: colors.surfaceSolid, borderColor: colors.glassBorderStrong }]}>
+        <AppText variant="caption" tone="green">БЫСТРОЕ ДЕЙСТВИЕ</AppText>
+        <AppText variant="heading">{quick ? getTabRoute(quick)?.title : ''}</AppText>
+        <AppPressable accessibilityRole="button" accessibilityLabel="Открыть быстрое действие" actionLabel="tab_quick_action" onPress={chooseQuick} haptic="selection" style={[styles.quickButton, { backgroundColor: colors.greenGlow }]}>
+          <View style={styles.quickButtonContent}><AppText tone="green">Открыть</AppText></View>
+        </AppPressable>
+      </View>
     </Modal>
   </>;
 }
 
 const styles = StyleSheet.create({
   host: { position: 'absolute', left: 10, right: 10, bottom: 0 },
-  bar: { overflow: 'hidden', borderRadius: radii.xl, borderWidth: 1, paddingTop: 6 },
-  row: { flex: 1, flexDirection: 'row' },
-  item: { flex: 1, minWidth: 0 },
-  itemInner: { flex: 1, minHeight: 52, alignItems: 'center', justifyContent: 'center', gap: 2 },
-  label: { fontSize: 10, fontWeight: '600', maxWidth: '100%' },
+  bar: { overflow: 'hidden', borderRadius: radii.xl, borderWidth: 1, shadowOpacity: 0.24, shadowRadius: 18, shadowOffset: { width: 0, height: 8 }, elevation: 10 },
+  visual: { position: 'relative' },
+  specular: { position: 'absolute', left: 22, right: 22, top: 1, height: StyleSheet.hairlineWidth, zIndex: 3 },
+  row: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingVertical: 5 },
+  item: { flex: 1, height: 58, minWidth: 0 },
+  itemPressed: { opacity: 0.84 },
+  itemInner: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 3 },
+  label: { fontSize: 11, lineHeight: 14, fontWeight: '600', maxWidth: '100%' },
   scrim: { ...StyleSheet.absoluteFillObject },
   quickSheet: { position: 'absolute', left: 18, right: 18, bottom: 24, borderRadius: radii.xl, borderWidth: 1, padding: 20, gap: 12 },
-  quickButton: { minHeight: 48, borderRadius: radii.md, alignItems: 'center', justifyContent: 'center' },
+  quickButton: { minHeight: 48, borderRadius: radii.md, overflow: 'hidden' },
+  quickButtonContent: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 });

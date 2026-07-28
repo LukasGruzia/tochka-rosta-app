@@ -1,4 +1,12 @@
 import { Tabs } from 'expo-router';
 import { LiquidTabBar } from '@/components/LiquidTabBar';
-const items=[['index','Главная'],['diary','Дневник'],['catalog','Каталог'],['flow','Поток'],['profile','Профиль']] as const;
-export default function TabsLayout(){return <Tabs tabBar={(props)=><LiquidTabBar {...props}/>} screenOptions={{headerShown:false}}>{items.map(([name,title])=><Tabs.Screen key={name} name={name} options={{title}}/>)}</Tabs>;}
+import { TAB_ROUTES } from '@/config/routes';
+import { TabBarLayoutProvider } from '@/contexts/TabBarLayoutContext';
+
+export default function TabsLayout() {
+  return <TabBarLayoutProvider>
+    <Tabs tabBar={(props) => <LiquidTabBar {...props} />} screenOptions={{ headerShown: false }}>
+      {TAB_ROUTES.map((item) => <Tabs.Screen key={item.key} name={item.key} options={{ title: item.title }} />)}
+    </Tabs>
+  </TabBarLayoutProvider>;
+}

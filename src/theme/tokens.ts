@@ -15,8 +15,19 @@ export const spacing = { xs: 6, sm: 10, md: 16, lg: 24, xl: 32, xxl: 44 } as con
 export const radii = { sm: 14, md: 18, lg: 24, xl: 28, pill: 999 } as const;
 export const typography = { display: { fontSize: 36, lineHeight: 40, fontWeight: '800' as const }, title: { fontSize: 28, lineHeight: 33, fontWeight: '800' as const }, heading: { fontSize: 21, lineHeight: 26, fontWeight: '700' as const }, body: { fontSize: 16, lineHeight: 23, fontWeight: '400' as const }, caption: { fontSize: 13, lineHeight: 18, fontWeight: '500' as const } } as const;
 export const shadows = { card: { shadowOpacity: 0.22, shadowRadius: 18, shadowOffset: { width: 0, height: 8 }, elevation: 5 }, floating: { shadowOpacity: 0.28, shadowRadius: 24, shadowOffset: { width: 0, height: 12 }, elevation: 9 } } as const;
-export const glass = { blurIntensity: 22, blurElevated: 34, navigationBlur: 32 } as const;
+export const glass = {
+  blurIntensity: 22, blurElevated: 34, navigationBlur: 32,
+  base: { blur: 16, borderWidth: 1 },
+  raised: { blur: 26, borderWidth: 1 },
+  accent: { blur: 32, borderWidth: 1 },
+} as const;
 export const animations = { fast: 180, normal: 280, slow: 420, flameCycle: 3200 } as const;
-export const motion = { timing: { fast: 160, normal: 260, slow: 420 }, spring: { soft: { damping: 20, stiffness: 180 }, snappy: { damping: 18, stiffness: 300 }, liquid: { damping: 16, stiffness: 220, mass: 0.85 } }, pressScale: 0.97, cardEnter: 260, sheetEnter: 320, tabMorph: 240, successPulse: 520 } as const;
-export const sizes = { touch: 44, tabBarBase: 64, avatar: 104, productThumb: 76 } as const;
+export const motion = {
+  fast: 160, normal: 260, slow: 420,
+  timing: { fast: 160, normal: 260, slow: 420 },
+  spring: { soft: { damping: 20, stiffness: 180 }, snappy: { damping: 18, stiffness: 300 }, liquid: { damping: 16, stiffness: 220, mass: 0.85 } },
+  press: { scale: 0.985 }, card: { enter: 260 }, tab: { move: 240 }, sheet: { open: 320 }, success: { pulse: 520 },
+  pressScale: 0.985, cardEnter: 260, sheetEnter: 320, tabMorph: 240, successPulse: 520,
+} as const;
+export const sizes = { touch: 44, tabBarBase: 68, tabBarVisual: 68, avatar: 104, productThumb: 76 } as const;
 export const theme = { colors, spacing, radii, typography, shadows, glass, animations, motion, sizes } as const;

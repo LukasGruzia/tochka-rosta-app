@@ -1,7 +1,7 @@
 import type { PropsWithChildren, ReactNode } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { getTabContentPadding } from '@/services/tabBarMetrics';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTabBarLayout } from '@/contexts/TabBarLayoutContext';
 import { spacing } from '@/theme/tokens';
 import { useTheme } from '@/theme/ThemeProvider';
 import { AppBackground } from './AppBackground';
@@ -15,14 +15,14 @@ interface Props extends PropsWithChildren {
 }
 
 export function TabScreen({ title, subtitle, headerRight, children }: Props) {
-  const insets = useSafeAreaInsets();
+  const { tabBarHeight } = useTabBarLayout();
   const { colors } = useTheme();
   return <AppBackground><SafeAreaView style={styles.safe} edges={['top']}>
     {title ? <View style={[styles.header, { backgroundColor: colors.backgroundPrimary, borderBottomColor: colors.glassBorder }]}>
       <View style={styles.copy}><AppText variant="title">{title}</AppText>{subtitle ? <AppText tone="secondary">{subtitle}</AppText> : null}</View>
       {headerRight}
     </View> : null}
-    <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.scroll, { paddingBottom: getTabContentPadding(insets.bottom) }]}>
+    <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.scroll, { paddingBottom: tabBarHeight + spacing.md }]}>
       {children}
     </ScrollView>
   </SafeAreaView></AppBackground>;
