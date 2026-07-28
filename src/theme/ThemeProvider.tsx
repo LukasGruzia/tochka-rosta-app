@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, type PropsWithChildren } from 'react';
 import { LayoutAnimation, Platform, UIManager, useColorScheme } from 'react-native';
+import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
 import { useAppStore } from '@/store/appStore';
 import { darkColors, lightColors, type ThemeColors } from './tokens';
 import type { ThemeMode } from '@/types/domain';
@@ -26,14 +27,15 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 export function ThemeProvider({ children }: PropsWithChildren) {
+  const { flags } = useFeatureFlags();
   const mode = useAppStore((state) => state.themeMode);
   const setMode = useAppStore((state) => state.setThemeMode);
   const system = useColorScheme();
   const resolvedMode = resolveThemeMode(mode, system);
 
   useEffect(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-  }, [resolvedMode]);
+    if (flags.enableAnimatedThemeTransition) LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  }, [flags.enableAnimatedThemeTransition, resolvedMode]);
 
   const value = useMemo<ThemeValue>(
     () => ({
