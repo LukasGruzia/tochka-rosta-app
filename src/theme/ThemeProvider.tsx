@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useMemo, type PropsWithChildren } from 'react';
-import { LayoutAnimation, Platform, UIManager, useColorScheme } from 'react-native';
+import { createContext, useContext, useEffect, useMemo, useRef, type PropsWithChildren } from 'react';
+import { Animated, StyleSheet, useColorScheme } from 'react-native';
+import { useReducedMotion } from 'react-native-reanimated';
 import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
 import { useAppStore } from '@/store/appStore';
 import { darkColors, lightColors, type ThemeColors } from './tokens';
@@ -22,20 +23,26 @@ const ThemeContext = createContext<ThemeValue>({
   setMode: async () => {},
 });
 
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
-
 export function ThemeProvider({ children }: PropsWithChildren) {
   const { flags } = useFeatureFlags();
   const mode = useAppStore((state) => state.themeMode);
   const setMode = useAppStore((state) => state.setThemeMode);
   const system = useColorScheme();
   const resolvedMode = resolveThemeMode(mode, system);
+  const reducedMotion = useReducedMotion();
+  const opacity = useRef(new Animated.Value(1)).current;
+  const previousMode = useRef(resolvedMode);
 
   useEffect(() => {
-    if (flags.enableAnimatedThemeTransition) LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-  }, [flags.enableAnimatedThemeTransition, resolvedMode]);
+    if (previousMode.current === resolvedMode) return;
+    previousMode.current = resolvedMode;
+    if (!flags.enableAnimatedThemeTransition || reducedMotion) {
+      opacity.setValue(1);
+      return;
+    }
+    opacity.setValue(0.92);
+    Animated.timing(opacity, { toValue: 1, duration: 260, useNativeDriver: true }).start();
+  }, [flags.enableAnimatedThemeTransition, opacity, reducedMotion, resolvedMode]);
 
   const value = useMemo<ThemeValue>(
     () => ({
@@ -47,9 +54,11 @@ export function ThemeProvider({ children }: PropsWithChildren) {
     }),
     [mode, resolvedMode, setMode],
   );
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return <ThemeContext.Provider value={value}><Animated.View style={[styles.root, { opacity }]}>{children}</Animated.View></ThemeContext.Provider>;
 }
 
 export function useTheme() {
   return useContext(ThemeContext);
 }
+
+const styles = StyleSheet.create({ root: { flex: 1 } });
