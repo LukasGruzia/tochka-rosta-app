@@ -205,9 +205,12 @@ export interface RecipeDraft {
 }
 
 export interface HistoryAnalytics {
-  periodDays: 7 | 30;
+  periodDays: 7 | 30 | 90 | 365;
   averageCalories: number;
   averageProteinG: number;
+  averageFatG: number;
+  averageCarbsG: number;
+  averageTargetAccuracy: number;
   completedDays: number;
   longestStreak: number;
   entryCount: number;

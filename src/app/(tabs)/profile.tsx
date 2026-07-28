@@ -1,34 +1,82 @@
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
+import { AvatarPicker } from '@/components/AvatarPicker';
 import { AppText } from '@/components/AppText';
 import { GlassCard } from '@/components/GlassCard';
-import { PrimaryButton } from '@/components/PrimaryButton';
+import { ProfileMenuRow, ProfileMenuSection } from '@/components/ProfileMenuSection';
+import { ProfileStatCard } from '@/components/ProfileStatCard';
 import { TabScreen } from '@/components/TabScreen';
-import { activityLabels, dietLabels, goalLabels, restrictionLabels } from '@/constants/options';
-import { roundNutrition } from '@/services/nutritionCalculator';
+import { goalLabels } from '@/constants/options';
+import { loadProfileOverview } from '@/database/repositories/analyticsRepository';
 import { useAppStore } from '@/store/appStore';
-import { colors, spacing } from '@/theme/tokens';
+import { spacing } from '@/theme/tokens';
 
 export default function ProfileScreen() {
-  const { profile, target, recalculate, reset } = useAppStore();
-  if (!profile || !target) return <TabScreen title="Профиль"><AppText tone="secondary">Профиль ещё не создан.</AppText></TabScreen>;
-  const rounded = roundNutrition(target);
-  const doRecalculate = async () => { try { await recalculate(); Alert.alert('Готово', 'Дневная норма пересчитана и сохранена.'); } catch { Alert.alert('Ошибка', 'Не удалось пересчитать норму.'); } };
-  const confirmReset = () => Alert.alert('Сбросить приложение?', 'Все локальные данные, профиль и прогресс будут удалены с этого устройства.', [
-    { text: 'Отмена', style: 'cancel' }, { text: 'Сбросить', style: 'destructive', onPress: () => { void reset().then(() => router.replace('/(onboarding)/welcome')); } },
-  ]);
-  return <TabScreen title={profile.name} subtitle="Твой профиль хранится только на этом устройстве.">
-    <GlassCard variant="accent" style={styles.target}><AppText variant="caption" tone="green">ДНЕВНОЙ ОРИЕНТИР</AppText><AppText variant="display">{rounded.calories.toLocaleString('ru-RU')}</AppText><AppText tone="secondary">ккал в день</AppText></GlassCard>
-    <GlassCard variant="default">
-      <Row label="Возраст" value={`${profile.age} лет`}/><Row label="Рост" value={`${profile.heightCm} см`}/><Row label="Вес" value={`${profile.weightKg} кг`}/>
-      <Row label="Активность" value={activityLabels[profile.activityLevel]}/><Row label="Цель" value={goalLabels[profile.goal]}/><Row label="Питание" value={dietLabels[profile.dietPreference]}/>
-      <Row label="Ограничения" value={profile.restrictions.length ? profile.restrictions.map((item) => restrictionLabels[item]).join(', ') : 'Нет'}/>
+  const profile = useAppStore((state) => state.profile);
+  const flow = useAppStore((state) => state.flow);
+  const themeMode = useAppStore((state) => state.themeMode);
+  const setAvatar = useAppStore((state) => state.setAvatar);
+  const reset = useAppStore((state) => state.reset);
+  const [overview, setOverview] = useState({ trackedDays: 0, entryCount: 0, currentWeight: null as number | null });
+
+  useEffect(() => { void loadProfileOverview().then(setOverview); }, []);
+
+  if (!profile) return <TabScreen title="Профиль"><AppText tone="secondary">Профиль ещё не создан.</AppText></TabScreen>;
+  const weight = overview.currentWeight ?? profile.weightKg;
+  const themeLabel = themeMode === 'system' ? 'Как в системе' : themeMode === 'dark' ? 'Тёмная' : 'Светлая';
+  const confirmReset = () => Alert.alert(
+    'Сбросить приложение?',
+    'Все локальные данные, профиль, фото и прогресс будут удалены с этого устройства.',
+    [
+      { text: 'Отмена', style: 'cancel' },
+      { text: 'Сбросить', style: 'destructive', onPress: () => { void reset().then(() => router.replace('/(onboarding)/welcome')); } },
+    ],
+  );
+
+  return <TabScreen>
+    <View style={styles.header}>
+      <AvatarPicker name={profile.name} uri={profile.avatarUri} onChange={setAvatar} />
+      <AppText variant="title" style={styles.name}>{profile.name}</AppText>
+      <AppText tone="secondary">{goalLabels[profile.goal]} · {weight.toLocaleString('ru-RU')} кг</AppText>
+    </View>
+
+    <View style={styles.stats}>
+      <ProfileStatCard value={flow?.currentStreak ?? 0} label="дней в потоке" />
+      <ProfileStatCard value={overview.trackedDays} label="дней с записями" />
+      <ProfileStatCard value={overview.entryCount} label="приёмов добавлено" />
+    </View>
+
+    <GlassCard variant="accent" onPress={() => router.push('/analytics' as never)} accessibilityLabel="Открыть статистику">
+      <View style={styles.insight}><View style={styles.insightCopy}><AppText variant="heading">Твой прогресс</AppText><AppText tone="secondary">Калории, КБЖУ, регулярность и динамика по периодам.</AppText></View><AppText tone="green" style={styles.arrow}>›</AppText></View>
     </GlassCard>
-    <GlassCard variant="compact"><AppText variant="heading">КБЖУ</AppText><View style={styles.macro}><AppText tone="secondary">Белки {rounded.proteinG} г</AppText><AppText tone="secondary">Жиры {rounded.fatG} г</AppText><AppText tone="secondary">Углеводы {rounded.carbsG} г</AppText></View></GlassCard>
-    <GlassCard variant="compact"><AppText variant="heading">Приложение</AppText><MenuRow label="Источники данных" onPress={() => router.push('/data-sources' as never)}/><MenuRow label="Резервная копия" onPress={() => router.push('/data-management' as never)}/><MenuRow label="История и аналитика" onPress={() => router.push('/analytics' as never)}/>{__DEV__ ? <MenuRow label="Диагностика" onPress={() => router.push('/developer' as never)}/> : null}</GlassCard>
-    <View style={styles.actions}><PrimaryButton label="Изменить данные" onPress={() => router.push('/edit-profile')} /><PrimaryButton label="Пересчитать норму" secondary onPress={doRecalculate} /><PrimaryButton label="Сбросить приложение" secondary onPress={confirmReset} /></View>
+
+    <ProfileMenuSection title="Прогресс">
+      <ProfileMenuRow icon="◒" label="Статистика" onPress={() => router.push('/analytics' as never)} />
+      <ProfileMenuRow icon="↘" label="История веса" value={`${weight.toLocaleString('ru-RU')} кг`} onPress={() => router.push('/weight-progress' as never)} />
+    </ProfileMenuSection>
+
+    <ProfileMenuSection title="Личные данные">
+      <ProfileMenuRow icon="◉" label="Данные и цель" onPress={() => router.push('/edit-profile')} />
+      <ProfileMenuRow icon="◎" label="Дневная норма" value="КБЖУ" onPress={() => router.push('/edit-profile')} />
+    </ProfileMenuSection>
+
+    <ProfileMenuSection title="Приложение">
+      <ProfileMenuRow icon="◐" label="Оформление" value={themeLabel} onPress={() => router.push('/appearance' as never)} />
+      <ProfileMenuRow icon="▦" label="Источники данных" onPress={() => router.push('/data-sources' as never)} />
+      <ProfileMenuRow icon="⇅" label="Резервная копия" onPress={() => router.push('/data-management' as never)} />
+      {__DEV__ ? <ProfileMenuRow icon="⌘" label="Диагностика" onPress={() => router.push('/developer' as never)} /> : null}
+    </ProfileMenuSection>
+
+    <ProfileMenuSection title="Другое">
+      <ProfileMenuRow icon="!" label="Сбросить данные" danger onPress={confirmReset} />
+    </ProfileMenuSection>
+    <AppText variant="caption" tone="muted" style={styles.version}>Точка Роста · APP v0.3 · данные хранятся локально</AppText>
   </TabScreen>;
 }
-function Row({ label, value }: { label: string; value: string }) { return <View style={styles.row}><AppText variant="caption" tone="secondary">{label}</AppText><AppText style={styles.value}>{value}</AppText></View>; }
-function MenuRow({ label, onPress }: { label: string; onPress: () => void }) { return <Pressable onPress={onPress} style={styles.menuRow}><AppText>{label}</AppText><AppText tone="muted">›</AppText></Pressable>; }
-const styles = StyleSheet.create({ target: { alignItems: 'center', gap: 3 }, row: { paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.glassBorder, gap: 4 }, value: { fontWeight: '700' }, macro: { gap: spacing.xs, marginTop: spacing.sm }, actions: { gap: spacing.sm }, menuRow: { minHeight: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.glassBorder } });
+
+const styles = StyleSheet.create({
+  header: { alignItems: 'center', gap: spacing.xs, paddingTop: spacing.sm, paddingBottom: spacing.sm }, name: { marginTop: spacing.sm },
+  stats: { flexDirection: 'row', gap: spacing.sm }, insight: { flexDirection: 'row', alignItems: 'center', gap: spacing.md }, insightCopy: { flex: 1, gap: spacing.xs }, arrow: { fontSize: 34 },
+  version: { textAlign: 'center', paddingVertical: spacing.md },
+});

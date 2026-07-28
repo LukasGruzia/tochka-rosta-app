@@ -191,7 +191,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   setThemeMode: async (mode) => { set({ themeMode: mode }); await setSetting('theme_mode', mode); },
 
-  setAvatar: async (uri) => { await updateProfileAvatar(uri); const profile=get().profile; if(profile)set({profile:{...profile,avatarUri:uri},draft:{...get().draft,avatarUri:uri}}); },
+  setAvatar: async (uri) => { const previous=get().profile?.avatarUri;if(previous&&previous!==uri)await deleteStoredAvatar(previous);await updateProfileAvatar(uri); const profile=get().profile; if(profile)set({profile:{...profile,avatarUri:uri},draft:{...get().draft,avatarUri:uri}}); },
 
   refreshWater: async (date) => set({ water: await loadWaterSummary(date ?? get().diaryDate) }),
   addWater: async (amountMl,date) => { const selected=date??get().diaryDate; await addWaterRepository(amountMl,selected); if(selected===get().diaryDate)set({water:await loadWaterSummary(selected)}); },
