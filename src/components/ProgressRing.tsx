@@ -3,11 +3,12 @@ import Svg, { Circle } from 'react-native-svg';
 import Animated, { useAnimatedProps, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useEffect } from 'react';
 import { AppText } from './AppText';
-import { colors } from '@/theme/tokens';
+import { useTheme } from '@/theme/ThemeProvider';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 interface Props { progress: number; size?: number; value: string; label: string; }
 export function ProgressRing({ progress, size = 190, value, label }: Props) {
+  const { colors } = useTheme();
   const reducedMotion = useReducedMotion();
   const radius = (size - 18) / 2;
   const circumference = 2 * Math.PI * radius;

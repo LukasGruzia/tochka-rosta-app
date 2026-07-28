@@ -1,49 +1,87 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { AppIcon } from '@/components/AppIcon';
 import { AppText } from '@/components/AppText';
 import { GlassCard } from '@/components/GlassCard';
-import { PrimaryButton } from '@/components/PrimaryButton';
+import { MacroProgress } from '@/components/MacroProgress';
 import { ProgressRing } from '@/components/ProgressRing';
 import { TabScreen } from '@/components/TabScreen';
+import { WaterCard } from '@/components/WaterCard';
 import { mealLabels } from '@/constants/options';
 import { roundNutrition } from '@/services/nutritionCalculator';
+import { getSmartNextStep } from '@/services/smartNextStep';
 import { useAppStore } from '@/store/appStore';
-import { colors, radii, spacing } from '@/theme/tokens';
-import { getDayGreeting } from '@/utils/date';
+import { useTheme } from '@/theme/ThemeProvider';
+import { radii, spacing } from '@/theme/tokens';
+import { getDayGreeting, getLocalDateKey } from '@/utils/date';
 import type { MealType } from '@/types/domain';
 
+const meals: MealType[] = ['breakfast', 'lunch', 'snack', 'dinner'];
+
 export default function HomeScreen() {
-  const { profile, target, diary, flow, refreshDiary, refreshFlow } = useAppStore();
-  useFocusEffect(useCallback(() => { void refreshDiary(); }, [refreshDiary]));
-  useFocusEffect(useCallback(() => { void refreshFlow(); }, [refreshFlow]));
+  const { profile, target, diary, flow, products, setDiaryDate, refreshFlow } = useAppStore();
+  const { colors } = useTheme();
+  const [details, setDetails] = useState(false);
+  useFocusEffect(useCallback(() => { void Promise.all([setDiaryDate(getLocalDateKey()), refreshFlow()]); }, [refreshFlow, setDiaryDate]));
+  const recommendation = useMemo(() => products.find((product) => product.isFavorite) ?? products.find((product) => product.goalTags.includes(profile?.goal ?? 'balance')) ?? products[0], [products, profile?.goal]);
+
   if (!profile || !target) return <TabScreen title="Загружаем профиль…"><AppText tone="secondary">Данные появятся через мгновение.</AppText></TabScreen>;
   const rounded = roundNutrition(target);
   const consumed = Math.round(diary?.consumedCalories ?? 0);
-  const remaining = Math.max(0, rounded.calories - consumed);
+  const remaining = rounded.calories - consumed;
   const progress = rounded.calories ? consumed / rounded.calories : 0;
-  return <TabScreen title={`${getDayGreeting()}, ${profile.name}`} subtitle="Сегодня ты продолжаешь свой путь."
-    headerRight={<Pressable accessibilityRole="button" accessibilityLabel="Открыть профиль" onPress={() => router.push('/(tabs)/profile')} style={styles.avatar}><Image source={require('../../../assets/brand/logo-mark.png')} contentFit="contain" style={styles.avatarImage}/></Pressable>}>
-    <GlassCard variant="accent" style={styles.calorieCard}>
-      <ProgressRing progress={progress} size={170} value={String(consumed)} label="ккал съедено" />
-      <View style={styles.calorieCopy}><AppText variant="heading">{remaining.toLocaleString('ru-RU')} осталось</AppText><AppText variant="caption" tone="secondary">Дневная цель · {rounded.calories.toLocaleString('ru-RU')} ккал</AppText></View>
-      <View style={styles.macroRow}><Macro label="Белки" value={rounded.proteinG}/><Macro label="Жиры" value={rounded.fatG}/><Macro label="Углеводы" value={rounded.carbsG}/></View>
-    </GlassCard>
-    <View style={styles.sectionTitle}><AppText variant="heading">Твой план на день</AppText></View>
-    <GlassCard variant="default" style={styles.plan}>
-      {(Object.keys(mealLabels) as MealType[]).map((meal, index) => { const entries = diary?.entries.filter((entry) => entry.mealType === meal) ?? []; const mealCalories = entries.reduce((sum, entry) => sum + entry.calories, 0); return <Pressable key={meal} onPress={() => router.push({ pathname: '/(tabs)/catalog', params: { meal } })} style={[styles.meal, index > 0 && styles.divider]}><View><AppText style={styles.mealTitle}>{mealLabels[meal]}</AppText><AppText variant="caption" tone="muted">{entries.length ? `${entries.length} · ${Math.round(mealCalories)} ккал` : 'Ничего не добавлено'}</AppText></View><AppText tone="green">＋</AppText></Pressable>; })}
-      <PrimaryButton label="Добавить блюдо" secondary onPress={() => router.push('/(tabs)/catalog')} />
-    </GlassCard>
-    <GlassCard variant="compact" style={styles.flow} onPress={() => router.push('/(tabs)/flow')}><View style={styles.fire}><AppIcon name="flow" size={34} color={colors.greenBright}/></View><View style={styles.flowCopy}><AppText style={styles.mealTitle}>Поток · {flow?.currentStreak ?? 0} дней</AppText><AppText variant="caption" tone="secondary">{flow?.currentStreak ? `Лучшая серия — ${flow.longestStreak}` : 'Закрой первый день, чтобы начать серию'}</AppText></View></GlassCard>
-    <GlassCard variant="compact" onPress={() => router.push('/meal-plan' as never)}><AppText variant="heading">Рацион на день</AppText><AppText tone="secondary">Собрать локальную рекомендацию из доступных блюд.</AppText></GlassCard>
-  </TabScreen>;
+  const next = getSmartNextStep(diary, new Date().getHours());
+  const initials = profile.name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase();
+
+  return <>
+    <TabScreen title={`${getDayGreeting()}, ${profile.name}`} subtitle="Небольшие действия складываются в устойчивый результат."
+      headerRight={<Pressable accessibilityRole="button" accessibilityLabel="Открыть профиль" onPress={() => router.push('/(tabs)/profile')} style={[styles.avatar, { borderColor: colors.glassBorderStrong, backgroundColor: colors.surfaceStrong }]}>{profile.avatarUri ? <Image source={{ uri: profile.avatarUri }} contentFit="cover" style={StyleSheet.absoluteFill} /> : <AppText tone="green" style={styles.initials}>{initials}</AppText>}</Pressable>}>
+      <GlassCard variant="accent" style={styles.calorieCard} onPress={() => setDetails(true)} accessibilityLabel="Открыть подробности дневной нормы">
+        <ProgressRing progress={progress} size={168} value={String(consumed)} label="ккал съедено" />
+        <View style={styles.calorieCopy}><AppText variant="heading" tone={remaining < 0 ? 'warning' : 'primary'}>{remaining >= 0 ? `${remaining.toLocaleString('ru-RU')} осталось` : `${Math.abs(remaining).toLocaleString('ru-RU')} сверх цели`}</AppText><AppText variant="caption" tone="secondary">Дневная цель · {rounded.calories.toLocaleString('ru-RU')} ккал · нажми подробнее</AppText></View>
+        <View style={[styles.macroPanel, { backgroundColor: colors.blackScrim }]}><MacroProgress label="Б" value={diary?.consumedProteinG ?? 0} target={rounded.proteinG} /><MacroProgress label="Ж" value={diary?.consumedFatG ?? 0} target={rounded.fatG} color={colors.gold} /><MacroProgress label="У" value={diary?.consumedCarbsG ?? 0} target={rounded.carbsG} color={colors.carbs} /></View>
+      </GlassCard>
+
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickActions}>
+        <QuickAction icon="+" label="Добавить" onPress={() => router.push({ pathname: '/food-search' as never, params: { meal: next.meal } } as never)} />
+        <QuickAction icon="⌕" label="Поиск" onPress={() => router.push('/food-search' as never)} />
+        <QuickAction icon="◒" label="Вода" onPress={() => router.push('/water-tracker' as never)} />
+        <QuickAction icon="▦" label="Рацион" onPress={() => router.push('/meal-plan' as never)} />
+      </ScrollView>
+
+      <GlassCard variant="interactive" onPress={() => router.push({ pathname: '/food-search' as never, params: { meal: next.meal } } as never)} accessibilityLabel={next.title}>
+        <View style={styles.next}><View style={[styles.nextIcon, { backgroundColor: colors.greenGlow }]}><AppText tone="green">→</AppText></View><View style={styles.nextCopy}><AppText variant="heading">{next.title}</AppText><AppText tone="secondary">{next.description}</AppText></View><AppText tone="muted">›</AppText></View>
+      </GlassCard>
+
+      <View style={styles.sectionTitle}><AppText variant="heading">Сегодня</AppText><Pressable onPress={() => router.push('/(tabs)/diary')}><AppText variant="caption" tone="green">Открыть дневник</AppText></Pressable></View>
+      <GlassCard variant="default" style={styles.plan}>{meals.map((meal, index) => { const entries = diary?.entries.filter((entry) => entry.mealType === meal) ?? []; const calories = entries.reduce((sum, entry) => sum + entry.calories, 0); return <Pressable key={meal} onPress={() => router.push({ pathname: '/food-search' as never, params: { meal } } as never)} style={[styles.meal, index > 0 && { borderTopColor: colors.glassBorder, borderTopWidth: 1 }]}><View><AppText style={styles.bold}>{mealLabels[meal]}</AppText><AppText variant="caption" tone="muted">{entries.length ? `${entries.length} · ${Math.round(calories)} ккал` : 'Пока ничего не добавлено'}</AppText></View><AppText tone="green">+</AppText></Pressable>; })}</GlassCard>
+
+      <WaterCard onOpen={() => router.push('/water-tracker' as never)} />
+
+      <GlassCard variant="compact" onPress={() => router.push('/(tabs)/flow')}><View style={styles.flow}><View style={[styles.flowIcon, { backgroundColor: colors.greenGlow }]}><AppIcon name="flow" size={32} color={colors.greenBright} /></View><View style={styles.nextCopy}><AppText style={styles.bold}>Поток · {flow?.currentStreak ?? 0} дней</AppText><AppText variant="caption" tone="secondary">{flow?.currentStreak ? `Лучшая серия — ${flow.longestStreak}` : 'Закрой первый день, чтобы начать серию'}</AppText></View><AppText tone="muted">›</AppText></View></GlassCard>
+
+      {recommendation ? <GlassCard variant="compact" onPress={() => router.push(`/product/${recommendation.id}` as never)}><AppText variant="caption" tone="green">РЕКОМЕНДАЦИЯ ДНЯ</AppText><AppText variant="heading">{recommendation.name}</AppText><AppText tone="secondary">{Math.round(recommendation.caloriesPer100g)} ккал на 100 г · открыть карточку</AppText></GlassCard> : null}
+    </TabScreen>
+    <CalorieDetails visible={details} onClose={() => setDetails(false)} consumed={consumed} target={rounded.calories} bmr={target.bmr} tdee={target.tdee} />
+  </>;
 }
-function Macro({ label, value }: { label: string; value: number }) { return <View style={styles.macro}><AppText variant="caption" tone="secondary">{label}</AppText><AppText style={styles.macroValue}>{value} г</AppText></View>; }
+
+function QuickAction({ icon, label, onPress }: { icon: string; label: string; onPress: () => void }) {
+  const { colors } = useTheme();
+  return <Pressable accessibilityRole="button" onPress={onPress} style={({ pressed }) => [styles.quick, { backgroundColor: colors.surface, borderColor: colors.glassBorder }, pressed && styles.pressed]}><View style={[styles.quickIcon, { backgroundColor: colors.greenGlow }]}><AppText tone="green" variant="heading">{icon}</AppText></View><AppText variant="caption" style={styles.bold}>{label}</AppText></Pressable>;
+}
+
+function CalorieDetails({ visible, onClose, consumed, target, bmr, tdee }: { visible: boolean; onClose: () => void; consumed: number; target: number; bmr: number; tdee: number }) {
+  const { colors } = useTheme();
+  return <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}><Pressable style={[styles.scrim, { backgroundColor: colors.blackScrim }]} onPress={onClose} /><View style={[styles.sheet, { backgroundColor: colors.backgroundSecondary, borderColor: colors.glassBorder }]}><View style={styles.sheetHead}><AppText variant="heading">Дневная энергия</AppText><Pressable onPress={onClose}><AppText>×</AppText></Pressable></View><View style={styles.detailRow}><AppText tone="secondary">Съедено</AppText><AppText style={styles.bold}>{consumed} ккал</AppText></View><View style={styles.detailRow}><AppText tone="secondary">Цель</AppText><AppText style={styles.bold}>{target} ккал</AppText></View><View style={styles.detailRow}><AppText tone="secondary">Базовый обмен</AppText><AppText>{Math.round(bmr)} ккал</AppText></View><View style={styles.detailRow}><AppText tone="secondary">Расход с активностью</AppText><AppText>{Math.round(tdee)} ккал</AppText></View><AppText variant="caption" tone="muted">Цель рассчитана по данным профиля и выбранной цели. Это ориентир, а не медицинская рекомендация.</AppText></View></Modal>;
+}
+
 const styles = StyleSheet.create({
-  avatar: { width: 48, height: 48, borderRadius: 24, borderWidth: 1, borderColor: colors.glassBorderStrong, backgroundColor: colors.surfaceStrong, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }, avatarImage: { width: 58, height: 42 },
-  calorieCard: { alignItems: 'center', gap: spacing.md }, calorieCopy: { alignItems: 'center', gap: 3 }, macroRow: { width: '100%', flexDirection: 'row', backgroundColor: colors.blackScrim, borderRadius: radii.md, paddingVertical: spacing.sm }, macro: { flex: 1, alignItems: 'center', gap: 2 }, macroValue: { fontWeight: '700' },
-  sectionTitle: { marginTop: spacing.sm }, plan: { gap: 0 }, meal: { minHeight: 62, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, divider: { borderTopWidth: 1, borderTopColor: colors.glassBorder }, mealTitle: { fontWeight: '700' },
-  flow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md }, fire: { width: 54, height: 54, borderRadius: 27, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.greenGlow }, flowCopy: { flex: 1, gap: 4 },
+  avatar: { width: 48, height: 48, borderRadius: 24, borderWidth: 1, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }, initials: { fontWeight: '800' }, calorieCard: { alignItems: 'center', gap: spacing.md }, calorieCopy: { alignItems: 'center', gap: 3 },
+  macroPanel: { width: '100%', flexDirection: 'row', gap: spacing.md, borderRadius: radii.md, padding: spacing.md }, quickActions: { gap: spacing.sm }, quick: { width: 82, minHeight: 86, borderRadius: radii.lg, borderWidth: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.xs }, quickIcon: { width: 38, height: 38, borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center' }, pressed: { opacity: 0.65, transform: [{ scale: 0.98 }] }, bold: { fontWeight: '700' },
+  next: { flexDirection: 'row', alignItems: 'center', gap: spacing.md }, nextIcon: { width: 44, height: 44, borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center' }, nextCopy: { flex: 1, gap: 3 }, sectionTitle: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.sm }, plan: { gap: 0 }, meal: { minHeight: 62, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  flow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md }, flowIcon: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center' },
+  scrim: { ...StyleSheet.absoluteFillObject }, sheet: { position: 'absolute', left: 0, right: 0, bottom: 0, gap: spacing.md, padding: spacing.lg, paddingBottom: spacing.xl, borderTopLeftRadius: radii.xl, borderTopRightRadius: radii.xl, borderWidth: 1 }, sheetHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, detailRow: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md },
 });
