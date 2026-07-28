@@ -10,6 +10,8 @@ import { getSetting, resetApplicationData, setSetting } from '@/database/reposit
 import { generateMealPlan } from '@/services/mealPlanner';
 import { calculateNutrition } from '@/services/nutritionCalculator';
 import { deleteStoredAvatar } from '@/services/avatarStorage';
+import { loadBudgetSettings } from '@/database/repositories/budgetRepository';
+import type { DailyPlanOptions } from '@/services/mealPlanner';
 import type { DiaryEntryInput, DiarySummary, FlowState, MealPlan, MealType, NutritionResult, Product, ProfileDraft, SavedProfile, ThemeMode, WaterSummary } from '@/types/domain';
 import { getLocalDateKey } from '@/utils/date';
 
@@ -50,7 +52,7 @@ interface AppState {
   toggleFavorite: (productId: number) => Promise<void>;
   closeDay: () => Promise<void>;
   refreshFlow: () => Promise<void>;
-  generatePlan: (date?: string, replacements?: Partial<Record<MealType, number>>) => Promise<void>;
+  generatePlan: (date?: string, replacements?: Partial<Record<MealType, number>>, options?: DailyPlanOptions) => Promise<void>;
   loadPlan: (date?: string) => Promise<void>;
   resetPlan: (date?: string) => Promise<void>;
   setThemeMode: (mode: ThemeMode) => Promise<void>;
@@ -173,11 +175,12 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   refreshFlow: async () => set({ flow: await loadFlowState() }),
 
-  generatePlan: async (date, replacements) => {
+  generatePlan: async (date, replacements, options) => {
     const selectedDate = date ?? get().diaryDate;
     const { products, target, profile } = get();
     if (!target || !profile) throw new Error('Сначала заполни профиль');
-    const plan = generateMealPlan(selectedDate, products.filter((product) => product.sourceType === 'tochka_rosta' || product.isUserCreated), target, profile, replacements);
+    const budget=options?.budget??await loadBudgetSettings();
+    const plan = generateMealPlan(selectedDate, products, target, profile, replacements,{...options,budget});
     await saveMealPlan(plan);
     set({ mealPlan: plan });
   },
