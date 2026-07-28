@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, FlatList, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Alert, FlatList, InteractionManager, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AddToDiarySheet } from '@/components/AddToDiarySheet';
@@ -17,7 +17,7 @@ import { getTabContentPadding } from '@/services/tabBarMetrics';
 import { getNextMealType } from '@/services/diaryMath';
 import { useAppStore } from '@/store/appStore';
 import { useTheme } from '@/theme/ThemeProvider';
-import { radii, spacing } from '@/theme/tokens';
+import { motion, radii, spacing } from '@/theme/tokens';
 import type { FoodSourceType, MealType, Product } from '@/types/domain';
 import { createSectionErrorBoundary } from '@/components/ScreenErrorFallback';
 
@@ -52,13 +52,37 @@ export default function CatalogScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [selected, setSelected] = useState<Product | null>(null);
   const [quick, setQuick] = useState(false);
+  const [catalogReady, setCatalogReady] = useState(false);
   const requestId = useRef(0);
   const generation = useRef(0);
   const meal = meals.includes(params.meal as MealType) ? params.meal as MealType : getNextMealType();
 
   useEffect(() => { const timer = setTimeout(() => setDebouncedQuery(query), 320); return () => clearTimeout(timer); }, [query]);
-  useEffect(() => { let active = true; void loadProductCategories().then((items) => { if (active) setCategories(items); }); return () => { active = false; }; }, []);
   useEffect(() => {
+    let delayFinished = false;
+    let interactionsFinished = false;
+    let active = true;
+    const reveal = () => {
+      if (active && delayFinished && interactionsFinished) setCatalogReady(true);
+    };
+    const timer = setTimeout(() => {
+      delayFinished = true;
+      reveal();
+    }, motion.tabDataDelay);
+    const task = InteractionManager.runAfterInteractions(() => {
+      interactionsFinished = true;
+      reveal();
+    });
+    return () => { active = false; task.cancel(); clearTimeout(timer); };
+  }, []);
+  useEffect(() => {
+    if (!catalogReady) return;
+    let active = true;
+    void loadProductCategories().then((items) => { if (active) setCategories(items); });
+    return () => { active = false; };
+  }, [catalogReady]);
+  useEffect(() => {
+    if (!catalogReady) return;
     let active = true;
     const id = ++requestId.current;
     generation.current += 1;
@@ -72,7 +96,7 @@ export default function CatalogScreen() {
       .catch(() => { if (active && id === requestId.current) { setProducts([]); setTotal(0); } })
       .finally(() => { if (active && id === requestId.current) setLoading(false); });
     return () => { active = false; };
-  }, [category, debouncedQuery, filter]);
+  }, [catalogReady, category, debouncedQuery, filter]);
 
   const loadMore = useCallback(async () => {
     if (loading || loadingMore || products.length >= total) return;
@@ -107,7 +131,7 @@ export default function CatalogScreen() {
         ListHeaderComponent={<View style={styles.header}><View style={[styles.search, { borderColor: colors.glassBorder, backgroundColor: colors.surfaceStrong }]}><AppText tone="muted">⌕</AppText><TextInput value={query} onChangeText={setQuery} placeholder="Найти продукт или блюдо" placeholderTextColor={colors.textMuted} style={[styles.searchInput, { color: colors.textPrimary }]} returnKeyType="search" /><Pressable accessibilityLabel="Открыть полный поиск" onPress={() => router.push('/food-search' as never)}><AppText tone="green">›</AppText></Pressable></View><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontal}>{filters.map((item) => <FilterChip key={item.value} label={item.label} selected={filter === item.value} onPress={() => setFilter(item.value)} />)}</ScrollView><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontal}>{['Все', ...categories].map((item) => <FilterChip key={item} label={item} selected={category === item} onPress={() => setCategory(item)} />)}</ScrollView><View style={styles.actions}><Pressable style={[styles.action, { borderColor: colors.glassBorder }]} onPress={() => router.push('/product/new')}><AppText tone="green">+</AppText><AppText variant="caption">Создать продукт</AppText></Pressable><Pressable style={[styles.action, { borderColor: colors.glassBorder }]} onPress={() => router.push('/recipe/new')}><AppText tone="green">+</AppText><AppText variant="caption">Собрать рецепт</AppText></Pressable></View><QuickAddButton onPress={() => setQuick(true)} /><View style={styles.count}><AppText variant="heading">{category === 'Все' ? 'Продукты' : category}</AppText><AppText variant="caption" tone="muted">{products.length} из {total}</AppText></View></View>}
         ItemSeparatorComponent={Separator}
         ListFooterComponent={loadingMore ? <AppText tone="muted" style={styles.loading}>Загружаем ещё…</AppText> : null}
-        ListEmptyComponent={!loading ? <View style={styles.empty}><AppText variant="heading">Ничего не найдено</AppText><AppText tone="secondary">Сбрось фильтр или создай собственный продукт.</AppText></View> : null}
+        ListEmptyComponent={loading ? <CatalogSkeleton color={colors.surfaceStrong} /> : <View style={styles.empty}><AppText variant="heading">Ничего не найдено</AppText><AppText tone="secondary">Сбрось фильтр или создай собственный продукт.</AppText></View>}
       />
     </SafeAreaView></AppBackground>
     {selected ? <AddToDiarySheet product={selected} visible initialMeal={meal} date={diaryDate} onClose={() => setSelected(null)} onAdd={async (mealType, servings, quantityG) => { await addToDiary({ product: selected, mealType, servings, quantityG }); Alert.alert('Добавлено', selected.name); }} /> : null}
@@ -116,7 +140,10 @@ export default function CatalogScreen() {
 }
 
 function Separator() { return <View style={styles.separator} />; }
+function CatalogSkeleton({ color }: { color: string }) {
+  return <View accessibilityLabel="Загружаем каталог" style={styles.skeleton}>{[0, 1, 2, 3].map((item) => <View key={item} style={[styles.skeletonRow, { backgroundColor: color }]} />)}</View>;
+}
 const styles = StyleSheet.create({
   safe: { flex: 1 }, title: { minHeight: 76, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.lg, paddingVertical: spacing.sm }, iconButton: { width: 46, height: 46, alignItems: 'center', justifyContent: 'center', borderRadius: radii.md, borderWidth: 1 },
-  content: { paddingHorizontal: spacing.md }, header: { gap: spacing.md, paddingBottom: spacing.md }, search: { minHeight: 52, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.md, borderRadius: radii.md, borderWidth: 1 }, searchInput: { flex: 1, fontSize: 16 }, horizontal: { gap: spacing.sm }, actions: { flexDirection: 'row', gap: spacing.sm }, action: { flex: 1, minHeight: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.xs, borderRadius: radii.md, borderWidth: 1 }, count: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, separator: { height: spacing.sm }, empty: { alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.xxl }, loading: { textAlign: 'center', paddingVertical: spacing.md },
+  content: { paddingHorizontal: spacing.md }, header: { gap: spacing.md, paddingBottom: spacing.md }, search: { minHeight: 52, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.md, borderRadius: radii.md, borderWidth: 1 }, searchInput: { flex: 1, fontSize: 16 }, horizontal: { gap: spacing.sm }, actions: { flexDirection: 'row', gap: spacing.sm }, action: { flex: 1, minHeight: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.xs, borderRadius: radii.md, borderWidth: 1 }, count: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, separator: { height: spacing.sm }, empty: { alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.xxl }, loading: { textAlign: 'center', paddingVertical: spacing.md }, skeleton: { gap: spacing.sm }, skeletonRow: { height: 74, borderRadius: radii.md, opacity: 0.72 },
 });
