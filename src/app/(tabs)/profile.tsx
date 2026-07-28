@@ -53,12 +53,15 @@ export default function ProfileScreen() {
 
     <ProfileMenuSection title="Прогресс">
       <ProfileMenuRow icon="◒" label="Статистика" onPress={() => router.push('/analytics' as never)} />
+      <ProfileMenuRow icon="⌁" label="Что замечено" onPress={() => router.push('/personal-insights' as never)} />
       <ProfileMenuRow icon="↘" label="История веса" value={`${weight.toLocaleString('ru-RU')} кг`} onPress={() => router.push('/weight-progress' as never)} />
     </ProfileMenuSection>
 
     <ProfileMenuSection title="Личные данные">
       <ProfileMenuRow icon="◉" label="Данные и цель" onPress={() => router.push('/edit-profile')} />
       <ProfileMenuRow icon="◎" label="Дневная норма" value="КБЖУ" onPress={() => router.push('/edit-profile')} />
+      <ProfileMenuRow icon="₽" label="Бюджет питания" onPress={() => router.push('/nutrition-budget' as never)} />
+      <ProfileMenuRow icon="▤" label="Моя неделя" onPress={() => router.push('/my-week' as never)} />
     </ProfileMenuSection>
 
     <ProfileMenuSection title="Приложение">

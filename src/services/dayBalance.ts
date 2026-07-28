@@ -7,5 +7,7 @@ export function calculateDayBalance(diary:DiarySummary|null,water:WaterSummary|n
   {key:'carbs',label:'Углеводы',status:status(diary.consumedCarbsG,diary.targetCarbsG),detail:`${Math.round(diary.consumedCarbsG)} из ${Math.round(diary.targetCarbsG)} г`},
   {key:'meals',label:'Регулярность',status:meals.size>=3?'enough':'supplement',detail:`Заполнено приёмов пищи: ${meals.size}`},
   {key:'variety',label:'Разнообразие',status:categories.size>=5?'enough':'supplement',detail:`Разных позиций: ${categories.size}`},
+  {key:'fiber',label:'Клетчатка',status:'noData',detail:'Показывается, когда состав продуктов содержит эти данные'},
+  {key:'produce',label:'Овощи и фрукты',status:diary.entries.some((entry)=>/овощ|фрукт|яблок|банан|томат|огур|капуст/i.test(entry.productName))?'enough':'supplement',detail:'Можно дополнить день овощами, фруктами или ягодами'},
   {key:'water',label:'Вода',status:water?status(water.totalMl,water.goalMl):'noData',detail:water?`${water.totalMl} из ${water.goalMl} мл`:'Нет данных'},
 ];}
