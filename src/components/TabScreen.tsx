@@ -1,4 +1,36 @@
-import type{PropsWithChildren,ReactNode}from'react';import{StyleSheet,View}from'react-native';import{SafeAreaView,useSafeAreaInsets}from'react-native-safe-area-context';import Animated,{Extrapolation,interpolate,useAnimatedScrollHandler,useAnimatedStyle,useSharedValue}from'react-native-reanimated';import{AppBackground}from'./AppBackground';import{AppText}from'./AppText';import{spacing}from'@/theme/tokens';import{getTabContentPadding}from'@/services/tabBarMetrics';import{useTheme}from'@/theme/ThemeProvider';
-interface Props extends PropsWithChildren{title?:string;subtitle?:string;headerRight?:ReactNode;collapsible?:boolean;}
-export function TabScreen({title,subtitle,headerRight,children,collapsible=true}:Props){const insets=useSafeAreaInsets();const{colors}=useTheme();const scroll=useSharedValue(0);const onScroll=useAnimatedScrollHandler((event)=>{scroll.value=event.contentOffset.y;});const headerStyle=useAnimatedStyle(()=>({minHeight:interpolate(scroll.value,[0,72],[78,54],Extrapolation.CLAMP),paddingTop:interpolate(scroll.value,[0,72],[12,6],Extrapolation.CLAMP),paddingBottom:interpolate(scroll.value,[0,72],[12,6],Extrapolation.CLAMP)}));const titleStyle=useAnimatedStyle(()=>({transform:[{scale:interpolate(scroll.value,[0,72],[1,.84],Extrapolation.CLAMP)},{translateX:interpolate(scroll.value,[0,72],[0,-18],Extrapolation.CLAMP)}]}));const subtitleStyle=useAnimatedStyle(()=>({opacity:interpolate(scroll.value,[0,38],[1,0],Extrapolation.CLAMP),height:interpolate(scroll.value,[0,38],[22,0],Extrapolation.CLAMP)}));return <AppBackground><SafeAreaView style={styles.safe} edges={['top']}><Animated.ScrollView showsVerticalScrollIndicator={false} onScroll={onScroll} scrollEventThrottle={16} stickyHeaderIndices={title&&collapsible?[0]:undefined} contentContainerStyle={[styles.scroll,{paddingBottom:getTabContentPadding(insets.bottom)}]}>{title?<Animated.View style={[styles.header,{backgroundColor:colors.backgroundPrimary},collapsible&&headerStyle]}><View style={styles.copy}><Animated.View style={[styles.titleAnchor,collapsible&&titleStyle]}><AppText variant="title">{title}</AppText></Animated.View>{subtitle?<Animated.View style={collapsible&&subtitleStyle}><AppText tone="secondary">{subtitle}</AppText></Animated.View>:null}</View>{headerRight}</Animated.View>:null}{children}</Animated.ScrollView></SafeAreaView></AppBackground>;}
-const styles=StyleSheet.create({safe:{flex:1},scroll:{flexGrow:1,paddingHorizontal:spacing.lg,paddingTop:spacing.xs,gap:spacing.md},header:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:spacing.md,marginHorizontal:-spacing.xs,paddingHorizontal:spacing.xs,zIndex:10},copy:{flex:1,gap:4},titleAnchor:{alignSelf:'flex-start'}});
+import type { PropsWithChildren, ReactNode } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getTabContentPadding } from '@/services/tabBarMetrics';
+import { spacing } from '@/theme/tokens';
+import { useTheme } from '@/theme/ThemeProvider';
+import { AppBackground } from './AppBackground';
+import { AppText } from './AppText';
+
+interface Props extends PropsWithChildren {
+  title?: string;
+  subtitle?: string;
+  headerRight?: ReactNode;
+  collapsible?: boolean;
+}
+
+export function TabScreen({ title, subtitle, headerRight, children }: Props) {
+  const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
+  return <AppBackground><SafeAreaView style={styles.safe} edges={['top']}>
+    {title ? <View style={[styles.header, { backgroundColor: colors.backgroundPrimary, borderBottomColor: colors.glassBorder }]}>
+      <View style={styles.copy}><AppText variant="title">{title}</AppText>{subtitle ? <AppText tone="secondary">{subtitle}</AppText> : null}</View>
+      {headerRight}
+    </View> : null}
+    <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.scroll, { paddingBottom: getTabContentPadding(insets.bottom) }]}>
+      {children}
+    </ScrollView>
+  </SafeAreaView></AppBackground>;
+}
+
+const styles = StyleSheet.create({
+  safe: { flex: 1 },
+  header: { minHeight: 72, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth },
+  copy: { flex: 1, gap: 4 },
+  scroll: { flexGrow: 1, paddingHorizontal: spacing.lg, paddingTop: spacing.md, gap: spacing.md },
+});

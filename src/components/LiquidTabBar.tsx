@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { router } from 'expo-router';
 import { BlurView } from 'expo-blur';
@@ -11,8 +11,120 @@ import { getTabBarMetrics } from '@/services/tabBarMetrics';
 import { clampTabIndex } from '@/services/tabNavigation';
 import { useTheme } from '@/theme/ThemeProvider';
 import { motion, radii } from '@/theme/tokens';
-import { AppIcon, type IconName } from './AppIcon';import{AppText}from'./AppText';import{LiquidTabIndicator}from'./LiquidTabIndicator';
-const meta:Record<string,{title:string;icon:IconName;action:string}>={index:{title:'Главная',icon:'home',action:'Добавить еду'},diary:{title:'Дневник',icon:'diary',action:'Открыть календарь'},catalog:{title:'Каталог',icon:'catalog',action:'Начать поиск'},flow:{title:'Поток',icon:'flow',action:'Сегодняшний прогресс'},profile:{title:'Профиль',icon:'profile',action:'Сменить тему'}};
-function TabItem({index,position,focused,label,icon,onPress,onLongPress}:{index:number;position:SharedValue<number>;focused:boolean;label:string;icon:IconName;onPress:()=>void;onLongPress:()=>void}){const{colors}=useTheme();const animated=useAnimatedStyle(()=>{const closeness=Math.max(0,1-Math.abs(position.value-index));return{opacity:.62+closeness*.38,transform:[{translateY:-closeness*2},{scale:.98+closeness*.04}]};});return <Pressable accessibilityRole="tab" accessibilityLabel={label} accessibilityState={{selected:focused}} onPress={onPress} onLongPress={onLongPress} delayLongPress={420} style={styles.item}><Animated.View style={[styles.itemInner,animated]}><AppIcon name={icon} size={22} color={focused?colors.greenBright:colors.textSecondary}/><AppText numberOfLines={1} style={[styles.label,{color:focused?colors.textPrimary:colors.textMuted}]}>{label}</AppText></Animated.View></Pressable>;}
-export function LiquidTabBar({state,navigation}:BottomTabBarProps){const{colors,isDark}=useTheme();const insets=useSafeAreaInsets();const metrics=getTabBarMetrics(insets.bottom);const[width,setWidth]=useState(0);const position=useSharedValue(state.index);const dragging=useSharedValue(0);const start=useSharedValue(state.index);const lastHaptic=useRef(state.index);const reduced=useReducedMotion();const[quick,setQuick]=useState<string|null>(null);useEffect(()=>{position.value=reduced?state.index:withSpring(state.index,motion.spring.liquid);lastHaptic.current=state.index;},[position,reduced,state.index]);const haptic=(index:number)=>{if(lastHaptic.current===index)return;lastHaptic.current=index;void Haptics.selectionAsync();};const navigate=(index:number)=>{const route=state.routes[index];if(!route)return;const focused=state.index===index;const event=navigation.emit({type:'tabPress',target:route.key,canPreventDefault:true});if(!focused&&!event.defaultPrevented)navigation.navigate(route.name,route.params);};const pan=Gesture.Pan().minDistance(8).activeOffsetX([-8,8]).failOffsetY([-12,12]).onBegin((event)=>{start.value=state.index;dragging.value=1;if(width>0)position.value=clampTabIndex(event.x/(width/state.routes.length)-.5,state.routes.length);}).onUpdate((event)=>{if(width<=0)return;const raw=Math.max(0,Math.min(state.routes.length-1,event.x/(width/state.routes.length)-.5));position.value=raw;const nearest=Math.round(raw);runOnJS(haptic)(nearest);}).onEnd(()=>{const nearest=clampTabIndex(Math.round(position.value),state.routes.length);position.value=reduced?nearest:withSpring(nearest,motion.spring.liquid);runOnJS(navigate)(nearest);}).onFinalize((_event,success)=>{dragging.value=0;if(!success)position.value=reduced?state.index:withSpring(state.index,motion.spring.soft);});const chooseQuick=()=>{const route=quick;setQuick(null);if(route==='index')router.push('/food-search' as never);else if(route==='diary')router.push({pathname:'/(tabs)/diary',params:{calendar:'1'}} as never);else if(route==='catalog')router.push('/food-search' as never);else if(route==='flow')router.push('/(tabs)/flow' as never);else if(route==='profile')router.push('/appearance' as never);};return <><View pointerEvents="box-none" style={[styles.host,{height:metrics.height}]}><GestureDetector gesture={pan}><View onLayout={(event)=>setWidth(event.nativeEvent.layout.width)} style={[styles.bar,{height:metrics.height,paddingBottom:metrics.paddingBottom,borderColor:colors.glassBorderStrong,backgroundColor:colors.surfaceStrong}]}>{Platform.OS==='ios'?<BlurView intensity={34} tint={isDark?'dark':'light'} style={StyleSheet.absoluteFill}/>:null}{width>0?<LiquidTabIndicator position={position} barWidth={width} count={state.routes.length}/>:null}<View style={styles.row}>{state.routes.map((route,index)=>{const item=meta[route.name]??{title:route.name,icon:'home' as IconName,action:''};return <TabItem key={route.key} index={index} position={position} focused={state.index===index} label={item.title} icon={item.icon} onPress={()=>{void Haptics.selectionAsync();position.value=reduced?index:withTiming(index,{duration:motion.tabMorph});navigate(index);}} onLongPress={()=>{navigation.emit({type:'tabLongPress',target:route.key});void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);setQuick(route.name);}}/>;})}</View></View></GestureDetector></View><Modal visible={quick!==null} transparent animationType={reduced?'none':'fade'} onRequestClose={()=>setQuick(null)}><Pressable style={[styles.scrim,{backgroundColor:colors.blackScrim}]} onPress={()=>setQuick(null)}/><View style={[styles.quickSheet,{backgroundColor:colors.surfaceSolid,borderColor:colors.glassBorderStrong}]}><AppText variant="caption" tone="green">БЫСТРОЕ ДЕЙСТВИЕ</AppText><AppText variant="heading">{quick?meta[quick]?.action:''}</AppText><Pressable accessibilityRole="button" onPress={chooseQuick} style={[styles.quickButton,{backgroundColor:colors.greenGlow}]}><AppText tone="green">Открыть</AppText></Pressable></View></Modal></>}
-const styles=StyleSheet.create({host:{position:'absolute',left:10,right:10,bottom:0},bar:{overflow:'hidden',borderRadius:radii.xl,borderWidth:1,paddingTop:6},row:{flex:1,flexDirection:'row'},item:{flex:1,minWidth:0},itemInner:{flex:1,minHeight:52,alignItems:'center',justifyContent:'center',gap:2},label:{fontSize:10,fontWeight:'600',maxWidth:'100%'},scrim:{...StyleSheet.absoluteFillObject},quickSheet:{position:'absolute',left:18,right:18,bottom:24,borderRadius:radii.xl,borderWidth:1,padding:20,gap:12},quickButton:{minHeight:48,borderRadius:radii.md,alignItems:'center',justifyContent:'center'}});
+import { AppIcon, type IconName } from './AppIcon';
+import { AppText } from './AppText';
+import { LiquidTabIndicator } from './LiquidTabIndicator';
+
+const meta: Record<string, { title: string; icon: IconName; action: string }> = {
+  index: { title: 'Главная', icon: 'home', action: 'Добавить еду' },
+  diary: { title: 'Дневник', icon: 'diary', action: 'Открыть календарь' },
+  catalog: { title: 'Каталог', icon: 'catalog', action: 'Начать поиск' },
+  flow: { title: 'Поток', icon: 'flow', action: 'Сегодняшний прогресс' },
+  profile: { title: 'Профиль', icon: 'profile', action: 'Сменить тему' },
+};
+
+function triggerSelectionHaptic() {
+  void Haptics.selectionAsync();
+}
+
+function TabItem({ index, position, focused, label, icon, onPress, onLongPress }: { index: number; position: SharedValue<number>; focused: boolean; label: string; icon: IconName; onPress: () => void; onLongPress: () => void }) {
+  const { colors } = useTheme();
+  const animated = useAnimatedStyle(() => {
+    const closeness = Math.max(0, 1 - Math.abs(position.value - index));
+    return { opacity: 0.62 + closeness * 0.38, transform: [{ translateY: -closeness * 2 }, { scale: 0.98 + closeness * 0.04 }] };
+  });
+  return <Pressable accessibilityRole="tab" accessibilityLabel={label} accessibilityState={{ selected: focused }} onPress={onPress} onLongPress={onLongPress} delayLongPress={420} style={styles.item}>
+    <Animated.View style={[styles.itemInner, animated]}><AppIcon name={icon} size={22} color={focused ? colors.greenBright : colors.textSecondary} /><AppText numberOfLines={1} style={[styles.label, { color: focused ? colors.textPrimary : colors.textMuted }]}>{label}</AppText></Animated.View>
+  </Pressable>;
+}
+
+export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
+  const { colors, isDark } = useTheme();
+  const insets = useSafeAreaInsets();
+  const metrics = getTabBarMetrics(insets.bottom);
+  const [width, setWidth] = useState(0);
+  const activeIndex = state.index;
+  const position = useSharedValue(activeIndex);
+  const lastHapticIndex = useSharedValue(activeIndex);
+  const reduced = useReducedMotion();
+  const [quick, setQuick] = useState<string | null>(null);
+  const tabCount = state.routes.length;
+
+  useEffect(() => {
+    position.value = reduced ? activeIndex : withSpring(activeIndex, motion.spring.liquid);
+    lastHapticIndex.value = activeIndex;
+  }, [activeIndex, lastHapticIndex, position, reduced]);
+
+  const navigate = (index: number) => {
+    const route = state.routes[index];
+    if (!route) return;
+    const focused = activeIndex === index;
+    const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+    if (!focused && !event.defaultPrevented) navigation.navigate(route.name, route.params);
+  };
+
+  const pan = Gesture.Pan()
+    .minDistance(8)
+    .activeOffsetX([-8, 8])
+    .failOffsetY([-12, 12])
+    .onBegin((event) => {
+      if (width > 0) position.value = clampTabIndex(event.x / (width / tabCount) - 0.5, tabCount);
+    })
+    .onUpdate((event) => {
+      if (width <= 0) return;
+      const raw = Math.max(0, Math.min(tabCount - 1, event.x / (width / tabCount) - 0.5));
+      position.value = raw;
+      const nearest = Math.round(raw);
+      if (nearest !== lastHapticIndex.value) {
+        lastHapticIndex.value = nearest;
+        runOnJS(triggerSelectionHaptic)();
+      }
+    })
+    .onEnd(() => {
+      const nearest = clampTabIndex(Math.round(position.value), tabCount);
+      position.value = reduced ? nearest : withSpring(nearest, motion.spring.liquid);
+      runOnJS(navigate)(nearest);
+    })
+    .onFinalize((_event, success) => {
+      if (!success) position.value = reduced ? activeIndex : withSpring(activeIndex, motion.spring.soft);
+    });
+
+  const chooseQuick = () => {
+    const route = quick;
+    setQuick(null);
+    if (route === 'index') router.push('/food-search' as never);
+    else if (route === 'diary') router.push({ pathname: '/(tabs)/diary', params: { calendar: '1' } } as never);
+    else if (route === 'catalog') router.push('/food-search' as never);
+    else if (route === 'flow') router.push('/(tabs)/flow' as never);
+    else if (route === 'profile') router.push('/appearance' as never);
+  };
+
+  return <>
+    <View pointerEvents="box-none" style={[styles.host, { height: metrics.height }]}>
+      <GestureDetector gesture={pan}><View onLayout={(event) => setWidth(event.nativeEvent.layout.width)} style={[styles.bar, { height: metrics.height, paddingBottom: metrics.paddingBottom, borderColor: colors.glassBorderStrong, backgroundColor: colors.surfaceStrong }]}>
+        {Platform.OS === 'ios' ? <BlurView intensity={34} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} /> : null}
+        {width > 0 ? <LiquidTabIndicator position={position} barWidth={width} count={tabCount} /> : null}
+        <View style={styles.row}>{state.routes.map((route, index) => {
+          const item = meta[route.name] ?? { title: route.name, icon: 'home' as IconName, action: '' };
+          return <TabItem key={route.key} index={index} position={position} focused={activeIndex === index} label={item.title} icon={item.icon} onPress={() => { triggerSelectionHaptic(); position.value = reduced ? index : withTiming(index, { duration: motion.tabMorph }); navigate(index); }} onLongPress={() => { navigation.emit({ type: 'tabLongPress', target: route.key }); void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setQuick(route.name); }} />;
+        })}</View>
+      </View></GestureDetector>
+    </View>
+    <Modal visible={quick !== null} transparent animationType={reduced ? 'none' : 'fade'} onRequestClose={() => setQuick(null)}>
+      <Pressable style={[styles.scrim, { backgroundColor: colors.blackScrim }]} onPress={() => setQuick(null)} />
+      <View style={[styles.quickSheet, { backgroundColor: colors.surfaceSolid, borderColor: colors.glassBorderStrong }]}><AppText variant="caption" tone="green">БЫСТРОЕ ДЕЙСТВИЕ</AppText><AppText variant="heading">{quick ? meta[quick]?.action : ''}</AppText><Pressable accessibilityRole="button" onPress={chooseQuick} style={[styles.quickButton, { backgroundColor: colors.greenGlow }]}><AppText tone="green">Открыть</AppText></Pressable></View>
+    </Modal>
+  </>;
+}
+
+const styles = StyleSheet.create({
+  host: { position: 'absolute', left: 10, right: 10, bottom: 0 },
+  bar: { overflow: 'hidden', borderRadius: radii.xl, borderWidth: 1, paddingTop: 6 },
+  row: { flex: 1, flexDirection: 'row' },
+  item: { flex: 1, minWidth: 0 },
+  itemInner: { flex: 1, minHeight: 52, alignItems: 'center', justifyContent: 'center', gap: 2 },
+  label: { fontSize: 10, fontWeight: '600', maxWidth: '100%' },
+  scrim: { ...StyleSheet.absoluteFillObject },
+  quickSheet: { position: 'absolute', left: 18, right: 18, bottom: 24, borderRadius: radii.xl, borderWidth: 1, padding: 20, gap: 12 },
+  quickButton: { minHeight: 48, borderRadius: radii.md, alignItems: 'center', justifyContent: 'center' },
+});
