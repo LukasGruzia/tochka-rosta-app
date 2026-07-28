@@ -11,6 +11,7 @@ export function parseLocalDate(dateKey: string) {
 export function shiftLocalDate(dateKey: string, days: number) {
   const date = parseLocalDate(dateKey); date.setDate(date.getDate() + days); return getLocalDateKey(date);
 }
+export function getWeekStart(dateKey=getLocalDateKey()){const date=parseLocalDate(dateKey);const offset=(date.getDay()+6)%7;date.setDate(date.getDate()-offset);return getLocalDateKey(date);}
 
 export function shiftMonth(monthKey: string, amount: number) {
   const [year, month] = monthKey.split('-').map(Number); return getLocalDateKey(new Date(year, month - 1 + amount, 1, 12)).slice(0, 7);

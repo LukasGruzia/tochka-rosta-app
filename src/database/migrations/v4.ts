@@ -42,6 +42,23 @@ UPDATE water_entries SET uuid=lower(hex(randomblob(4)))||'-'||lower(hex(randombl
 UPDATE weight_logs SET uuid=lower(hex(randomblob(4)))||'-'||lower(hex(randomblob(2)))||'-4'||substr(lower(hex(randomblob(2))),2)||'-a'||substr(lower(hex(randomblob(2))),2)||'-'||lower(hex(randomblob(6))) WHERE uuid IS NULL;
 UPDATE flow_history SET uuid=lower(hex(randomblob(4)))||'-'||lower(hex(randomblob(2)))||'-4'||substr(lower(hex(randomblob(2))),2)||'-a'||substr(lower(hex(randomblob(2))),2)||'-'||lower(hex(randomblob(6))), updated_at=COALESCE(updated_at,created_at) WHERE uuid IS NULL;
 
+CREATE TABLE meal_plan_items_v4 (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  date TEXT NOT NULL,
+  product_id INTEGER NOT NULL REFERENCES products(id),
+  meal_type TEXT NOT NULL,
+  servings REAL NOT NULL DEFAULT 1,
+  is_added_to_diary INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL,
+  uuid TEXT,
+  updated_at TEXT,
+  deleted_at TEXT,
+  sync_status TEXT NOT NULL DEFAULT 'local'
+);
+INSERT INTO meal_plan_items_v4 SELECT id,date,product_id,meal_type,servings,is_added_to_diary,created_at,uuid,updated_at,deleted_at,sync_status FROM meal_plan_items;
+DROP TABLE meal_plan_items;
+ALTER TABLE meal_plan_items_v4 RENAME TO meal_plan_items;
+
 CREATE TABLE budget_settings (
   id INTEGER PRIMARY KEY CHECK(id=1),
   per_meal_budget REAL,
@@ -164,6 +181,7 @@ CREATE UNIQUE INDEX idx_products_uuid_v4 ON products(uuid);
 CREATE UNIQUE INDEX idx_recipes_uuid_v4 ON recipes(uuid);
 CREATE UNIQUE INDEX idx_diary_entries_uuid_v4 ON diary_entries(uuid);
 CREATE UNIQUE INDEX idx_meal_plan_uuid_v4 ON meal_plan_items(uuid);
+CREATE INDEX idx_meal_plan_date_v4 ON meal_plan_items(date);
 CREATE UNIQUE INDEX idx_meal_template_uuid_v4 ON meal_templates(uuid);
 CREATE UNIQUE INDEX idx_water_uuid_v4 ON water_entries(uuid);
 CREATE UNIQUE INDEX idx_weight_uuid_v4 ON weight_logs(uuid);
