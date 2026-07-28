@@ -1,7 +1,9 @@
 import { sizes } from '../theme/tokens';
 
 export function getTabBarMetrics(bottomInset: number) {
-  const safeBottom = Math.max(bottomInset, 6);
-  return { bottom: 0, safeAreaHeight: safeBottom, visualHeight: sizes.tabBarVisual, height: sizes.tabBarVisual + safeBottom };
+  const bottomOffset = Math.max(bottomInset - 4, 8);
+  const visualHeight = Math.min(sizes.tabBarVisual, sizes.tabBarMax);
+  const occupiedHeight = visualHeight + bottomOffset;
+  return { bottomOffset, visualHeight, occupiedHeight, contentInset: occupiedHeight + 20 };
 }
-export function getTabContentPadding(bottomInset:number){return getTabBarMetrics(bottomInset).height+18;}
+export function getTabContentPadding(bottomInset: number) { return getTabBarMetrics(bottomInset).contentInset; }

@@ -15,14 +15,14 @@ interface Props extends PropsWithChildren {
 }
 
 export function TabScreen({ title, subtitle, headerRight, children }: Props) {
-  const { tabBarHeight } = useTabBarLayout();
+  const { contentInset } = useTabBarLayout();
   const { colors } = useTheme();
   return <AppBackground><SafeAreaView style={styles.safe} edges={['top']}>
     {title ? <View style={[styles.header, { backgroundColor: colors.backgroundPrimary, borderBottomColor: colors.glassBorder }]}>
       <View style={styles.copy}><AppText variant="title">{title}</AppText>{subtitle ? <AppText tone="secondary">{subtitle}</AppText> : null}</View>
       {headerRight}
     </View> : null}
-    <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.scroll, { paddingBottom: tabBarHeight + spacing.md }]}>
+    <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.scroll, { paddingBottom: contentInset }]}>
       {children}
     </ScrollView>
   </SafeAreaView></AppBackground>;

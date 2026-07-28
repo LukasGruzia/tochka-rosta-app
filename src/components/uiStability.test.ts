@@ -12,17 +12,18 @@ describe('critical UI stability wiring', () => {
     expect(animatedStyle).toContain('scale.get()');
   });
 
-  it('keeps tab drag behind a disabled-by-default feature flag', () => {
+  it('keeps tab drag behind a safe-mode-compatible feature flag', () => {
     const flags = read('src/config/features.ts'); const tabBar = read('src/components/LiquidTabBar.tsx');
-    expect(flags).toContain('enableLiquidTabDrag: false');
+    expect(flags).toContain('enableLiquidTabDrag: true');
     expect(tabBar).toContain('flags.enableLiquidTabDrag');
     expect(tabBar).toContain('performTabPress');
   });
 
-  it('separates visual tab height from safe-area space and centers items', () => {
+  it('keeps safe-area outside the visual tab surface and centers items', () => {
     const tabBar = read('src/components/LiquidTabBar.tsx');
     expect(tabBar).toContain('height: metrics.visualHeight');
-    expect(tabBar).toContain('height: metrics.safeAreaHeight');
+    expect(tabBar).toContain('bottom: metrics.bottomOffset');
+    expect(tabBar).not.toContain('metrics.safeAreaHeight');
     expect(tabBar).toContain("alignItems: 'center'");
     expect(tabBar).toContain("justifyContent: 'center'");
   });

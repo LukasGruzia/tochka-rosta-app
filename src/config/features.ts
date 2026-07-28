@@ -10,11 +10,10 @@ export interface FeatureFlags {
 
 export const defaultFeatureFlags: FeatureFlags = {
   enableLiquidTabAnimation: true,
-  // Drag stays opt-in until it passes the physical-device stress test.
-  enableLiquidTabDrag: false,
+  enableLiquidTabDrag: true,
   enableFlowFlameAnimation: true,
   enableFloatingHeaders: false,
-  enableAnimatedThemeTransition: false,
+  enableAnimatedThemeTransition: true,
   enableAdvancedGlassBlur: true,
   enableSheetGestures: false,
 };

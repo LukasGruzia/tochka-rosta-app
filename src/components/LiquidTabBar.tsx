@@ -5,7 +5,7 @@ import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Modal, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { runOnJS, type SharedValue, useReducedMotion, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { runOnJS, type SharedValue, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getTabRoute } from '@/config/routes';
 import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
@@ -19,14 +19,19 @@ import { motion, radii } from '@/theme/tokens';
 import { AppIcon } from './AppIcon';
 import { AppPressable } from './AppPressable';
 import { AppText } from './AppText';
-import { LiquidTabIndicator } from './LiquidTabIndicator';
+import { LiquidTabSlider } from './LiquidTabSlider';
 
 function triggerSelectionHaptic() {
   void safelyRunHaptic('selection');
 }
 
-function TabItem({ focused, label, icon, onPress, onLongPress }: { focused: boolean; label: string; icon: Parameters<typeof AppIcon>[0]['name']; onPress: () => void; onLongPress: () => void }) {
+function TabItem({ focused, label, icon, index, position, onPress, onLongPress }: { focused: boolean; label: string; icon: Parameters<typeof AppIcon>[0]['name']; index: number; position: SharedValue<number>; onPress: () => void; onLongPress: () => void }) {
+  'use no memo';
   const { colors } = useTheme();
+  const proximity = useAnimatedStyle(() => {
+    const distance = Math.min(1, Math.abs(position.get() - index));
+    return { opacity: 0.7 + (1 - distance) * 0.3, transform: [{ scale: 0.96 + (1 - distance) * 0.04 }] };
+  });
   return <AppPressable
     accessibilityRole="tab"
     accessibilityLabel={label}
@@ -39,10 +44,10 @@ function TabItem({ focused, label, icon, onPress, onLongPress }: { focused: bool
     style={styles.item}
     pressedStyle={styles.itemPressed}
   >
-    <View style={styles.itemInner}>
+    <Animated.View style={[styles.itemInner, proximity]}>
       <AppIcon name={icon} size={24} color={focused ? colors.greenBright : colors.textSecondary} />
       <AppText numberOfLines={1} style={[styles.label, { color: focused ? colors.textPrimary : colors.textMuted }]}>{label}</AppText>
-    </View>
+    </Animated.View>
   </AppPressable>;
 }
 
@@ -85,7 +90,7 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
   'use no memo';
   const { colors, isDark } = useTheme();
   const { flags } = useFeatureFlags();
-  const { setTabBarHeight } = useTabBarLayout();
+  const { setTabBarLayout } = useTabBarLayout();
   const insets = useSafeAreaInsets();
   const metrics = getTabBarMetrics(insets.bottom);
   const [width, setWidth] = useState(0);
@@ -134,15 +139,15 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
   const glassSurface = <View
     onLayout={(event) => {
       setWidth(event.nativeEvent.layout.width);
-      setTabBarHeight(event.nativeEvent.layout.height);
+      setTabBarLayout(event.nativeEvent.layout.height, metrics.bottomOffset);
     }}
-    style={[styles.bar, { height: metrics.height, borderColor: colors.glassBorderStrong, backgroundColor: colors.surfaceStrong }]}
+    style={[styles.bar, { height: metrics.visualHeight, borderColor: colors.glassBorderStrong, backgroundColor: colors.surfaceStrong }]}
   >
     {Platform.OS === 'ios' && flags.enableAdvancedGlassBlur ? <BlurView intensity={30} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} /> : null}
     <LinearGradient colors={[`${colors.surfaceSolid}E8`, `${colors.greenDark}D8`]} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} style={StyleSheet.absoluteFill} />
     <View style={[styles.specular, { backgroundColor: `${colors.textPrimary}32` }]} />
-    <View style={[styles.visual, { height: metrics.visualHeight }]}>
-      {width > 0 && flags.enableLiquidTabAnimation ? <LiquidTabIndicator position={position} barWidth={width} count={tabCount} /> : null}
+    <View style={styles.visual}>
+      {width > 0 && flags.enableLiquidTabAnimation ? <LiquidTabSlider position={position} barWidth={width} count={tabCount} /> : null}
       <View style={styles.row}>{state.routes.map((route, index) => {
         const item = getTabRoute(route.name) ?? getTabRoute('index')!;
         return <TabItem
@@ -150,6 +155,8 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
           focused={activeIndex === index}
           label={item.title}
           icon={item.icon}
+          index={index}
+          position={position}
           onPress={() => selectTab(index)}
           onLongPress={() => {
             navigation.emit({ type: 'tabLongPress', target: route.key });
@@ -159,13 +166,12 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
         />;
       })}</View>
     </View>
-    <View pointerEvents="none" style={{ height: metrics.safeAreaHeight }} />
   </View>;
 
   return <>
-    <View pointerEvents="box-none" style={[styles.host, { height: metrics.height }]}>
+    <View pointerEvents="box-none" style={[styles.host, { height: metrics.visualHeight, bottom: metrics.bottomOffset }]}>
       {flags.enableLiquidTabDrag
-        ? <DraggableSurface width={width} count={tabCount} activeIndex={activeIndex} position={position} reducedMotion={reducedMotion} onSelect={selectTab}>{glassSurface}</DraggableSurface>
+        ? <DraggableSurface width={width} count={tabCount} activeIndex={activeIndex} position={position} reducedMotion={reducedMotion} onSelect={navigate}>{glassSurface}</DraggableSurface>
         : glassSurface}
     </View>
     <Modal visible={quick !== null} transparent animationType={reducedMotion ? 'none' : 'fade'} onRequestClose={() => setQuick(null)}>
@@ -182,9 +188,9 @@ export function LiquidTabBar({ state, navigation }: BottomTabBarProps) {
 }
 
 const styles = StyleSheet.create({
-  host: { position: 'absolute', left: 10, right: 10, bottom: 0 },
+  host: { position: 'absolute', left: 12, right: 12 },
   bar: { overflow: 'hidden', borderRadius: radii.xl, borderWidth: 1, shadowOpacity: 0.24, shadowRadius: 18, shadowOffset: { width: 0, height: 8 }, elevation: 10 },
-  visual: { position: 'relative' },
+  visual: { position: 'relative', flex: 1 },
   specular: { position: 'absolute', left: 22, right: 22, top: 1, height: StyleSheet.hairlineWidth, zIndex: 3 },
   row: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingVertical: 5 },
   item: { flex: 1, height: 58, minWidth: 0 },

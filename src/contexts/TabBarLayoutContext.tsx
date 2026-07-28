@@ -3,17 +3,22 @@ import { sizes } from '@/theme/tokens';
 
 interface TabBarLayoutValue {
   tabBarHeight: number;
-  setTabBarHeight: (height: number) => void;
+  bottomOffset: number;
+  contentInset: number;
+  setTabBarLayout: (height: number, bottomOffset: number) => void;
 }
 
-const TabBarLayoutContext = createContext<TabBarLayoutValue>({ tabBarHeight: sizes.tabBarVisual + 6, setTabBarHeight: () => {} });
+const defaultBottomOffset = 8;
+const TabBarLayoutContext = createContext<TabBarLayoutValue>({ tabBarHeight: sizes.tabBarVisual, bottomOffset: defaultBottomOffset, contentInset: sizes.tabBarVisual + defaultBottomOffset + 20, setTabBarLayout: () => {} });
 
 export function TabBarLayoutProvider({ children }: PropsWithChildren) {
-  const [tabBarHeight, updateHeight] = useState(sizes.tabBarVisual + 6);
-  const setTabBarHeight = useCallback((height: number) => {
-    if (Number.isFinite(height) && height > 0) updateHeight(Math.round(height));
+  const [layout, updateLayout] = useState<{ tabBarHeight: number; bottomOffset: number }>({ tabBarHeight: sizes.tabBarVisual, bottomOffset: defaultBottomOffset });
+  const setTabBarLayout = useCallback((height: number, bottomOffset: number) => {
+    if (!Number.isFinite(height) || height <= 0 || !Number.isFinite(bottomOffset)) return;
+    const next = { tabBarHeight: Math.round(height), bottomOffset: Math.max(0, Math.round(bottomOffset)) };
+    updateLayout((current) => current.tabBarHeight === next.tabBarHeight && current.bottomOffset === next.bottomOffset ? current : next);
   }, []);
-  const value = useMemo(() => ({ tabBarHeight, setTabBarHeight }), [setTabBarHeight, tabBarHeight]);
+  const value = useMemo(() => ({ ...layout, contentInset: layout.tabBarHeight + layout.bottomOffset + 20, setTabBarLayout }), [layout, setTabBarLayout]);
   return <TabBarLayoutContext.Provider value={value}>{children}</TabBarLayoutContext.Provider>;
 }
 

@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { defaultFeatureFlags, resolveFeatureFlags, safeModeFeatureFlags } from './features';
 
 describe('UI feature flags', () => {
-  it('keeps experimental drag and sheet gestures off by default', () => {
-    expect(defaultFeatureFlags.enableLiquidTabDrag).toBe(false);
+  it('enables the premium tab gesture while keeping sheet gestures conservative', () => {
+    expect(defaultFeatureFlags.enableLiquidTabDrag).toBe(true);
     expect(defaultFeatureFlags.enableSheetGestures).toBe(false);
   });
 
