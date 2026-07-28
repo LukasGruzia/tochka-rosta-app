@@ -9,8 +9,10 @@ export async function persistAvatar(sourceUri: string) {
   const target = `${directory}avatar-${Date.now()}.jpg`;
   await FileSystem.copyAsync({ from: optimized.uri, to: target });
   const cacheDirectory = FileSystem.cacheDirectory;
-  if (cacheDirectory && optimized.uri.startsWith(cacheDirectory)) await FileSystem.deleteAsync(optimized.uri, { idempotent: true });
-  if (cacheDirectory && sourceUri.startsWith(cacheDirectory)) await FileSystem.deleteAsync(sourceUri, { idempotent: true });
+  const cleanup: Promise<void>[] = [];
+  if (cacheDirectory && optimized.uri.startsWith(cacheDirectory)) cleanup.push(FileSystem.deleteAsync(optimized.uri, { idempotent: true }));
+  if (cacheDirectory && sourceUri.startsWith(cacheDirectory)) cleanup.push(FileSystem.deleteAsync(sourceUri, { idempotent: true }));
+  await Promise.allSettled(cleanup);
   return target;
 }
 
