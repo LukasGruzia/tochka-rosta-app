@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import { AvatarPicker } from '@/components/AvatarPicker';
 import { AppText } from '@/components/AppText';
@@ -15,17 +15,20 @@ import { performanceModeLabels } from '@/config/performance';
 import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
 import { createSectionErrorBoundary } from '@/components/ScreenErrorFallback';
 import { useRenderTracker } from '@/performance/renderTracker';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import { getProfileAvatarSize } from '@/services/avatarLayout';
 
 export const ErrorBoundary = createSectionErrorBoundary('ProfileScreen');
 
 export default function ProfileScreen() {
   useRenderTracker('ProfileScreen');
-  const profile = useAppStore((state) => state.profile);
+  const { profile, avatarUri, avatarCacheKey, userName, updateAvatar } = useUserProfile();
   const flow = useAppStore((state) => state.flow);
   const themeMode = useAppStore((state) => state.themeMode);
-  const setAvatar = useAppStore((state) => state.setAvatar);
   const reset = useAppStore((state) => state.reset);
   const { performanceMode } = useFeatureFlags();
+  const { width } = useWindowDimensions();
+  const avatarSize = getProfileAvatarSize(width);
   const [overview, setOverview] = useState({ trackedDays: 0, entryCount: 0, currentWeight: null as number | null });
 
   useEffect(() => {
@@ -50,8 +53,8 @@ export default function ProfileScreen() {
 
   return <TabScreen title="Профиль" subtitle="Личные данные и прогресс">
     <View style={styles.header}>
-      <AvatarPicker name={profile.name} uri={profile.avatarUri} onChange={setAvatar} />
-      <AppText variant="title" style={styles.name}>{profile.name}</AppText>
+      <AvatarPicker name={userName} uri={avatarUri} cacheKey={avatarCacheKey} size={avatarSize} onChange={updateAvatar} />
+      <AppText variant="title" numberOfLines={2} style={styles.name}>{userName}</AppText>
       <AppText tone="secondary">{goalLabels[profile.goal]} · {weight.toLocaleString('ru-RU')} кг</AppText>
     </View>
 
@@ -95,7 +98,7 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: { alignItems: 'center', gap: spacing.xs, paddingTop: spacing.sm, paddingBottom: spacing.sm }, name: { marginTop: spacing.sm },
+  header: { alignItems: 'center', gap: spacing.xs, paddingTop: spacing.sm, paddingBottom: spacing.sm }, name: { width: '100%', marginTop: spacing.sm, textAlign: 'center', flexShrink: 1 },
   stats: { flexDirection: 'row', gap: spacing.sm }, insight: { flexDirection: 'row', alignItems: 'center', gap: spacing.md }, insightCopy: { flex: 1, gap: spacing.xs }, arrow: { fontSize: 34 },
   version: { textAlign: 'center', paddingVertical: spacing.md },
 });
