@@ -10,9 +10,11 @@ import { ProgressRing } from '@/components/ProgressRing';
 import { activityLabels, goalLabels } from '@/constants/options';
 import { calculateNutrition, roundNutrition } from '@/services/nutritionCalculator';
 import { useAppStore } from '@/store/appStore';
-import { colors, spacing } from '@/theme/tokens';
+import { spacing } from '@/theme/tokens';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function CalculationScreen() {
+  const { colors } = useTheme();
   const draft = useAppStore((state) => state.draft);
   const setCalculatedTarget = useAppStore((state) => state.setCalculatedTarget);
   const completeOnboarding = useAppStore((state) => state.completeOnboarding);

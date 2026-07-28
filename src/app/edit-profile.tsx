@@ -8,10 +8,12 @@ import { OnboardingShell } from '@/components/OnboardingShell';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { activityOptions, dietOptions, goalOptions, restrictionOptions } from '@/constants/options';
 import { useAppStore } from '@/store/appStore';
-import { colors, radii, spacing } from '@/theme/tokens';
+import { radii, spacing } from '@/theme/tokens';
+import { useTheme } from '@/theme/ThemeProvider';
 import type { ProfileDraft, Restriction } from '@/types/domain';
 
 export default function EditProfileScreen() {
+  const { colors } = useTheme();
   const profile = useAppStore((state) => state.profile);
   const updateProfile = useAppStore((state) => state.updateProfile);
   const [draft, setDraft] = useState<ProfileDraft>(profile ?? { name: '', age: 30, calculationSex: 'male', heightCm: 175, weightKg: 70, activityLevel: 'medium', goal: 'balance', dietPreference: 'all', restrictions: [] });
@@ -26,7 +28,7 @@ export default function EditProfileScreen() {
   };
   return <OnboardingShell keyboard eyebrow="Локальное редактирование" title="Изменить данные" description="После сохранения дневная норма обновится автоматически."
     footer={<View style={styles.actions}><PrimaryButton label={saving ? 'Сохраняем…' : 'Сохранить изменения'} disabled={saving} onPress={save}/><PrimaryButton label="Отмена" secondary onPress={() => router.back()}/></View>}>
-    <View style={styles.field}><AppText variant="caption" tone="secondary">Имя</AppText><TextInput value={draft.name} onChangeText={(value) => patch('name', value)} style={styles.input} accessibilityLabel="Имя" /></View>
+    <View style={styles.field}><AppText variant="caption" tone="secondary">Имя</AppText><TextInput value={draft.name} onChangeText={(value) => patch('name', value)} style={[styles.input, { borderColor: colors.glassBorder, backgroundColor: colors.surfaceStrong, color: colors.textPrimary }]} accessibilityLabel="Имя" /></View>
     <AppText variant="heading">Пол для расчёта</AppText><ChoiceCard title="Женский" selected={draft.calculationSex === 'female'} onPress={() => patch('calculationSex', 'female')}/><ChoiceCard title="Мужской" selected={draft.calculationSex === 'male'} onPress={() => patch('calculationSex', 'male')}/>
     <NumberStepper label="Возраст" value={draft.age} unit="лет" min={16} max={80} onChange={(value) => patch('age', value)}/>
     <NumberStepper label="Рост" value={draft.heightCm} unit="см" min={120} max={230} onChange={(value) => patch('heightCm', value)}/>
@@ -37,4 +39,4 @@ export default function EditProfileScreen() {
     <AppText variant="heading">Ограничения</AppText>{restrictionOptions.map((item) => <ChoiceCard key={item.value} title={item.title} selected={draft.restrictions.includes(item.value)} onPress={() => toggle(item.value)}/>)}
   </OnboardingShell>;
 }
-const styles = StyleSheet.create({ actions: { gap: spacing.sm }, field: { gap: spacing.sm }, input: { minHeight: 58, borderRadius: radii.md, borderWidth: 1, borderColor: colors.glassBorder, backgroundColor: colors.surfaceStrong, color: colors.textPrimary, fontSize: 20, paddingHorizontal: spacing.md } });
+const styles = StyleSheet.create({ actions: { gap: spacing.sm }, field: { gap: spacing.sm }, input: { minHeight: 58, borderRadius: radii.md, borderWidth: 1, fontSize: 20, paddingHorizontal: spacing.md } });

@@ -12,6 +12,11 @@ type RawFood = { fdcId: number; description: string; dataType?: string; publicat
 type CompactFood = { fdcId: number; name: string; originalName: string; category: string; caloriesPer100g: number; proteinPer100g: number; fatPer100g: number; carbsPer100g: number; fiberPer100g: number | null; sugarPer100g: number | null; sodiumPer100g: number | null; servingSizeG: number; aliases: string[]; sourceVersion: string };
 
 const categories = [
+  ['Спортивное питание', /\b(protein powder|protein bar|sports drink|energy gel|whey protein)\b/i],
+  ['Детское питание', /\b(baby food|infant formula|toddler food|infant cereal)\b/i],
+  ['Растительные альтернативы', /\b(tofu|tempeh|seitan|plant-based|soy milk|almond milk|oat milk)\b/i],
+  ['Десерты', /\b(cake|cookie|brownie|chocolate|pudding|ice cream|dessert|doughnut|donut)\b/i],
+  ['Фастфуд', /\b(burger|hamburger|hot dog|nachos|fried chicken|cheeseburger)\b/i],
   ['Крупы', /\b(rice|oat|oatmeal|buckwheat|bulgur|quinoa|millet|barley|farro|grain|cereal|grits|sorghum|fonio|einkorn|khorasan)\b/i],
   ['Макароны', /\b(pasta|spaghetti|macaroni|noodle|vermicelli|lasagna)\b/i],
   ['Хлеб', /\b(bread|roll|bun|bagel|tortilla|pita|toast|cracker|biscuit|muffin)\b/i],
@@ -40,6 +45,10 @@ const categories = [
 ] as const;
 
 const names: [RegExp, string, string[]][] = [
+  [/protein powder|whey protein/i, 'Протеиновый порошок', ['протеин']], [/protein bar/i, 'Протеиновый батончик', []], [/sports drink/i, 'Спортивный напиток', ['изотоник']],
+  [/tofu/i, 'Тофу', ['соевый сыр']], [/tempeh/i, 'Темпе', []], [/seitan/i, 'Сейтан', []], [/(soy|almond|oat) milk/i, 'Растительный напиток', ['растительное молоко']],
+  [/baby food|infant formula|toddler food/i, 'Детское питание', []],
+  [/burger|hamburger/i, 'Бургер', ['гамбургер']], [/cookie/i, 'Печенье', []], [/chocolate/i, 'Шоколад', []], [/ice cream/i, 'Мороженое', []], [/cake/i, 'Торт', []],
   [/^flour.*buckwheat/i, 'Мука гречневая', []], [/^flour.*rice/i, 'Мука рисовая', []], [/^flour.*whole wheat/i, 'Мука цельнозерновая', []], [/^flour/i, 'Мука', []],
   [/^buckwheat groats$/i, 'Гречка варёная', ['гречневая каша', 'гречка готовая', 'каша гречневая']], [/buckwheat.*(cooked|boiled)/i, 'Гречка варёная', ['гречневая каша', 'гречка готовая', 'каша гречневая']], [/buckwheat/i, 'Гречка сухая', ['гречневая крупа', 'ядрица']],
   [/rice.*brown.*(cooked|boiled)/i, 'Рис бурый варёный', ['бурый рис готовый']], [/rice.*brown/i, 'Рис бурый сухой', ['коричневый рис']], [/rice.*white.*(cooked|boiled)/i, 'Рис белый варёный', ['рис готовый']], [/rice.*white/i, 'Рис белый сухой', ['белый рис']],
@@ -80,14 +89,14 @@ export function normalizeUsdaFood(food: RawFood, sourceVersion: string): Compact
 }
 
 function readFoods(path: string) { const root = JSON.parse(readFileSync(path, 'utf8')) as { FoundationFoods?: (RawFood | null)[]; SurveyFoods?: (RawFood | null)[] }; return (root.FoundationFoods ?? root.SurveyFoods ?? []).filter((item): item is RawFood => Boolean(item)); }
-export function buildCatalog(paths: string[], limit = 650) {
+export function buildCatalog(paths: string[], limit = 950) {
   const records = paths.flatMap((path) => readFoods(path).map((food) => ({ food, version: path.toLowerCase().includes('foundation') ? 'Foundation Foods · 2026-04-30' : 'FNDDS 2021–2023 · 2024-10-31' })));
   const raw = records.map((item) => item.food); const normalized = records.map(({ food, version }) => normalizeUsdaFood(food, version)).filter((item): item is CompactFood => item !== null);
   const perCategory = new Map<string, number>(); const seen = new Set<string>(); const nameCounts = new Map<string, number>(); const result: CompactFood[] = [];
   const required = /buckwheat|rice, (white|brown)|oats?, whole grain|bulgur|quinoa|pasta|potato|bread|chicken, (breast|thigh)|turkey|beef|pork|salmon|tuna|cod|egg|milk|kefir|cottage cheese|yogurt|cheese|butter|olive oil|sunflower oil|apple|banana|orange|tomato|cucumber|cabbage|carrot|broccoli|bean|lentil|chickpea|almond|walnut/i;
   const score = (food: CompactFood) => Number(required.test(food.originalName)) * 4 + Number(/cooked|boiled|buckwheat groats$/i.test(food.originalName)) * 3 + Number(/\braw\b/i.test(food.originalName)) * 3 + Number(food.sourceVersion.includes('2026')) * 2;
   normalized.sort((a, b) => score(b) - score(a) || a.originalName.length - b.originalName.length);
-  const add = (food: CompactFood, cap = 36) => { if (result.length >= limit || (perCategory.get(food.category) ?? 0) >= cap) return; const signature = `${food.originalName.toLowerCase().replace(/[^a-z0-9]+/g, ' ')}|${Math.round(food.caloriesPer100g)}`; if (seen.has(signature)) return; seen.add(signature); const count = (nameCounts.get(food.name) ?? 0) + 1; nameCounts.set(food.name, count); if (count > 1) food.name = `${food.name} · вариант ${count}`; perCategory.set(food.category, (perCategory.get(food.category) ?? 0) + 1); result.push(food); };
+  const add = (food: CompactFood, cap = 44) => { if (result.length >= limit || (perCategory.get(food.category) ?? 0) >= cap) return; const signature = `${food.originalName.toLowerCase().replace(/[^a-z0-9]+/g, ' ')}|${Math.round(food.caloriesPer100g)}`; if (seen.has(signature)) return; seen.add(signature); const count = (nameCounts.get(food.name) ?? 0) + 1; nameCounts.set(food.name, count); if (count > 1) food.name = `${food.name} · вариант ${count}`; perCategory.set(food.category, (perCategory.get(food.category) ?? 0) + 1); result.push(food); };
   for (const [category] of categories) for (const food of normalized.filter((item) => item.category === category).slice(0, 20)) add(food, 20);
   for (const food of normalized) add(food);
   return { foods: result, report: { sourceFiles: paths.map((path) => resolve(path)), generatedAt: new Date().toISOString(), rawRecords: raw.length, normalizedRecords: normalized.length, exportedRecords: result.length, categories: Object.fromEntries([...perCategory.entries()].sort()), nutrientIds: { calories: [1008, 2047, 2048], protein: 1003, fat: 1004, carbs: 1005, fiber: 1079, sugar: 2000, sodium: 1093 }, translation: 'Контролируемые правила и словарь; непереведённое оригинальное название хранится отдельно.' } };

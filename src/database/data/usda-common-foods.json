@@ -1,5 +1,1687 @@
 [
   {
+    "fdcId": 2710771,
+    "name": "Спортивный напиток",
+    "originalName": "Sports drink, NFS",
+    "category": "Спортивное питание",
+    "caloriesPer100g": 26,
+    "proteinPer100g": 0,
+    "fatPer100g": 0,
+    "carbsPer100g": 6.43,
+    "fiberPer100g": 0,
+    "sugarPer100g": 5.24,
+    "sodiumPer100g": 39,
+    "servingSizeG": 372,
+    "aliases": [
+      "спортивный напиток",
+      "изотоник"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710770,
+    "name": "Спортивный напиток · вариант 2",
+    "originalName": "Sports drink (Powerade)",
+    "category": "Спортивное питание",
+    "caloriesPer100g": 32,
+    "proteinPer100g": 0,
+    "fatPer100g": 0.05,
+    "carbsPer100g": 7.84,
+    "fiberPer100g": 0,
+    "sugarPer100g": 6.11,
+    "sodiumPer100g": 42,
+    "servingSizeG": 372,
+    "aliases": [
+      "спортивный напиток",
+      "изотоник"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710769,
+    "name": "Спортивный напиток · вариант 3",
+    "originalName": "Sports drink (Gatorade G)",
+    "category": "Спортивное питание",
+    "caloriesPer100g": 26,
+    "proteinPer100g": 0,
+    "fatPer100g": 0,
+    "carbsPer100g": 6.43,
+    "fiberPer100g": 0,
+    "sugarPer100g": 5.24,
+    "sodiumPer100g": 39,
+    "servingSizeG": 496,
+    "aliases": [
+      "спортивный напиток",
+      "изотоник"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710774,
+    "name": "Спортивный напиток · вариант 4",
+    "originalName": "Sports drink, low calorie",
+    "category": "Спортивное питание",
+    "caloriesPer100g": 8,
+    "proteinPer100g": 0.05,
+    "fatPer100g": 0.01,
+    "carbsPer100g": 1.94,
+    "fiberPer100g": 0,
+    "sugarPer100g": 1.3,
+    "sodiumPer100g": 45,
+    "servingSizeG": 240,
+    "aliases": [
+      "спортивный напиток",
+      "изотоник"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710772,
+    "name": "Спортивный напиток · вариант 5",
+    "originalName": "Sports drink, low calorie (Gatorade G2)",
+    "category": "Спортивное питание",
+    "caloriesPer100g": 8,
+    "proteinPer100g": 0.05,
+    "fatPer100g": 0.01,
+    "carbsPer100g": 1.94,
+    "fiberPer100g": 0,
+    "sugarPer100g": 1.3,
+    "sodiumPer100g": 45,
+    "servingSizeG": 600,
+    "aliases": [
+      "спортивный напиток",
+      "изотоник"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710773,
+    "name": "Спортивный напиток · вариант 6",
+    "originalName": "Sports drink, low calorie (Powerade Zero)",
+    "category": "Спортивное питание",
+    "caloriesPer100g": 0,
+    "proteinPer100g": 0,
+    "fatPer100g": 0,
+    "carbsPer100g": 0.14,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 42,
+    "servingSizeG": 240,
+    "aliases": [
+      "спортивный напиток",
+      "изотоник"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708122,
+    "name": "Протеиновый батончик",
+    "originalName": "Nutrition bar (Snickers Marathon Protein Bar)",
+    "category": "Спортивное питание",
+    "caloriesPer100g": 415,
+    "proteinPer100g": 25,
+    "fatPer100g": 12.5,
+    "carbsPer100g": 50.5,
+    "fiberPer100g": 12.5,
+    "sugarPer100g": 28.8,
+    "sodiumPer100g": 238,
+    "servingSizeG": 80,
+    "aliases": [
+      "протеиновый батончик"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710732,
+    "name": "Протеиновый порошок",
+    "originalName": "Nutritional powder mix (EAS Soy Protein Powder)",
+    "category": "Спортивное питание",
+    "caloriesPer100g": 405,
+    "proteinPer100g": 47.6,
+    "fatPer100g": 3.57,
+    "carbsPer100g": 43.9,
+    "fiberPer100g": 0,
+    "sugarPer100g": 40.5,
+    "sodiumPer100g": 452,
+    "servingSizeG": 44,
+    "aliases": [
+      "протеиновый порошок",
+      "протеин"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710615,
+    "name": "Спортивный напиток, сухой",
+    "originalName": "Sports drink, dry concentrate, not reconstituted",
+    "category": "Спортивное питание",
+    "caloriesPer100g": 380,
+    "proteinPer100g": 0,
+    "fatPer100g": 1.01,
+    "carbsPer100g": 97.9,
+    "fiberPer100g": 0,
+    "sugarPer100g": 97.2,
+    "sodiumPer100g": 130,
+    "servingSizeG": 36,
+    "aliases": [
+      "спортивный напиток",
+      "изотоник"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710731,
+    "name": "Протеиновый порошок · вариант 2",
+    "originalName": "Nutritional powder mix (EAS Whey Protein Powder)",
+    "category": "Спортивное питание",
+    "caloriesPer100g": 385,
+    "proteinPer100g": 66.7,
+    "fatPer100g": 5.13,
+    "carbsPer100g": 18,
+    "fiberPer100g": 0,
+    "sugarPer100g": 5.13,
+    "sodiumPer100g": 385,
+    "servingSizeG": 10,
+    "aliases": [
+      "протеиновый порошок",
+      "протеин"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708124,
+    "name": "Протеиновый батончик · вариант 2",
+    "originalName": "Nutrition bar (South Beach Living High Protein Bar)",
+    "category": "Спортивное питание",
+    "caloriesPer100g": 412,
+    "proteinPer100g": 30.3,
+    "fatPer100g": 15.2,
+    "carbsPer100g": 38.4,
+    "fiberPer100g": 7.3,
+    "sugarPer100g": 15.2,
+    "sodiumPer100g": 436,
+    "servingSizeG": 35,
+    "aliases": [
+      "протеиновый батончик"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710118,
+    "name": "Морковь",
+    "originalName": "Baby Toddler carrots, Stage 1",
+    "category": "Детское питание",
+    "caloriesPer100g": 26,
+    "proteinPer100g": 0.8,
+    "fatPer100g": 0.1,
+    "carbsPer100g": 6,
+    "fiberPer100g": 1.7,
+    "sugarPer100g": 3.64,
+    "sodiumPer100g": 69,
+    "servingSizeG": 90,
+    "aliases": [
+      "морковь"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710119,
+    "name": "Морковь · вариант 2",
+    "originalName": "Baby Toddler carrots, Stage 2",
+    "category": "Детское питание",
+    "caloriesPer100g": 32,
+    "proteinPer100g": 0.8,
+    "fatPer100g": 0.2,
+    "carbsPer100g": 7.2,
+    "fiberPer100g": 1.7,
+    "sugarPer100g": 3.16,
+    "sodiumPer100g": 49,
+    "servingSizeG": 110,
+    "aliases": [
+      "морковь"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708129,
+    "name": "Детское питание",
+    "originalName": "Baby Toddler bar",
+    "category": "Детское питание",
+    "caloriesPer100g": 344,
+    "proteinPer100g": 5.43,
+    "fatPer100g": 5.3,
+    "carbsPer100g": 68.6,
+    "fiberPer100g": 1.7,
+    "sugarPer100g": 42,
+    "sodiumPer100g": 157,
+    "servingSizeG": 20,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710126,
+    "name": "Детское питание · вариант 2",
+    "originalName": "Baby Toddler beets",
+    "category": "Детское питание",
+    "caloriesPer100g": 34,
+    "proteinPer100g": 1.3,
+    "fatPer100g": 0.1,
+    "carbsPer100g": 7.7,
+    "fiberPer100g": 1.9,
+    "sugarPer100g": 6.09,
+    "sodiumPer100g": 83,
+    "servingSizeG": 90,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705518,
+    "name": "Детское питание · вариант 3",
+    "originalName": "Infant formula, NFS",
+    "category": "Детское питание",
+    "caloriesPer100g": 66,
+    "proteinPer100g": 1.38,
+    "fatPer100g": 3.56,
+    "carbsPer100g": 7.12,
+    "fiberPer100g": 0,
+    "sugarPer100g": 7.12,
+    "sodiumPer100g": 17,
+    "servingSizeG": 30.5,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708194,
+    "name": "Детское питание · вариант 4",
+    "originalName": "Baby Toddler wheels",
+    "category": "Детское питание",
+    "caloriesPer100g": 413,
+    "proteinPer100g": 10,
+    "fatPer100g": 6.41,
+    "carbsPer100g": 78.9,
+    "fiberPer100g": 0,
+    "sugarPer100g": 10,
+    "sodiumPer100g": 350,
+    "servingSizeG": 7,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709371,
+    "name": "Детское питание · вариант 5",
+    "originalName": "Baby Toddler prunes",
+    "category": "Детское питание",
+    "caloriesPer100g": 100,
+    "proteinPer100g": 1,
+    "fatPer100g": 0.2,
+    "carbsPer100g": 23.5,
+    "fiberPer100g": 2.7,
+    "sugarPer100g": 14.3,
+    "sodiumPer100g": 1,
+    "servingSizeG": 110,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708190,
+    "name": "Детское питание · вариант 6",
+    "originalName": "Baby Toddler crackers",
+    "category": "Детское питание",
+    "caloriesPer100g": 391,
+    "proteinPer100g": 12.5,
+    "fatPer100g": 0.87,
+    "carbsPer100g": 83.2,
+    "fiberPer100g": 0,
+    "sugarPer100g": 12.5,
+    "sodiumPer100g": 313,
+    "servingSizeG": 1,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705463,
+    "name": "Детское питание · вариант 7",
+    "originalName": "Baby Toddler food, NFS",
+    "category": "Детское питание",
+    "caloriesPer100g": 75,
+    "proteinPer100g": 4.9,
+    "fatPer100g": 2.15,
+    "carbsPer100g": 9.08,
+    "fiberPer100g": 1.1,
+    "sugarPer100g": 4.47,
+    "sodiumPer100g": 27,
+    "servingSizeG": 110,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708193,
+    "name": "Детское питание · вариант 8",
+    "originalName": "Baby Toddler crunchies",
+    "category": "Детское питание",
+    "caloriesPer100g": 462,
+    "proteinPer100g": 3.2,
+    "fatPer100g": 19.2,
+    "carbsPer100g": 69.1,
+    "fiberPer100g": 1.2,
+    "sugarPer100g": 14,
+    "sodiumPer100g": 250,
+    "servingSizeG": 1,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708128,
+    "name": "Детское питание · вариант 9",
+    "originalName": "Baby Toddler snack, NFS",
+    "category": "Детское питание",
+    "caloriesPer100g": 359,
+    "proteinPer100g": 7.34,
+    "fatPer100g": 3.29,
+    "carbsPer100g": 83.4,
+    "fiberPer100g": 3.4,
+    "sugarPer100g": 18.2,
+    "sodiumPer100g": 83,
+    "servingSizeG": 1,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705584,
+    "name": "Детское питание · вариант 10",
+    "originalName": "Infant formula, low iron",
+    "category": "Детское питание",
+    "caloriesPer100g": 66,
+    "proteinPer100g": 1.43,
+    "fatPer100g": 3.6,
+    "carbsPer100g": 6.9,
+    "fiberPer100g": 0,
+    "sugarPer100g": 6.58,
+    "sodiumPer100g": 15,
+    "servingSizeG": 30.5,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705549,
+    "name": "Детское питание · вариант 11",
+    "originalName": "Infant formula, Gerber, NFS",
+    "category": "Детское питание",
+    "caloriesPer100g": 65,
+    "proteinPer100g": 1.49,
+    "fatPer100g": 3.33,
+    "carbsPer100g": 7.26,
+    "fiberPer100g": 0,
+    "sugarPer100g": 6.9,
+    "sodiumPer100g": 20,
+    "servingSizeG": 30.5,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705583,
+    "name": "Детское питание · вариант 12",
+    "originalName": "Infant formula, amino acids",
+    "category": "Детское питание",
+    "caloriesPer100g": 66,
+    "proteinPer100g": 1.8,
+    "fatPer100g": 3.36,
+    "carbsPer100g": 7.21,
+    "fiberPer100g": 0,
+    "sugarPer100g": 6.6,
+    "sodiumPer100g": 30,
+    "servingSizeG": 30.5,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705519,
+    "name": "Детское питание · вариант 13",
+    "originalName": "Infant formula, Similac, NFS",
+    "category": "Детское питание",
+    "caloriesPer100g": 65,
+    "proteinPer100g": 1.37,
+    "fatPer100g": 3.6,
+    "carbsPer100g": 6.9,
+    "fiberPer100g": 0,
+    "sugarPer100g": 6.9,
+    "sodiumPer100g": 17,
+    "servingSizeG": 30.5,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705533,
+    "name": "Детское питание · вариант 14",
+    "originalName": "Infant formula, Enfamil, NFS",
+    "category": "Детское питание",
+    "caloriesPer100g": 66,
+    "proteinPer100g": 1.43,
+    "fatPer100g": 3.49,
+    "carbsPer100g": 7.36,
+    "fiberPer100g": 0,
+    "sugarPer100g": 7.34,
+    "sodiumPer100g": 19,
+    "servingSizeG": 30.5,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705578,
+    "name": "Детское питание · вариант 15",
+    "originalName": "Infant formula, store brand, soy",
+    "category": "Детское питание",
+    "caloriesPer100g": 66,
+    "proteinPer100g": 1.61,
+    "fatPer100g": 3.51,
+    "carbsPer100g": 6.9,
+    "fiberPer100g": 0,
+    "sugarPer100g": 6.76,
+    "sodiumPer100g": 26,
+    "servingSizeG": 30.5,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705573,
+    "name": "Детское питание · вариант 16",
+    "originalName": "Infant formula, Similac for Diarrhea",
+    "category": "Детское питание",
+    "caloriesPer100g": 66,
+    "proteinPer100g": 1.76,
+    "fatPer100g": 3.6,
+    "carbsPer100g": 6.67,
+    "fiberPer100g": 0.7,
+    "sugarPer100g": 6.66,
+    "sodiumPer100g": 29,
+    "servingSizeG": 30.5,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705559,
+    "name": "Детское питание · вариант 17",
+    "originalName": "Infant formula, organic, ready-to-feed",
+    "category": "Детское питание",
+    "caloriesPer100g": 66,
+    "proteinPer100g": 1.38,
+    "fatPer100g": 3.56,
+    "carbsPer100g": 7.12,
+    "fiberPer100g": 0,
+    "sugarPer100g": 7.12,
+    "sodiumPer100g": 17,
+    "servingSizeG": 30.5,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705564,
+    "name": "Детское питание · вариант 18",
+    "originalName": "Infant formula, store brand, added rice",
+    "category": "Детское питание",
+    "caloriesPer100g": 65,
+    "proteinPer100g": 1.49,
+    "fatPer100g": 3.36,
+    "carbsPer100g": 7.17,
+    "fiberPer100g": 0,
+    "sugarPer100g": 7.08,
+    "sodiumPer100g": 23,
+    "servingSizeG": 30.5,
+    "aliases": [
+      "детское питание"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2257044,
+    "name": "Растительный напиток",
+    "originalName": "Soy milk, sweetened, plain, refrigerated",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 40.7,
+    "proteinPer100g": 2.78,
+    "fatPer100g": 1.96,
+    "carbsPer100g": 3,
+    "fiberPer100g": 0,
+    "sugarPer100g": null,
+    "sodiumPer100g": 39.4,
+    "servingSizeG": 100,
+    "aliases": [
+      "растительный напиток",
+      "растительное молоко"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 1999630,
+    "name": "Растительный напиток · вариант 2",
+    "originalName": "Soy milk, unsweetened, plain, shelf stable",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 38.5,
+    "proteinPer100g": 3.55,
+    "fatPer100g": 2.12,
+    "carbsPer100g": 1.29,
+    "fiberPer100g": 0,
+    "sugarPer100g": null,
+    "sodiumPer100g": 34.3,
+    "servingSizeG": 100,
+    "aliases": [
+      "растительный напиток",
+      "растительное молоко"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2257046,
+    "name": "Растительный напиток · вариант 3",
+    "originalName": "Oat milk, unsweetened, plain, refrigerated",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 48.3,
+    "proteinPer100g": 0.797,
+    "fatPer100g": 2.75,
+    "carbsPer100g": 5.1,
+    "fiberPer100g": 0,
+    "sugarPer100g": null,
+    "sodiumPer100g": 42,
+    "servingSizeG": 100,
+    "aliases": [
+      "растительный напиток",
+      "растительное молоко"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 1999631,
+    "name": "Растительный напиток · вариант 4",
+    "originalName": "Almond milk, unsweetened, plain, shelf stable",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 14.6,
+    "proteinPer100g": 0.555,
+    "fatPer100g": 1.22,
+    "carbsPer100g": 0.337,
+    "fiberPer100g": 0,
+    "sugarPer100g": null,
+    "sodiumPer100g": 59.6,
+    "servingSizeG": 100,
+    "aliases": [
+      "растительный напиток",
+      "растительное молоко"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2257045,
+    "name": "Растительный напиток · вариант 5",
+    "originalName": "Almond milk, unsweetened, plain, refrigerated",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 19.3,
+    "proteinPer100g": 0.656,
+    "fatPer100g": 1.56,
+    "carbsPer100g": 0.671,
+    "fiberPer100g": 0,
+    "sugarPer100g": null,
+    "sodiumPer100g": 59.2,
+    "servingSizeG": 100,
+    "aliases": [
+      "растительный напиток",
+      "растительное молоко"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2705412,
+    "name": "Растительный напиток · вариант 6",
+    "originalName": "Oat milk",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 45,
+    "proteinPer100g": 0.66,
+    "fatPer100g": 2.33,
+    "carbsPer100g": 5.37,
+    "fiberPer100g": 0.5,
+    "sugarPer100g": 2.04,
+    "sodiumPer100g": 43,
+    "servingSizeG": 30.5,
+    "aliases": [
+      "растительный напиток",
+      "растительное молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705410,
+    "name": "Растительный напиток · вариант 7",
+    "originalName": "Almond milk, NFS",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 20,
+    "proteinPer100g": 0.54,
+    "fatPer100g": 1.21,
+    "carbsPer100g": 1.53,
+    "fiberPer100g": 0,
+    "sugarPer100g": 1.2,
+    "sodiumPer100g": 59,
+    "servingSizeG": 30.5,
+    "aliases": [
+      "растительный напиток",
+      "растительное молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705404,
+    "name": "Растительный напиток · вариант 8",
+    "originalName": "Soy milk, sweetened",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 53,
+    "proteinPer100g": 3.41,
+    "fatPer100g": 2.05,
+    "carbsPer100g": 5.22,
+    "fiberPer100g": 0,
+    "sugarPer100g": 4.53,
+    "sodiumPer100g": 33,
+    "servingSizeG": 244,
+    "aliases": [
+      "растительный напиток",
+      "растительное молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705406,
+    "name": "Растительный напиток · вариант 9",
+    "originalName": "Soy milk, chocolate",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 64,
+    "proteinPer100g": 3.35,
+    "fatPer100g": 2.03,
+    "carbsPer100g": 8.32,
+    "fiberPer100g": 0.1,
+    "sugarPer100g": 7.49,
+    "sodiumPer100g": 32,
+    "servingSizeG": 244,
+    "aliases": [
+      "растительный напиток",
+      "растительное молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707570,
+    "name": "Растительный напиток · вариант 10",
+    "originalName": "Yogurt, almond milk",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 128,
+    "proteinPer100g": 3.03,
+    "fatPer100g": 7.03,
+    "carbsPer100g": 13,
+    "fiberPer100g": 1.5,
+    "sugarPer100g": 7.8,
+    "sodiumPer100g": 49,
+    "servingSizeG": 226,
+    "aliases": [
+      "растительный напиток",
+      "растительное молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705405,
+    "name": "Растительный напиток · вариант 11",
+    "originalName": "Soy milk, unsweetened",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 38,
+    "proteinPer100g": 3.55,
+    "fatPer100g": 2.12,
+    "carbsPer100g": 1.29,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0.56,
+    "sodiumPer100g": 34,
+    "servingSizeG": 244,
+    "aliases": [
+      "растительный напиток",
+      "растительное молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705407,
+    "name": "Растительный напиток · вариант 12",
+    "originalName": "Almond milk, sweetened",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 30,
+    "proteinPer100g": 0.53,
+    "fatPer100g": 1.18,
+    "carbsPer100g": 4.31,
+    "fiberPer100g": 0,
+    "sugarPer100g": 3.99,
+    "sodiumPer100g": 58,
+    "servingSizeG": 2.5,
+    "aliases": [
+      "растительный напиток",
+      "растительное молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705408,
+    "name": "Растительный напиток · вариант 13",
+    "originalName": "Almond milk, chocolate",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 43,
+    "proteinPer100g": 0.57,
+    "fatPer100g": 1.2,
+    "carbsPer100g": 7.44,
+    "fiberPer100g": 0.1,
+    "sugarPer100g": 6.97,
+    "sodiumPer100g": 56,
+    "servingSizeG": 244,
+    "aliases": [
+      "растительный напиток",
+      "растительное молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705409,
+    "name": "Растительный напиток · вариант 14",
+    "originalName": "Almond milk, unsweetened",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 15,
+    "proteinPer100g": 0.55,
+    "fatPer100g": 1.22,
+    "carbsPer100g": 0.34,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 60,
+    "servingSizeG": 2.5,
+    "aliases": [
+      "растительный напиток",
+      "растительное молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707477,
+    "name": "Тофу",
+    "originalName": "Tofu and vegetables excluding carrots, broccoli, and dark-green leafy; no potatoes, with soy-based sauce",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 93,
+    "proteinPer100g": 4.21,
+    "fatPer100g": 6.94,
+    "carbsPer100g": 4.4,
+    "fiberPer100g": 0.9,
+    "sugarPer100g": 1.7,
+    "sodiumPer100g": 210,
+    "servingSizeG": 217,
+    "aliases": [
+      "тофу",
+      "соевый сыр"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706745,
+    "name": "Тофу · вариант 2",
+    "originalName": "Beef, tofu, and vegetables excluding carrots, broccoli,  and dark-green leafy; no potatoes, soy-based sauce",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 117,
+    "proteinPer100g": 7.52,
+    "fatPer100g": 7.96,
+    "carbsPer100g": 4.45,
+    "fiberPer100g": 1,
+    "sugarPer100g": 1.66,
+    "sodiumPer100g": 230,
+    "servingSizeG": 163,
+    "aliases": [
+      "тофу",
+      "соевый сыр"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706770,
+    "name": "Тофу · вариант 3",
+    "originalName": "Pork, tofu, and vegetables, excluding carrots, broccoli, and dark-green leafy; no potatoes, soy-based sauce",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 118,
+    "proteinPer100g": 7.21,
+    "fatPer100g": 8.05,
+    "carbsPer100g": 4.45,
+    "fiberPer100g": 1,
+    "sugarPer100g": 1.66,
+    "sodiumPer100g": 232,
+    "servingSizeG": 163,
+    "aliases": [
+      "тофу",
+      "соевый сыр"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707476,
+    "name": "Тофу · вариант 4",
+    "originalName": "Tofu and vegetables including carrots, broccoli, and/or dark-green leafy; no potatoes, with soy-based sauce",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 92,
+    "proteinPer100g": 4.11,
+    "fatPer100g": 6.71,
+    "carbsPer100g": 4.68,
+    "fiberPer100g": 1.2,
+    "sugarPer100g": 1.64,
+    "sodiumPer100g": 216,
+    "servingSizeG": 163,
+    "aliases": [
+      "тофу",
+      "соевый сыр"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706760,
+    "name": "Тофу · вариант 5",
+    "originalName": "Pork, tofu, and vegetables including carrots, broccoli, and/or dark-green leafy; no potatoes, soy-base sauce",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 116,
+    "proteinPer100g": 7,
+    "fatPer100g": 7.77,
+    "carbsPer100g": 4.75,
+    "fiberPer100g": 1.2,
+    "sugarPer100g": 1.6,
+    "sodiumPer100g": 238,
+    "servingSizeG": 217,
+    "aliases": [
+      "тофу",
+      "соевый сыр"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706739,
+    "name": "Тофу · вариант 6",
+    "originalName": "Beef, tofu, and vegetables including carrots, broccoli, and/or dark-green leafy; no potatoes, soy-based sauce",
+    "category": "Растительные альтернативы",
+    "caloriesPer100g": 115,
+    "proteinPer100g": 7.3,
+    "fatPer100g": 7.68,
+    "carbsPer100g": 4.75,
+    "fiberPer100g": 1.2,
+    "sugarPer100g": 1.6,
+    "sodiumPer100g": 235,
+    "servingSizeG": 163,
+    "aliases": [
+      "тофу",
+      "соевый сыр"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707409,
+    "name": "Торт",
+    "originalName": "Bean cake",
+    "category": "Десерты",
+    "caloriesPer100g": 414,
+    "proteinPer100g": 5.8,
+    "fatPer100g": 21.4,
+    "carbsPer100g": 49.9,
+    "fiberPer100g": 3,
+    "sugarPer100g": 20.4,
+    "sodiumPer100g": 186,
+    "servingSizeG": 32,
+    "aliases": [
+      "торт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705680,
+    "name": "Хлеб",
+    "originalName": "Pudding, bread",
+    "category": "Десерты",
+    "caloriesPer100g": 156,
+    "proteinPer100g": 5.6,
+    "fatPer100g": 4.86,
+    "carbsPer100g": 23.5,
+    "fiberPer100g": 1,
+    "sugarPer100g": 15.1,
+    "sodiumPer100g": 206,
+    "servingSizeG": 200,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705697,
+    "name": "Банан",
+    "originalName": "Banana pudding",
+    "category": "Десерты",
+    "caloriesPer100g": 160,
+    "proteinPer100g": 2.57,
+    "fatPer100g": 4.26,
+    "carbsPer100g": 28,
+    "fiberPer100g": 0.7,
+    "sugarPer100g": 19.7,
+    "sodiumPer100g": 128,
+    "servingSizeG": 190,
+    "aliases": [
+      "банан"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707900,
+    "name": "Печенье",
+    "originalName": "Cookie, almond",
+    "category": "Десерты",
+    "caloriesPer100g": 514,
+    "proteinPer100g": 5.37,
+    "fatPer100g": 26.2,
+    "carbsPer100g": 63.8,
+    "fiberPer100g": 1.3,
+    "sugarPer100g": 21.6,
+    "sodiumPer100g": 353,
+    "servingSizeG": 5,
+    "aliases": [
+      "печенье"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706560,
+    "name": "Торт · вариант 2",
+    "originalName": "Tuna cake or patty",
+    "category": "Десерты",
+    "caloriesPer100g": 206,
+    "proteinPer100g": 15.3,
+    "fatPer100g": 14.9,
+    "carbsPer100g": 2.65,
+    "fiberPer100g": 0.2,
+    "sugarPer100g": 0.49,
+    "sodiumPer100g": 372,
+    "servingSizeG": 120,
+    "aliases": [
+      "торт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707901,
+    "name": "Печенье · вариант 2",
+    "originalName": "Cookie, applesauce",
+    "category": "Десерты",
+    "caloriesPer100g": 450,
+    "proteinPer100g": 6.2,
+    "fatPer100g": 18.1,
+    "carbsPer100g": 68.7,
+    "fiberPer100g": 2.8,
+    "sugarPer100g": 24.7,
+    "sodiumPer100g": 520,
+    "servingSizeG": 20,
+    "aliases": [
+      "печенье"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707964,
+    "name": "Печенье · вариант 3",
+    "originalName": "Cookie, shortbread",
+    "category": "Десерты",
+    "caloriesPer100g": 514,
+    "proteinPer100g": 5.37,
+    "fatPer100g": 26.2,
+    "carbsPer100g": 63.8,
+    "fiberPer100g": 1.3,
+    "sugarPer100g": 21.6,
+    "sodiumPer100g": 353,
+    "servingSizeG": 45,
+    "aliases": [
+      "печенье"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705466,
+    "name": "Шоколад",
+    "originalName": "Chocolate milk, NFS",
+    "category": "Десерты",
+    "caloriesPer100g": 65,
+    "proteinPer100g": 3.44,
+    "fatPer100g": 0.83,
+    "carbsPer100g": 11,
+    "fiberPer100g": 0.1,
+    "sugarPer100g": 9.55,
+    "sodiumPer100g": 68,
+    "servingSizeG": 248,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705517,
+    "name": "Шоколад · вариант 2",
+    "originalName": "Chocolate milk drink",
+    "category": "Десерты",
+    "caloriesPer100g": 49,
+    "proteinPer100g": 0.64,
+    "fatPer100g": 0.4,
+    "carbsPer100g": 10.7,
+    "fiberPer100g": 0.6,
+    "sugarPer100g": 8.68,
+    "sodiumPer100g": 91,
+    "servingSizeG": 248,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707023,
+    "name": "Торт · вариант 3",
+    "originalName": "Salmon cake sandwich",
+    "category": "Десерты",
+    "caloriesPer100g": 279,
+    "proteinPer100g": 13.9,
+    "fatPer100g": 15.9,
+    "carbsPer100g": 19.4,
+    "fiberPer100g": 1,
+    "sugarPer100g": 2.22,
+    "sodiumPer100g": 419,
+    "servingSizeG": 180,
+    "aliases": [
+      "торт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705467,
+    "name": "Шоколад, цельный",
+    "originalName": "Chocolate milk, whole",
+    "category": "Десерты",
+    "caloriesPer100g": 83,
+    "proteinPer100g": 3.17,
+    "fatPer100g": 3.39,
+    "carbsPer100g": 10.3,
+    "fiberPer100g": 0.8,
+    "sugarPer100g": 9.54,
+    "sodiumPer100g": 60,
+    "servingSizeG": 248,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707863,
+    "name": "Шоколад · вариант 3",
+    "originalName": "Cheesecake, chocolate",
+    "category": "Десерты",
+    "caloriesPer100g": 394,
+    "proteinPer100g": 5.72,
+    "fatPer100g": 26.1,
+    "carbsPer100g": 35.5,
+    "fiberPer100g": 1.6,
+    "sugarPer100g": 25.9,
+    "sodiumPer100g": 269,
+    "servingSizeG": 180,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707952,
+    "name": "Печенье · вариант 4",
+    "originalName": "Cookie, peanut butter",
+    "category": "Десерты",
+    "caloriesPer100g": 473,
+    "proteinPer100g": 8.92,
+    "fatPer100g": 23.8,
+    "carbsPer100g": 58.2,
+    "fiberPer100g": 2.1,
+    "sugarPer100g": 28.6,
+    "sodiumPer100g": 463,
+    "servingSizeG": 45,
+    "aliases": [
+      "печенье"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707855,
+    "name": "Торт · вариант 4",
+    "originalName": "Cake or cupcake, apple",
+    "category": "Десерты",
+    "caloriesPer100g": 376,
+    "proteinPer100g": 2.41,
+    "fatPer100g": 17.5,
+    "carbsPer100g": 52.5,
+    "fiberPer100g": 0.9,
+    "sugarPer100g": 39.5,
+    "sodiumPer100g": 280,
+    "servingSizeG": 200,
+    "aliases": [
+      "торт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707856,
+    "name": "Торт · вариант 5",
+    "originalName": "Cake or cupcake, banana",
+    "category": "Десерты",
+    "caloriesPer100g": 379,
+    "proteinPer100g": 2.47,
+    "fatPer100g": 17.5,
+    "carbsPer100g": 53.1,
+    "fiberPer100g": 1,
+    "sugarPer100g": 39.6,
+    "sodiumPer100g": 280,
+    "servingSizeG": 90,
+    "aliases": [
+      "торт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707859,
+    "name": "Торт · вариант 6",
+    "originalName": "Cake or cupcake, carrot",
+    "category": "Десерты",
+    "caloriesPer100g": 374,
+    "proteinPer100g": 2.49,
+    "fatPer100g": 17.5,
+    "carbsPer100g": 51.8,
+    "fiberPer100g": 1.1,
+    "sugarPer100g": 38.5,
+    "sodiumPer100g": 288,
+    "servingSizeG": 90,
+    "aliases": [
+      "торт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707970,
+    "name": "Печенье · вариант 5",
+    "originalName": "Cookie, butter or sugar",
+    "category": "Десерты",
+    "caloriesPer100g": 464,
+    "proteinPer100g": 5.35,
+    "fatPer100g": 19.6,
+    "carbsPer100g": 67.3,
+    "fiberPer100g": 1.3,
+    "sugarPer100g": 27.3,
+    "sodiumPer100g": 385,
+    "servingSizeG": 5,
+    "aliases": [
+      "печенье"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705453,
+    "name": "Шоколад, замороженный",
+    "originalName": "Frozen yogurt, chocolate",
+    "category": "Десерты",
+    "caloriesPer100g": 131,
+    "proteinPer100g": 3,
+    "fatPer100g": 3.6,
+    "carbsPer100g": 21.6,
+    "fiberPer100g": 2.3,
+    "sugarPer100g": 19.2,
+    "sodiumPer100g": 63,
+    "servingSizeG": 175,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706552,
+    "name": "Торт · вариант 7",
+    "originalName": "Fish, salmon cake or patty",
+    "category": "Десерты",
+    "caloriesPer100g": 285,
+    "proteinPer100g": 16.1,
+    "fatPer100g": 22.1,
+    "carbsPer100g": 4.46,
+    "fiberPer100g": 0.3,
+    "sugarPer100g": 0.65,
+    "sodiumPer100g": 404,
+    "servingSizeG": 85,
+    "aliases": [
+      "торт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705458,
+    "name": "Шоколад, замороженный · вариант 2",
+    "originalName": "Frozen yogurt bar, chocolate",
+    "category": "Десерты",
+    "caloriesPer100g": 131,
+    "proteinPer100g": 3,
+    "fatPer100g": 3.6,
+    "carbsPer100g": 21.6,
+    "fiberPer100g": 2.3,
+    "sugarPer100g": 19.2,
+    "sodiumPer100g": 63,
+    "servingSizeG": 65,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706167,
+    "name": "Говядина",
+    "originalName": "Hot dog, beef",
+    "category": "Фастфуд",
+    "caloriesPer100g": 310,
+    "proteinPer100g": 11.7,
+    "fatPer100g": 28,
+    "carbsPer100g": 2.89,
+    "fiberPer100g": 0,
+    "sugarPer100g": 1.26,
+    "sodiumPer100g": 828,
+    "servingSizeG": 57,
+    "aliases": [
+      "говядина"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706170,
+    "name": "Индейка",
+    "originalName": "Hot dog, turkey",
+    "category": "Фастфуд",
+    "caloriesPer100g": 223,
+    "proteinPer100g": 12.2,
+    "fatPer100g": 17.3,
+    "carbsPer100g": 3.81,
+    "fiberPer100g": 0,
+    "sugarPer100g": 1.21,
+    "sodiumPer100g": 865,
+    "servingSizeG": 10,
+    "aliases": [
+      "индейка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706888,
+    "name": "Бургер",
+    "originalName": "Cheeseburger, NFS",
+    "category": "Фастфуд",
+    "caloriesPer100g": 296,
+    "proteinPer100g": 17.9,
+    "fatPer100g": 16.2,
+    "carbsPer100g": 18.7,
+    "fiberPer100g": 0.6,
+    "sugarPer100g": 2.98,
+    "sodiumPer100g": 438,
+    "servingSizeG": 165,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708582,
+    "name": "Фасоль",
+    "originalName": "Nachos, with beans",
+    "category": "Фастфуд",
+    "caloriesPer100g": 210,
+    "proteinPer100g": 4.62,
+    "fatPer100g": 11.4,
+    "carbsPer100g": 23.3,
+    "fiberPer100g": 2.5,
+    "sugarPer100g": 0.48,
+    "sodiumPer100g": 434,
+    "servingSizeG": 250,
+    "aliases": [
+      "фасоль"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706894,
+    "name": "Бургер · вариант 2",
+    "originalName": "Cheeseburger slider",
+    "category": "Фастфуд",
+    "caloriesPer100g": 297,
+    "proteinPer100g": 18.1,
+    "fatPer100g": 16.4,
+    "carbsPer100g": 17.9,
+    "fiberPer100g": 0.6,
+    "sugarPer100g": 2.85,
+    "sodiumPer100g": 431,
+    "servingSizeG": 80,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708577,
+    "name": "Сыр",
+    "originalName": "Nachos, cheese only",
+    "category": "Фастфуд",
+    "caloriesPer100g": 266,
+    "proteinPer100g": 4.46,
+    "fatPer100g": 15.7,
+    "carbsPer100g": 27.8,
+    "fiberPer100g": 2,
+    "sugarPer100g": 0.45,
+    "sodiumPer100g": 547,
+    "servingSizeG": 250,
+    "aliases": [
+      "сыр"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708578,
+    "name": "Говядина · вариант 2",
+    "originalName": "Nachos, beef or pork",
+    "category": "Фастфуд",
+    "caloriesPer100g": 265,
+    "proteinPer100g": 10.7,
+    "fatPer100g": 16,
+    "carbsPer100g": 19.9,
+    "fiberPer100g": 1.4,
+    "sugarPer100g": 0.32,
+    "sodiumPer100g": 429,
+    "servingSizeG": 7,
+    "aliases": [
+      "говядина"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707481,
+    "name": "Бургер · вариант 3",
+    "originalName": "Veggie burger, on bun",
+    "category": "Фастфуд",
+    "caloriesPer100g": 224,
+    "proteinPer100g": 13,
+    "fatPer100g": 5.2,
+    "carbsPer100g": 30.8,
+    "fiberPer100g": 3.5,
+    "sugarPer100g": 3.94,
+    "sodiumPer100g": 534,
+    "servingSizeG": 160,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706892,
+    "name": "Бургер · вариант 4",
+    "originalName": "Cheeseburger (McDonalds)",
+    "category": "Фастфуд",
+    "caloriesPer100g": 270,
+    "proteinPer100g": 13.5,
+    "fatPer100g": 12.9,
+    "carbsPer100g": 25.5,
+    "fiberPer100g": 1.9,
+    "sugarPer100g": 5.24,
+    "sodiumPer100g": 628,
+    "servingSizeG": 110,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706890,
+    "name": "Бургер · вариант 5",
+    "originalName": "Cheeseburger (Burger King)",
+    "category": "Фастфуд",
+    "caloriesPer100g": 265,
+    "proteinPer100g": 14,
+    "fatPer100g": 12.3,
+    "carbsPer100g": 23.7,
+    "fiberPer100g": 1,
+    "sugarPer100g": 4.66,
+    "sodiumPer100g": 527,
+    "servingSizeG": 110,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707473,
+    "name": "Бургер · вариант 6",
+    "originalName": "Veggie burger patty, no bun",
+    "category": "Фастфуд",
+    "caloriesPer100g": 177,
+    "proteinPer100g": 15.7,
+    "fatPer100g": 6.3,
+    "carbsPer100g": 14.3,
+    "fiberPer100g": 4.9,
+    "sugarPer100g": 1.07,
+    "sodiumPer100g": 569,
+    "servingSizeG": 125,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708581,
+    "name": "Курица",
+    "originalName": "Nachos, chicken, with beans",
+    "category": "Фастфуд",
+    "caloriesPer100g": 203,
+    "proteinPer100g": 9.62,
+    "fatPer100g": 10.5,
+    "carbsPer100g": 18.3,
+    "fiberPer100g": 2,
+    "sugarPer100g": 0.38,
+    "sodiumPer100g": 425,
+    "servingSizeG": 250,
+    "aliases": [
+      "курица"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706914,
+    "name": "Бургер · вариант 7",
+    "originalName": "Double cheeseburger (McDonalds)",
+    "category": "Фастфуд",
+    "caloriesPer100g": 282,
+    "proteinPer100g": 16.2,
+    "fatPer100g": 16.2,
+    "carbsPer100g": 18,
+    "fiberPer100g": 0.9,
+    "sugarPer100g": 4.16,
+    "sodiumPer100g": 617,
+    "servingSizeG": 165,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708579,
+    "name": "Говядина · вариант 3",
+    "originalName": "Nachos, beef or pork, with beans",
+    "category": "Фастфуд",
+    "caloriesPer100g": 220,
+    "proteinPer100g": 9.28,
+    "fatPer100g": 12.4,
+    "carbsPer100g": 18.3,
+    "fiberPer100g": 2,
+    "sugarPer100g": 0.38,
+    "sodiumPer100g": 424,
+    "servingSizeG": 250,
+    "aliases": [
+      "говядина"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706899,
+    "name": "Бургер · вариант 8",
+    "originalName": "Whopper with cheese (Burger King)",
+    "category": "Фастфуд",
+    "caloriesPer100g": 268,
+    "proteinPer100g": 13.7,
+    "fatPer100g": 15.8,
+    "carbsPer100g": 17.7,
+    "fiberPer100g": 1.1,
+    "sugarPer100g": 4.5,
+    "sodiumPer100g": 473,
+    "servingSizeG": 290,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706913,
+    "name": "Бургер · вариант 9",
+    "originalName": "Double cheeseburger (Burger King)",
+    "category": "Фастфуд",
+    "caloriesPer100g": 278,
+    "proteinPer100g": 16.3,
+    "fatPer100g": 15.7,
+    "carbsPer100g": 16.9,
+    "fiberPer100g": 0.7,
+    "sugarPer100g": 3.62,
+    "sodiumPer100g": 502,
+    "servingSizeG": 140,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707482,
+    "name": "Бургер · вариант 10",
+    "originalName": "Veggie burger, on bun, with cheese",
+    "category": "Фастфуд",
+    "caloriesPer100g": 243,
+    "proteinPer100g": 14,
+    "fatPer100g": 8.43,
+    "carbsPer100g": 27.2,
+    "fiberPer100g": 3,
+    "sugarPer100g": 3.78,
+    "sodiumPer100g": 600,
+    "servingSizeG": 181,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706887,
+    "name": "Бургер · вариант 11",
+    "originalName": "Cheeseburger slider, from fast food",
+    "category": "Фастфуд",
+    "caloriesPer100g": 298,
+    "proteinPer100g": 16.2,
+    "fatPer100g": 14.3,
+    "carbsPer100g": 25,
+    "fiberPer100g": 0.9,
+    "sugarPer100g": 3.99,
+    "sodiumPer100g": 505,
+    "servingSizeG": 60,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706893,
+    "name": "Бургер · вариант 12",
+    "originalName": "Cheeseburger, from school cafeteria",
+    "category": "Фастфуд",
+    "caloriesPer100g": 250,
+    "proteinPer100g": 18.7,
+    "fatPer100g": 8.64,
+    "carbsPer100g": 23.4,
+    "fiberPer100g": 2.7,
+    "sugarPer100g": 2.68,
+    "sodiumPer100g": 313,
+    "servingSizeG": 100,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706891,
+    "name": "Бургер · вариант 13",
+    "originalName": "Whopper Jr with cheese (Burger King)",
+    "category": "Фастфуд",
+    "caloriesPer100g": 235,
+    "proteinPer100g": 12,
+    "fatPer100g": 12.1,
+    "carbsPer100g": 19,
+    "fiberPer100g": 0.9,
+    "sugarPer100g": 4.08,
+    "sodiumPer100g": 407,
+    "servingSizeG": 155,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
     "fdcId": 2710820,
     "name": "Булгур, сырой, сухой",
     "originalName": "Bulgur, dry, raw",
@@ -579,7 +2261,7 @@
   },
   {
     "fdcId": 2707450,
-    "name": "Фасоль",
+    "name": "Фасоль · вариант 2",
     "originalName": "Vermicelli, made from soybeans",
     "category": "Макароны",
     "caloriesPer100g": 126,
@@ -597,7 +2279,7 @@
   },
   {
     "fdcId": 2708756,
-    "name": "Курица",
+    "name": "Курица · вариант 2",
     "originalName": "Lasagna with chicken or turkey",
     "category": "Макароны",
     "caloriesPer100g": 205,
@@ -830,7 +2512,7 @@
   },
   {
     "fdcId": 2707790,
-    "name": "Хлеб",
+    "name": "Хлеб · вариант 2",
     "originalName": "Bread, soy",
     "category": "Хлеб",
     "caloriesPer100g": 267,
@@ -850,7 +2532,7 @@
   },
   {
     "fdcId": 2707848,
-    "name": "Хлеб · вариант 2",
+    "name": "Хлеб · вариант 3",
     "originalName": "Bread, nut",
     "category": "Хлеб",
     "caloriesPer100g": 403,
@@ -870,7 +2552,7 @@
   },
   {
     "fdcId": 2707613,
-    "name": "Хлеб · вариант 3",
+    "name": "Хлеб · вариант 4",
     "originalName": "Bread, naan",
     "category": "Хлеб",
     "caloriesPer100g": 311,
@@ -890,7 +2572,7 @@
   },
   {
     "fdcId": 2707616,
-    "name": "Хлеб · вариант 4",
+    "name": "Хлеб · вариант 5",
     "originalName": "Bread, pita",
     "category": "Хлеб",
     "caloriesPer100g": 275,
@@ -910,7 +2592,7 @@
   },
   {
     "fdcId": 2707714,
-    "name": "Хлеб · вариант 5",
+    "name": "Хлеб · вариант 6",
     "originalName": "Bread, puri",
     "category": "Хлеб",
     "caloriesPer100g": 409,
@@ -930,7 +2612,7 @@
   },
   {
     "fdcId": 2707598,
-    "name": "Хлеб · вариант 6",
+    "name": "Хлеб · вариант 7",
     "originalName": "Bread, white",
     "category": "Хлеб",
     "caloriesPer100g": 267,
@@ -950,7 +2632,7 @@
   },
   {
     "fdcId": 2707604,
-    "name": "Хлеб · вариант 7",
+    "name": "Хлеб · вариант 8",
     "originalName": "Bread, Cuban",
     "category": "Хлеб",
     "caloriesPer100g": 272,
@@ -970,7 +2652,7 @@
   },
   {
     "fdcId": 2707633,
-    "name": "Хлеб · вариант 8",
+    "name": "Хлеб · вариант 9",
     "originalName": "Bread, onion",
     "category": "Хлеб",
     "caloriesPer100g": 238,
@@ -990,7 +2672,7 @@
   },
   {
     "fdcId": 2707660,
-    "name": "Сыр",
+    "name": "Сыр · вариант 2",
     "originalName": "Roll, cheese",
     "category": "Хлеб",
     "caloriesPer100g": 315,
@@ -1008,7 +2690,7 @@
   },
   {
     "fdcId": 2707764,
-    "name": "Хлеб · вариант 9",
+    "name": "Хлеб · вариант 10",
     "originalName": "Bread, black",
     "category": "Хлеб",
     "caloriesPer100g": 250,
@@ -1028,7 +2710,7 @@
   },
   {
     "fdcId": 2707850,
-    "name": "Хлеб · вариант 10",
+    "name": "Хлеб · вариант 11",
     "originalName": "Bread, fruit",
     "category": "Хлеб",
     "caloriesPer100g": 374,
@@ -1048,7 +2730,7 @@
   },
   {
     "fdcId": 2707618,
-    "name": "Хлеб · вариант 11",
+    "name": "Хлеб · вариант 12",
     "originalName": "Bread, cheese",
     "category": "Хлеб",
     "caloriesPer100g": 408,
@@ -1087,7 +2769,7 @@
   },
   {
     "fdcId": 2707644,
-    "name": "Хлеб · вариант 12",
+    "name": "Хлеб · вариант 13",
     "originalName": "Bread, raisin",
     "category": "Хлеб",
     "caloriesPer100g": 270,
@@ -1098,26 +2780,6 @@
     "sugarPer100g": 11.3,
     "sodiumPer100g": 408,
     "servingSizeG": 43,
-    "aliases": [
-      "хлеб",
-      "батон",
-      "буханка"
-    ],
-    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
-    "fdcId": 2705680,
-    "name": "Хлеб · вариант 13",
-    "originalName": "Pudding, bread",
-    "category": "Хлеб",
-    "caloriesPer100g": 156,
-    "proteinPer100g": 5.6,
-    "fatPer100g": 4.86,
-    "carbsPer100g": 23.5,
-    "fiberPer100g": 1,
-    "sugarPer100g": 15.1,
-    "sodiumPer100g": 206,
-    "servingSizeG": 200,
     "aliases": [
       "хлеб",
       "батон",
@@ -1162,6 +2824,24 @@
       "хлеб",
       "батон",
       "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707842,
+    "name": "Сыр · вариант 3",
+    "originalName": "Muffin, cheese",
+    "category": "Хлеб",
+    "caloriesPer100g": 367,
+    "proteinPer100g": 9.72,
+    "fatPer100g": 23,
+    "carbsPer100g": 30.5,
+    "fiberPer100g": 1,
+    "sugarPer100g": 1.88,
+    "sodiumPer100g": 491,
+    "servingSizeG": 130,
+    "aliases": [
+      "сыр"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
@@ -2159,7 +3839,7 @@
   },
   {
     "fdcId": 2709630,
-    "name": "Сыр · вариант 2",
+    "name": "Сыр · вариант 4",
     "originalName": "Spinach and cheese casserole",
     "category": "Зелень",
     "caloriesPer100g": 130,
@@ -2215,7 +3895,7 @@
   },
   {
     "fdcId": 2708772,
-    "name": "Сыр · вариант 3",
+    "name": "Сыр · вариант 5",
     "originalName": "Ravioli, cheese and spinach-filled, no sauce",
     "category": "Зелень",
     "caloriesPer100g": 150,
@@ -2252,7 +3932,7 @@
   },
   {
     "fdcId": 2708795,
-    "name": "Сыр · вариант 4",
+    "name": "Сыр · вариант 6",
     "originalName": "Cannelloni, cheese- and spinach-filled, no sauce",
     "category": "Зелень",
     "caloriesPer100g": 157,
@@ -3677,42 +5357,6 @@
     "sourceVersion": "Foundation Foods · 2026-04-30"
   },
   {
-    "fdcId": 1999631,
-    "name": "Молоко · вариант 5",
-    "originalName": "Almond milk, unsweetened, plain, shelf stable",
-    "category": "Орехи",
-    "caloriesPer100g": 14.6,
-    "proteinPer100g": 0.555,
-    "fatPer100g": 1.22,
-    "carbsPer100g": 0.337,
-    "fiberPer100g": 0,
-    "sugarPer100g": null,
-    "sodiumPer100g": 59.6,
-    "servingSizeG": 100,
-    "aliases": [
-      "молоко"
-    ],
-    "sourceVersion": "Foundation Foods · 2026-04-30"
-  },
-  {
-    "fdcId": 2257045,
-    "name": "Молоко · вариант 6",
-    "originalName": "Almond milk, unsweetened, plain, refrigerated",
-    "category": "Орехи",
-    "caloriesPer100g": 19.3,
-    "proteinPer100g": 0.656,
-    "fatPer100g": 1.56,
-    "carbsPer100g": 0.671,
-    "fiberPer100g": 0,
-    "sugarPer100g": null,
-    "sodiumPer100g": 59.2,
-    "servingSizeG": 100,
-    "aliases": [
-      "молоко"
-    ],
-    "sourceVersion": "Foundation Foods · 2026-04-30"
-  },
-  {
     "fdcId": 2346392,
     "name": "Орехи, сырой",
     "originalName": "Nuts, pine nuts, raw",
@@ -3948,7 +5592,7 @@
   },
   {
     "fdcId": 2706797,
-    "name": "Курица · вариант 2",
+    "name": "Курица · вариант 3",
     "originalName": "Almond chicken",
     "category": "Орехи",
     "caloriesPer100g": 195,
@@ -3961,6 +5605,42 @@
     "servingSizeG": 128,
     "aliases": [
       "курица"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707487,
+    "name": "Миндаль · вариант 3",
+    "originalName": "Almonds, salted",
+    "category": "Орехи",
+    "caloriesPer100g": 601,
+    "proteinPer100g": 20.1,
+    "fatPer100g": 53.4,
+    "carbsPer100g": 20.2,
+    "fiberPer100g": 10.5,
+    "sugarPer100g": 4.67,
+    "sodiumPer100g": 386,
+    "servingSizeG": 50,
+    "aliases": [
+      "миндаль"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707489,
+    "name": "Миндаль, без соли",
+    "originalName": "Almonds, unsalted",
+    "category": "Орехи",
+    "caloriesPer100g": 607,
+    "proteinPer100g": 20.3,
+    "fatPer100g": 54,
+    "carbsPer100g": 20.4,
+    "fiberPer100g": 10.6,
+    "sugarPer100g": 4.71,
+    "sodiumPer100g": 3,
+    "servingSizeG": 28,
+    "aliases": [
+      "миндаль"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
@@ -4308,7 +5988,7 @@
   },
   {
     "fdcId": 2706444,
-    "name": "Курица · вариант 3",
+    "name": "Курица · вариант 4",
     "originalName": "Sesame chicken",
     "category": "Семена",
     "caloriesPer100g": 293,
@@ -4603,7 +6283,7 @@
   },
   {
     "fdcId": 746785,
-    "name": "Индейка",
+    "name": "Индейка · вариант 2",
     "originalName": "Turkey, ground, 93% lean, 7% fat, pan-broiled crumbles",
     "category": "Птица",
     "caloriesPer100g": 220,
@@ -6146,7 +7826,7 @@
   },
   {
     "fdcId": 2259792,
-    "name": "Молоко · вариант 7",
+    "name": "Молоко · вариант 5",
     "originalName": "Buttermilk, low fat",
     "category": "Кисломолочные продукты",
     "caloriesPer100g": 42.8,
@@ -6273,7 +7953,7 @@
   },
   {
     "fdcId": 2705393,
-    "name": "Молоко · вариант 8",
+    "name": "Молоко · вариант 6",
     "originalName": "Buttermilk",
     "category": "Кисломолочные продукты",
     "caloriesPer100g": 43,
@@ -6470,24 +8150,6 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
-    "fdcId": 2705453,
-    "name": "Йогурт, замороженный · вариант 4",
-    "originalName": "Frozen yogurt, chocolate",
-    "category": "Кисломолочные продукты",
-    "caloriesPer100g": 131,
-    "proteinPer100g": 3,
-    "fatPer100g": 3.6,
-    "carbsPer100g": 21.6,
-    "fiberPer100g": 2.3,
-    "sugarPer100g": 19.2,
-    "sodiumPer100g": 63,
-    "servingSizeG": 175,
-    "aliases": [
-      "йогурт"
-    ],
-    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
     "fdcId": 2705749,
     "name": "Творог зернёный · вариант 2",
     "originalName": "Cottage cheese, farmer's",
@@ -6507,8 +8169,26 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
+    "fdcId": 2705418,
+    "name": "Йогурт, цельный · вариант 2",
+    "originalName": "Yogurt, whole milk, plain",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 78,
+    "proteinPer100g": 3.82,
+    "fatPer100g": 4.48,
+    "carbsPer100g": 5.57,
+    "fiberPer100g": 0,
+    "sugarPer100g": 4.09,
+    "sodiumPer100g": 42,
+    "servingSizeG": 113,
+    "aliases": [
+      "йогурт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
     "fdcId": 746767,
-    "name": "Сыр · вариант 5",
+    "name": "Сыр · вариант 7",
     "originalName": "Cheese, swiss",
     "category": "Сыры",
     "caloriesPer100g": 393,
@@ -6544,7 +8224,7 @@
   },
   {
     "fdcId": 2647441,
-    "name": "Сыр · вариант 6",
+    "name": "Сыр · вариант 8",
     "originalName": "Cheese, oaxaca, solid",
     "category": "Сыры",
     "caloriesPer100g": 297,
@@ -6562,7 +8242,7 @@
   },
   {
     "fdcId": 2647443,
-    "name": "Сыр · вариант 7",
+    "name": "Сыр · вариант 9",
     "originalName": "Cheese, cotija, solid",
     "category": "Сыры",
     "caloriesPer100g": 351,
@@ -6598,7 +8278,7 @@
   },
   {
     "fdcId": 2647440,
-    "name": "Сыр · вариант 8",
+    "name": "Сыр · вариант 10",
     "originalName": "Cheese, provolone, sliced",
     "category": "Сыры",
     "caloriesPer100g": 357,
@@ -6634,7 +8314,7 @@
   },
   {
     "fdcId": 2647442,
-    "name": "Сыр · вариант 9",
+    "name": "Сыр · вариант 11",
     "originalName": "Cheese, queso fresco, solid",
     "category": "Сыры",
     "caloriesPer100g": 298,
@@ -6652,7 +8332,7 @@
   },
   {
     "fdcId": 747429,
-    "name": "Сыр · вариант 10",
+    "name": "Сыр · вариант 12",
     "originalName": "Cheese, American, restaurant",
     "category": "Сыры",
     "caloriesPer100g": 375,
@@ -6670,7 +8350,7 @@
   },
   {
     "fdcId": 2647438,
-    "name": "Сыр · вариант 11",
+    "name": "Сыр · вариант 13",
     "originalName": "Cheese, monterey jack, solid",
     "category": "Сыры",
     "caloriesPer100g": 392,
@@ -6706,7 +8386,7 @@
   },
   {
     "fdcId": 2346385,
-    "name": "Сыр · вариант 12",
+    "name": "Сыр · вариант 14",
     "originalName": "Cream cheese, full fat, block",
     "category": "Сыры",
     "caloriesPer100g": 343,
@@ -6742,7 +8422,7 @@
   },
   {
     "fdcId": 328841,
-    "name": "Молоко · вариант 9",
+    "name": "Молоко · вариант 7",
     "originalName": "Cheese, cottage, lowfat, 2% milkfat",
     "category": "Сыры",
     "caloriesPer100g": 84,
@@ -6796,7 +8476,7 @@
   },
   {
     "fdcId": 325198,
-    "name": "Сыр · вариант 13",
+    "name": "Сыр · вариант 15",
     "originalName": "Cheese, pasteurized process, American, vitamin D fortified",
     "category": "Сыры",
     "caloriesPer100g": 366,
@@ -6814,7 +8494,7 @@
   },
   {
     "fdcId": 2647439,
-    "name": "Сыр · вариант 14",
+    "name": "Сыр · вариант 16",
     "originalName": "Cheese, pasteurized process cheese food or product, American, singles",
     "category": "Сыры",
     "caloriesPer100g": 310,
@@ -6832,7 +8512,7 @@
   },
   {
     "fdcId": 2705786,
-    "name": "Сыр · вариант 15",
+    "name": "Сыр · вариант 17",
     "originalName": "Cheese dip",
     "category": "Сыры",
     "caloriesPer100g": 163,
@@ -6850,7 +8530,7 @@
   },
   {
     "fdcId": 2705704,
-    "name": "Сыр · вариант 16",
+    "name": "Сыр · вариант 18",
     "originalName": "Cheese, NFS",
     "category": "Сыры",
     "caloriesPer100g": 381,
@@ -6865,42 +8545,6 @@
       "сыр"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
-    "fdcId": 2257044,
-    "name": "Молоко · вариант 10",
-    "originalName": "Soy milk, sweetened, plain, refrigerated",
-    "category": "Молоко",
-    "caloriesPer100g": 40.7,
-    "proteinPer100g": 2.78,
-    "fatPer100g": 1.96,
-    "carbsPer100g": 3,
-    "fiberPer100g": 0,
-    "sugarPer100g": null,
-    "sodiumPer100g": 39.4,
-    "servingSizeG": 100,
-    "aliases": [
-      "молоко"
-    ],
-    "sourceVersion": "Foundation Foods · 2026-04-30"
-  },
-  {
-    "fdcId": 1999630,
-    "name": "Молоко · вариант 11",
-    "originalName": "Soy milk, unsweetened, plain, shelf stable",
-    "category": "Молоко",
-    "caloriesPer100g": 38.5,
-    "proteinPer100g": 3.55,
-    "fatPer100g": 2.12,
-    "carbsPer100g": 1.29,
-    "fiberPer100g": 0,
-    "sugarPer100g": null,
-    "sodiumPer100g": 34.3,
-    "servingSizeG": 100,
-    "aliases": [
-      "молоко"
-    ],
-    "sourceVersion": "Foundation Foods · 2026-04-30"
   },
   {
     "fdcId": 746782,
@@ -6922,7 +8566,7 @@
   },
   {
     "fdcId": 746772,
-    "name": "Молоко · вариант 12",
+    "name": "Молоко · вариант 8",
     "originalName": "Milk, lowfat, fluid, 1% milkfat, with added vitamin A and vitamin D",
     "category": "Молоко",
     "caloriesPer100g": 43,
@@ -6940,7 +8584,7 @@
   },
   {
     "fdcId": 746778,
-    "name": "Молоко · вариант 13",
+    "name": "Молоко · вариант 9",
     "originalName": "Milk, reduced fat, fluid, 2% milkfat, with added vitamin A and vitamin D",
     "category": "Молоко",
     "caloriesPer100g": 50,
@@ -6976,7 +8620,7 @@
   },
   {
     "fdcId": 2705384,
-    "name": "Молоко · вариант 14",
+    "name": "Молоко · вариант 10",
     "originalName": "Milk, NFS",
     "category": "Молоко",
     "caloriesPer100g": 52,
@@ -6994,7 +8638,7 @@
   },
   {
     "fdcId": 2705395,
-    "name": "Молоко · вариант 15",
+    "name": "Растительный напиток · вариант 15",
     "originalName": "Goat milk",
     "category": "Молоко",
     "caloriesPer100g": 69,
@@ -7006,7 +8650,8 @@
     "sodiumPer100g": 50,
     "servingSizeG": 61,
     "aliases": [
-      "молоко"
+      "растительный напиток",
+      "растительное молоко"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
@@ -7030,7 +8675,7 @@
   },
   {
     "fdcId": 2705413,
-    "name": "Молоко · вариант 16",
+    "name": "Молоко · вариант 11",
     "originalName": "Coconut milk",
     "category": "Молоко",
     "caloriesPer100g": 31,
@@ -7048,7 +8693,7 @@
   },
   {
     "fdcId": 2705501,
-    "name": "Молоко · вариант 17",
+    "name": "Молоко · вариант 12",
     "originalName": "Milk, malted",
     "category": "Молоко",
     "caloriesPer100g": 66,
@@ -7066,7 +8711,7 @@
   },
   {
     "fdcId": 2708159,
-    "name": "Молоко · вариант 18",
+    "name": "Молоко · вариант 13",
     "originalName": "Crackers, milk",
     "category": "Молоко",
     "caloriesPer100g": 446,
@@ -7084,7 +8729,7 @@
   },
   {
     "fdcId": 2705387,
-    "name": "Молоко · вариант 19",
+    "name": "Молоко · вариант 14",
     "originalName": "Milk, low fat (1%)",
     "category": "Молоко",
     "caloriesPer100g": 43,
@@ -7102,7 +8747,7 @@
   },
   {
     "fdcId": 2705403,
-    "name": "Молоко · вариант 20",
+    "name": "Молоко · вариант 15",
     "originalName": "Non-dairy milk, NFS",
     "category": "Молоко",
     "caloriesPer100g": 31,
@@ -7119,62 +8764,8 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
-    "fdcId": 2705404,
-    "name": "Молоко · вариант 21",
-    "originalName": "Soy milk, sweetened",
-    "category": "Молоко",
-    "caloriesPer100g": 53,
-    "proteinPer100g": 3.41,
-    "fatPer100g": 2.05,
-    "carbsPer100g": 5.22,
-    "fiberPer100g": 0,
-    "sugarPer100g": 4.53,
-    "sodiumPer100g": 33,
-    "servingSizeG": 244,
-    "aliases": [
-      "молоко"
-    ],
-    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
-    "fdcId": 2705406,
-    "name": "Молоко · вариант 22",
-    "originalName": "Soy milk, chocolate",
-    "category": "Молоко",
-    "caloriesPer100g": 64,
-    "proteinPer100g": 3.35,
-    "fatPer100g": 2.03,
-    "carbsPer100g": 8.32,
-    "fiberPer100g": 0.1,
-    "sugarPer100g": 7.49,
-    "sodiumPer100g": 32,
-    "servingSizeG": 244,
-    "aliases": [
-      "молоко"
-    ],
-    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
-    "fdcId": 2705466,
-    "name": "Молоко · вариант 23",
-    "originalName": "Chocolate milk, NFS",
-    "category": "Молоко",
-    "caloriesPer100g": 65,
-    "proteinPer100g": 3.44,
-    "fatPer100g": 0.83,
-    "carbsPer100g": 11,
-    "fiberPer100g": 0.1,
-    "sugarPer100g": 9.55,
-    "sodiumPer100g": 68,
-    "servingSizeG": 248,
-    "aliases": [
-      "молоко"
-    ],
-    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
     "fdcId": 2710506,
-    "name": "Молоко · вариант 24",
+    "name": "Молоко · вариант 16",
     "originalName": "Tea, hot, with milk",
     "category": "Молоко",
     "caloriesPer100g": 51,
@@ -7192,7 +8783,7 @@
   },
   {
     "fdcId": 2705507,
-    "name": "Молоко · вариант 25",
+    "name": "Молоко · вариант 17",
     "originalName": "Milk shake with malt",
     "category": "Молоко",
     "caloriesPer100g": 125,
@@ -7209,18 +8800,108 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
-    "fdcId": 2705517,
-    "name": "Молоко · вариант 26",
-    "originalName": "Chocolate milk drink",
+    "fdcId": 2705388,
+    "name": "Молоко, обезжиренный · вариант 3",
+    "originalName": "Milk, fat free (skim)",
     "category": "Молоко",
-    "caloriesPer100g": 49,
-    "proteinPer100g": 0.64,
-    "fatPer100g": 0.4,
-    "carbsPer100g": 10.7,
-    "fiberPer100g": 0.6,
-    "sugarPer100g": 8.68,
-    "sodiumPer100g": 91,
+    "caloriesPer100g": 34,
+    "proteinPer100g": 3.43,
+    "fatPer100g": 0.08,
+    "carbsPer100g": 4.92,
+    "fiberPer100g": 0,
+    "sugarPer100g": 5.05,
+    "sodiumPer100g": 41,
+    "servingSizeG": 30.5,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705386,
+    "name": "Молоко · вариант 18",
+    "originalName": "Milk, reduced fat (2%)",
+    "category": "Молоко",
+    "caloriesPer100g": 50,
+    "proteinPer100g": 3.36,
+    "fatPer100g": 1.9,
+    "carbsPer100g": 4.9,
+    "fiberPer100g": 0,
+    "sugarPer100g": 4.89,
+    "sodiumPer100g": 39,
+    "servingSizeG": 244,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705399,
+    "name": "Молоко, цельный · вариант 6",
+    "originalName": "Milk, evaporated, whole",
+    "category": "Молоко",
+    "caloriesPer100g": 134,
+    "proteinPer100g": 6.81,
+    "fatPer100g": 7.56,
+    "carbsPer100g": 10,
+    "fiberPer100g": 0,
+    "sugarPer100g": 10,
+    "sodiumPer100g": 106,
+    "servingSizeG": 31.5,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710603,
+    "name": "Молоко · вариант 19",
+    "originalName": "Horchata, made with milk",
+    "category": "Молоко",
+    "caloriesPer100g": 91,
+    "proteinPer100g": 1.42,
+    "fatPer100g": 0.63,
+    "carbsPer100g": 19.6,
+    "fiberPer100g": 0.4,
+    "sugarPer100g": 9.56,
+    "sodiumPer100g": 9,
     "servingSizeG": 248,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705392,
+    "name": "Молоко, цельный · вариант 7",
+    "originalName": "Milk, lactose free, whole",
+    "category": "Молоко",
+    "caloriesPer100g": 61,
+    "proteinPer100g": 3.27,
+    "fatPer100g": 3.2,
+    "carbsPer100g": 4.63,
+    "fiberPer100g": 0,
+    "sugarPer100g": 4.81,
+    "sodiumPer100g": 38,
+    "servingSizeG": 244,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705402,
+    "name": "Молоко · вариант 20",
+    "originalName": "Milk, condensed, sweetened",
+    "category": "Молоко",
+    "caloriesPer100g": 321,
+    "proteinPer100g": 7.91,
+    "fatPer100g": 8.7,
+    "carbsPer100g": 54.4,
+    "fiberPer100g": 0,
+    "sugarPer100g": 54.4,
+    "sodiumPer100g": 127,
+    "servingSizeG": 19,
     "aliases": [
       "молоко"
     ],
@@ -8074,7 +9755,7 @@
   },
   {
     "fdcId": 2710273,
-    "name": "Блины",
+    "name": "Торт · вариант 8",
     "originalName": "Pancake syrup",
     "category": "Сахар и подсластители",
     "caloriesPer100g": 265,
@@ -8086,7 +9767,7 @@
     "sodiumPer100g": 61,
     "servingSizeG": 20,
     "aliases": [
-      "блины"
+      "торт"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
@@ -8109,26 +9790,8 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
-    "fdcId": 2710276,
-    "name": "Сахар и подсластители · вариант 5",
-    "originalName": "Chocolate syrup",
-    "category": "Сахар и подсластители",
-    "caloriesPer100g": 269,
-    "proteinPer100g": 0,
-    "fatPer100g": 0,
-    "carbsPer100g": 67.2,
-    "fiberPer100g": 0,
-    "sugarPer100g": 60,
-    "sodiumPer100g": 150,
-    "servingSizeG": 40,
-    "aliases": [
-      "сахар и подсластители"
-    ],
-    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
     "fdcId": 2710299,
-    "name": "Сахар и подсластители · вариант 6",
+    "name": "Сахар и подсластители · вариант 5",
     "originalName": "Jam or jelly, NFS",
     "category": "Сахар и подсластители",
     "caloriesPer100g": 261,
@@ -8145,26 +9808,8 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
-    "fdcId": 2707973,
-    "name": "Сахар · вариант 4",
-    "originalName": "Cookie, sugar wafer",
-    "category": "Сахар и подсластители",
-    "caloriesPer100g": 502,
-    "proteinPer100g": 3.84,
-    "fatPer100g": 23.2,
-    "carbsPer100g": 70.6,
-    "fiberPer100g": 1.6,
-    "sugarPer100g": 43,
-    "sodiumPer100g": 103,
-    "servingSizeG": 4,
-    "aliases": [
-      "сахар"
-    ],
-    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
     "fdcId": 2710606,
-    "name": "Сахар · вариант 5",
+    "name": "Сахар · вариант 4",
     "originalName": "Sugar cane beverage",
     "category": "Сахар и подсластители",
     "caloriesPer100g": 74,
@@ -8182,7 +9827,7 @@
   },
   {
     "fdcId": 2710280,
-    "name": "Блины · вариант 2",
+    "name": "Торт · вариант 9",
     "originalName": "Pancake syrup, light",
     "category": "Сахар и подсластители",
     "caloriesPer100g": 165,
@@ -8194,49 +9839,13 @@
     "sodiumPer100g": 178,
     "servingSizeG": 30,
     "aliases": [
-      "блины"
-    ],
-    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
-    "fdcId": 2708349,
-    "name": "Сахар · вариант 6",
-    "originalName": "Funnel cake with sugar",
-    "category": "Сахар и подсластители",
-    "caloriesPer100g": 353,
-    "proteinPer100g": 7.87,
-    "fatPer100g": 16.6,
-    "carbsPer100g": 43.5,
-    "fiberPer100g": 1,
-    "sugarPer100g": 15.9,
-    "sodiumPer100g": 278,
-    "servingSizeG": 70,
-    "aliases": [
-      "сахар"
-    ],
-    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
-    "fdcId": 2710277,
-    "name": "Сахар и подсластители · вариант 7",
-    "originalName": "Chocolate syrup, light",
-    "category": "Сахар и подсластители",
-    "caloriesPer100g": 153,
-    "proteinPer100g": 1.4,
-    "fatPer100g": 0.97,
-    "carbsPer100g": 34.6,
-    "fiberPer100g": 0,
-    "sugarPer100g": 28.6,
-    "sodiumPer100g": 100,
-    "servingSizeG": 30,
-    "aliases": [
-      "сахар и подсластители"
+      "торт"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
     "fdcId": 2710282,
-    "name": "Сахар и подсластители · вариант 8",
+    "name": "Сахар и подсластители · вариант 6",
     "originalName": "Agave liquid sweetener",
     "category": "Сахар и подсластители",
     "caloriesPer100g": 310,
@@ -8272,7 +9881,7 @@
   },
   {
     "fdcId": 2710372,
-    "name": "Сахар · вариант 7",
+    "name": "Сахар · вариант 5",
     "originalName": "Chewing gum, sugar free",
     "category": "Сахар и подсластители",
     "caloriesPer100g": 268,
@@ -8290,7 +9899,7 @@
   },
   {
     "fdcId": 2710304,
-    "name": "Сахар · вариант 8",
+    "name": "Сахар · вариант 6",
     "originalName": "Jam or jelly, sugar free",
     "category": "Сахар и подсластители",
     "caloriesPer100g": 121,
@@ -8301,6 +9910,78 @@
     "sugarPer100g": 3.39,
     "sodiumPer100g": 3,
     "servingSizeG": 20,
+    "aliases": [
+      "сахар"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710321,
+    "name": "Сахар · вариант 7",
+    "originalName": "Popsicle, no sugar added",
+    "category": "Сахар и подсластители",
+    "caloriesPer100g": 24,
+    "proteinPer100g": 0,
+    "fatPer100g": 0,
+    "carbsPer100g": 5.92,
+    "fiberPer100g": 0,
+    "sugarPer100g": 1.52,
+    "sodiumPer100g": 10,
+    "servingSizeG": 50,
+    "aliases": [
+      "сахар"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710768,
+    "name": "Сахар · вариант 8",
+    "originalName": "Energy drink, sugar free",
+    "category": "Сахар и подсластители",
+    "caloriesPer100g": 4,
+    "proteinPer100g": 0.25,
+    "fatPer100g": 0.08,
+    "carbsPer100g": 0.7,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 68,
+    "servingSizeG": 240,
+    "aliases": [
+      "сахар"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707511,
+    "name": "Орехи, запечённый",
+    "originalName": "Mixed nuts, honey roasted",
+    "category": "Сахар и подсластители",
+    "caloriesPer100g": 586,
+    "proteinPer100g": 15.4,
+    "fatPer100g": 46.7,
+    "carbsPer100g": 33.1,
+    "fiberPer100g": 5.8,
+    "sugarPer100g": 20.3,
+    "sodiumPer100g": 388,
+    "servingSizeG": 142,
+    "aliases": [
+      "орехи"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710324,
+    "name": "Сахар · вариант 9",
+    "originalName": "Snow cone, no sugar added",
+    "category": "Сахар и подсластители",
+    "caloriesPer100g": 24,
+    "proteinPer100g": 0,
+    "fatPer100g": 0,
+    "carbsPer100g": 5.92,
+    "fiberPer100g": 0,
+    "sugarPer100g": 1.52,
+    "sodiumPer100g": 10,
+    "servingSizeG": 200,
     "aliases": [
       "сахар"
     ],
@@ -9702,6 +11383,24 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
+    "fdcId": 2709918,
+    "name": "Масло сливочное, приготовленный · вариант 6",
+    "originalName": "Corn, fresh, cooked with butter or margarine",
+    "category": "Овощи",
+    "caloriesPer100g": 103,
+    "proteinPer100g": 3.18,
+    "fatPer100g": 3.5,
+    "carbsPer100g": 18.1,
+    "fiberPer100g": 1.9,
+    "sugarPer100g": 6.07,
+    "sodiumPer100g": 144,
+    "servingSizeG": 8,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
     "fdcId": 2708410,
     "name": "Рис бурый варёный, приготовленный · вариант 9",
     "originalName": "Rice, brown, cooked, fat added, made with oil",
@@ -9735,6 +11434,42 @@
     "servingSizeG": 160,
     "aliases": [
       "морковь"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709920,
+    "name": "Масло сливочное, приготовленный, замороженный · вариант 5",
+    "originalName": "Corn, frozen, cooked with butter or margarine",
+    "category": "Овощи",
+    "caloriesPer100g": 98,
+    "proteinPer100g": 2.48,
+    "fatPer100g": 2.84,
+    "carbsPer100g": 18.7,
+    "fiberPer100g": 2.3,
+    "sugarPer100g": 2.98,
+    "sodiumPer100g": 131,
+    "servingSizeG": 108,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709922,
+    "name": "Масло сливочное, приготовленный, консервированный · вариант 6",
+    "originalName": "Corn, canned, cooked with butter or margarine",
+    "category": "Овощи",
+    "caloriesPer100g": 85,
+    "proteinPer100g": 2.24,
+    "fatPer100g": 3.38,
+    "carbsPer100g": 13.9,
+    "fiberPer100g": 1.9,
+    "sugarPer100g": 4.32,
+    "sodiumPer100g": 216,
+    "servingSizeG": 8,
+    "aliases": [
+      "масло сливочное"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
@@ -9775,6 +11510,24 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
+    "fdcId": 2710031,
+    "name": "Брокколи, приготовленный · вариант 8",
+    "originalName": "Broccoli and cauliflower, cooked, no added fat",
+    "category": "Овощи",
+    "caloriesPer100g": 23,
+    "proteinPer100g": 2.35,
+    "fatPer100g": 0.17,
+    "carbsPer100g": 4.54,
+    "fiberPer100g": 2.8,
+    "sugarPer100g": 1.26,
+    "sodiumPer100g": 130,
+    "servingSizeG": 155,
+    "aliases": [
+      "брокколи"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
     "fdcId": 2708355,
     "name": "Макароны варёные, приготовленный · вариант 3",
     "originalName": "Long rice noodles, made from mung beans, cooked",
@@ -9794,6 +11547,24 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
+    "fdcId": 2709892,
+    "name": "Масло сливочное, приготовленный · вариант 7",
+    "originalName": "Cabbage, green, cooked with butter or margarine",
+    "category": "Овощи",
+    "caloriesPer100g": 52,
+    "proteinPer100g": 0.99,
+    "fatPer100g": 2.51,
+    "carbsPer100g": 6.44,
+    "fiberPer100g": 2.5,
+    "sugarPer100g": 3.24,
+    "sodiumPer100g": 151,
+    "servingSizeG": 78,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
     "fdcId": 2708432,
     "name": "Рис белый варёный, приготовленный · вариант 11",
     "originalName": "Rice, white, cooked with fat, Puerto Rican style",
@@ -9809,6 +11580,24 @@
     "aliases": [
       "рис белый варёный",
       "рис готовый"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709651,
+    "name": "Масло сливочное, приготовленный · вариант 8",
+    "originalName": "Broccoli, fresh, cooked with butter or margarine",
+    "category": "Овощи",
+    "caloriesPer100g": 60,
+    "proteinPer100g": 2.61,
+    "fatPer100g": 2.62,
+    "carbsPer100g": 6.33,
+    "fiberPer100g": 2.4,
+    "sugarPer100g": 1.42,
+    "sodiumPer100g": 171,
+    "servingSizeG": 10,
+    "aliases": [
+      "масло сливочное"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
@@ -9851,8 +11640,44 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
+    "fdcId": 2709653,
+    "name": "Масло сливочное, приготовленный, замороженный · вариант 6",
+    "originalName": "Broccoli, frozen, cooked with butter or margarine",
+    "category": "Овощи",
+    "caloriesPer100g": 47,
+    "proteinPer100g": 3.02,
+    "fatPer100g": 2.3,
+    "carbsPer100g": 5.19,
+    "fiberPer100g": 2.9,
+    "sugarPer100g": 1.43,
+    "sodiumPer100g": 140,
+    "servingSizeG": 95,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709842,
+    "name": "Масло сливочное, приготовленный · вариант 9",
+    "originalName": "Asparagus, fresh, cooked with butter or margarine",
+    "category": "Овощи",
+    "caloriesPer100g": 42,
+    "proteinPer100g": 2.31,
+    "fatPer100g": 2.48,
+    "carbsPer100g": 4.05,
+    "fiberPer100g": 2.2,
+    "sugarPer100g": 1.97,
+    "sodiumPer100g": 141,
+    "servingSizeG": 4,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
     "fdcId": 2709967,
-    "name": "Масло сливочное, приготовленный · вариант 6",
+    "name": "Масло сливочное, приготовленный · вариант 10",
     "originalName": "Green peas, fresh, cooked with butter or margarine",
     "category": "Бобовые",
     "caloriesPer100g": 102,
@@ -9906,7 +11731,7 @@
   },
   {
     "fdcId": 2709860,
-    "name": "Масло сливочное, приготовленный · вариант 7",
+    "name": "Масло сливочное, приготовленный · вариант 11",
     "originalName": "Green beans, fresh, cooked with butter or margarine",
     "category": "Бобовые",
     "caloriesPer100g": 61,
@@ -9924,7 +11749,7 @@
   },
   {
     "fdcId": 2709969,
-    "name": "Масло сливочное, приготовленный, замороженный · вариант 5",
+    "name": "Масло сливочное, приготовленный, замороженный · вариант 7",
     "originalName": "Green peas, frozen, cooked with butter or margarine",
     "category": "Бобовые",
     "caloriesPer100g": 95,
@@ -9942,7 +11767,7 @@
   },
   {
     "fdcId": 2709971,
-    "name": "Масло сливочное, приготовленный, консервированный · вариант 6",
+    "name": "Масло сливочное, приготовленный, консервированный · вариант 7",
     "originalName": "Green peas, canned, cooked with butter or margarine",
     "category": "Бобовые",
     "caloriesPer100g": 86,
@@ -9960,7 +11785,7 @@
   },
   {
     "fdcId": 2709862,
-    "name": "Масло сливочное, приготовленный, замороженный · вариант 6",
+    "name": "Масло сливочное, приготовленный, замороженный · вариант 8",
     "originalName": "Green beans, frozen, cooked with butter or margarine",
     "category": "Бобовые",
     "caloriesPer100g": 47,
@@ -9978,7 +11803,7 @@
   },
   {
     "fdcId": 2709864,
-    "name": "Масло сливочное, приготовленный, консервированный · вариант 7",
+    "name": "Масло сливочное, приготовленный, консервированный · вариант 8",
     "originalName": "Green beans, canned, cooked with butter or margarine",
     "category": "Бобовые",
     "caloriesPer100g": 43,
@@ -10067,6 +11892,24 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
+    "fdcId": 2709865,
+    "name": "Фасоль, приготовленный, консервированный · вариант 3",
+    "originalName": "Green beans, canned, reduced sodium, cooked, no added fat",
+    "category": "Бобовые",
+    "caloriesPer100g": 22,
+    "proteinPer100g": 1.12,
+    "fatPer100g": 0.46,
+    "carbsPer100g": 4.32,
+    "fiberPer100g": 1.9,
+    "sugarPer100g": 0.78,
+    "sodiumPer100g": 2,
+    "servingSizeG": 140,
+    "aliases": [
+      "фасоль"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
     "fdcId": 2709392,
     "name": "Картофель приготовленный · вариант 15",
     "originalName": "Potato, boiled, from fresh, peel not eaten, made with margarine",
@@ -10100,6 +11943,24 @@
     "servingSizeG": 16,
     "aliases": [
       "свинина"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709975,
+    "name": "Масло сливочное, приготовленный, консервированный · вариант 9",
+    "originalName": "Green peas, canned, reduced sodium, cooked with butter or margarine",
+    "category": "Бобовые",
+    "caloriesPer100g": 89,
+    "proteinPer100g": 3.89,
+    "fatPer100g": 3.11,
+    "carbsPer100g": 11.8,
+    "fiberPer100g": 4,
+    "sugarPer100g": 3.9,
+    "sodiumPer100g": 32,
+    "servingSizeG": 82,
+    "aliases": [
+      "масло сливочное"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
@@ -10142,6 +12003,24 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
+    "fdcId": 2709868,
+    "name": "Масло сливочное, приготовленный, консервированный · вариант 10",
+    "originalName": "Green beans, canned, reduced sodium, cooked with butter or margarine",
+    "category": "Бобовые",
+    "caloriesPer100g": 41,
+    "proteinPer100g": 1.1,
+    "fatPer100g": 2.64,
+    "carbsPer100g": 4.2,
+    "fiberPer100g": 1.8,
+    "sugarPer100g": 0.77,
+    "sodiumPer100g": 19,
+    "servingSizeG": 2,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
     "fdcId": 2709389,
     "name": "Картофель приготовленный · вариант 17",
     "originalName": "Potato, boiled, from fresh, peel not eaten, fat added, NS as to fat type",
@@ -10159,6 +12038,42 @@
       "картошка готовая"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709866,
+    "name": "Фасоль, приготовленный, консервированный · вариант 4",
+    "originalName": "Green beans, canned, reduced sodium, cooked, fat added, NS as to fat type",
+    "category": "Бобовые",
+    "caloriesPer100g": 44,
+    "proteinPer100g": 1.1,
+    "fatPer100g": 3,
+    "carbsPer100g": 4.2,
+    "fiberPer100g": 1.8,
+    "sugarPer100g": 0.76,
+    "sodiumPer100g": 11,
+    "servingSizeG": 145,
+    "aliases": [
+      "фасоль"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2644283,
+    "name": "Чечевица, сухой",
+    "originalName": "Lentils, dry",
+    "category": "Бобовые",
+    "caloriesPer100g": 360,
+    "proteinPer100g": 23.6,
+    "fatPer100g": 1.92,
+    "carbsPer100g": 62.2,
+    "fiberPer100g": null,
+    "sugarPer100g": null,
+    "sodiumPer100g": 0,
+    "servingSizeG": 35,
+    "aliases": [
+      "чечевица"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
   },
   {
     "fdcId": 2512372,
@@ -10215,6 +12130,24 @@
     "sourceVersion": "Foundation Foods · 2026-04-30"
   },
   {
+    "fdcId": 2262072,
+    "name": "Масло сливочное · вариант 8",
+    "originalName": "Peanut butter, creamy",
+    "category": "Бобовые",
+    "caloriesPer100g": 632,
+    "proteinPer100g": 24,
+    "fatPer100g": 49.4,
+    "carbsPer100g": 22.7,
+    "fiberPer100g": 6.32,
+    "sugarPer100g": null,
+    "sodiumPer100g": 221,
+    "servingSizeG": 100,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
     "fdcId": 2512378,
     "name": "Гречка сухая, цельный",
     "originalName": "Buckwheat, whole grain",
@@ -10231,6 +12164,24 @@
       "гречка сухая",
       "гречневая крупа",
       "ядрица"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2644281,
+    "name": "Фасоль, сухой",
+    "originalName": "Beans, cannellini, dry",
+    "category": "Бобовые",
+    "caloriesPer100g": 345,
+    "proteinPer100g": 21.6,
+    "fatPer100g": 2.2,
+    "carbsPer100g": 59.8,
+    "fiberPer100g": null,
+    "sugarPer100g": null,
+    "sodiumPer100g": 0,
+    "servingSizeG": 35,
+    "aliases": [
+      "фасоль"
     ],
     "sourceVersion": "Foundation Foods · 2026-04-30"
   },
@@ -10254,7 +12205,7 @@
   },
   {
     "fdcId": 323121,
-    "name": "Говядина",
+    "name": "Говядина · вариант 4",
     "originalName": "Frankfurter, beef, unheated",
     "category": "Мясо",
     "caloriesPer100g": 314,
@@ -10285,6 +12236,24 @@
     "servingSizeG": 40,
     "aliases": [
       "крупы"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 790214,
+    "name": "Мука рисовая · вариант 2",
+    "originalName": "Flour, rice, white, unenriched",
+    "category": "Крупы",
+    "caloriesPer100g": 359,
+    "proteinPer100g": 6.94,
+    "fatPer100g": 1.3,
+    "carbsPer100g": 79.8,
+    "fiberPer100g": 0.5,
+    "sugarPer100g": null,
+    "sodiumPer100g": 5,
+    "servingSizeG": 30,
+    "aliases": [
+      "мука рисовая"
     ],
     "sourceVersion": "Foundation Foods · 2026-04-30"
   },
@@ -10322,6 +12291,63 @@
     "servingSizeG": 142,
     "aliases": [
       "свинина"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 746774,
+    "name": "Свинина · вариант 3",
+    "originalName": "Restaurant, Chinese, sweet and sour pork",
+    "category": "Мясо",
+    "caloriesPer100g": 260,
+    "proteinPer100g": 8.88,
+    "fatPer100g": 13.6,
+    "carbsPer100g": 25.5,
+    "fiberPer100g": 1,
+    "sugarPer100g": null,
+    "sodiumPer100g": 304,
+    "servingSizeG": 611,
+    "aliases": [
+      "свинина"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2346396,
+    "name": "Овсяные хлопья, цельный",
+    "originalName": "Oats, whole grain, rolled, old fashioned",
+    "category": "Крупы",
+    "caloriesPer100g": 382,
+    "proteinPer100g": 13.5,
+    "fatPer100g": 5.89,
+    "carbsPer100g": 68.7,
+    "fiberPer100g": null,
+    "sugarPer100g": null,
+    "sodiumPer100g": 0.668,
+    "servingSizeG": 40,
+    "aliases": [
+      "овсяные хлопья",
+      "овсянка",
+      "геркулес"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2644282,
+    "name": "Нут, сухой",
+    "originalName": "Chickpeas, (garbanzo beans, bengal gram), dry",
+    "category": "Бобовые",
+    "caloriesPer100g": 383,
+    "proteinPer100g": 21.3,
+    "fatPer100g": 6.27,
+    "carbsPer100g": 60.4,
+    "fiberPer100g": null,
+    "sugarPer100g": null,
+    "sodiumPer100g": 8.78,
+    "servingSizeG": 35,
+    "aliases": [
+      "нут",
+      "турецкий горох"
     ],
     "sourceVersion": "Foundation Foods · 2026-04-30"
   },
@@ -10376,6 +12402,60 @@
     "servingSizeG": 129,
     "aliases": [
       "фрукты"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2727570,
+    "name": "Баранина, сырой",
+    "originalName": "Lamb, ground, raw",
+    "category": "Мясо",
+    "caloriesPer100g": 237,
+    "proteinPer100g": 17.5,
+    "fatPer100g": 18.6,
+    "carbsPer100g": -0.251,
+    "fiberPer100g": null,
+    "sugarPer100g": null,
+    "sodiumPer100g": 53.4,
+    "servingSizeG": 114,
+    "aliases": [
+      "баранина"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2727571,
+    "name": "Бизон, сырой",
+    "originalName": "Bison, ground, raw",
+    "category": "Мясо",
+    "caloriesPer100g": 159,
+    "proteinPer100g": 19.9,
+    "fatPer100g": 8.88,
+    "carbsPer100g": -0.15,
+    "fiberPer100g": null,
+    "sugarPer100g": null,
+    "sodiumPer100g": 55.7,
+    "servingSizeG": 114,
+    "aliases": [
+      "бизон"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2710821,
+    "name": "Крупы, сырой, сухой",
+    "originalName": "Wild rice, dry, raw",
+    "category": "Крупы",
+    "caloriesPer100g": 369,
+    "proteinPer100g": 12.8,
+    "fatPer100g": 1.7,
+    "carbsPer100g": 75.7,
+    "fiberPer100g": 4.26,
+    "sugarPer100g": null,
+    "sodiumPer100g": 1.01,
+    "servingSizeG": 45,
+    "aliases": [
+      "крупы"
     ],
     "sourceVersion": "Foundation Foods · 2026-04-30"
   },
@@ -10470,6 +12550,24 @@
     "sourceVersion": "Foundation Foods · 2026-04-30"
   },
   {
+    "fdcId": 2710829,
+    "name": "Крупы, сырой, сухой · вариант 2",
+    "originalName": "Fonio, grain, dry, raw",
+    "category": "Крупы",
+    "caloriesPer100g": 369,
+    "proteinPer100g": 7.17,
+    "fatPer100g": 1.69,
+    "carbsPer100g": 81.3,
+    "fiberPer100g": 2.2,
+    "sugarPer100g": null,
+    "sodiumPer100g": 2.97,
+    "servingSizeG": 45,
+    "aliases": [
+      "крупы"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
     "fdcId": 746770,
     "name": "Дыня, сырой · вариант 2",
     "originalName": "Melons, cantaloupe, raw",
@@ -10502,6 +12600,60 @@
     "servingSizeG": 140,
     "aliases": [
       "фрукты"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2710827,
+    "name": "Крупы, сырой, сухой · вариант 3",
+    "originalName": "Einkorn, grain, dry, raw",
+    "category": "Крупы",
+    "caloriesPer100g": 369,
+    "proteinPer100g": 15.1,
+    "fatPer100g": 3.81,
+    "carbsPer100g": 68.7,
+    "fiberPer100g": 8.91,
+    "sugarPer100g": null,
+    "sodiumPer100g": 0,
+    "servingSizeG": 45,
+    "aliases": [
+      "крупы"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2710828,
+    "name": "Груша, сырой, сухой",
+    "originalName": "Farro, pearled, dry, raw",
+    "category": "Крупы",
+    "caloriesPer100g": 367,
+    "proteinPer100g": 12.6,
+    "fatPer100g": 3.1,
+    "carbsPer100g": 72.1,
+    "fiberPer100g": 7.31,
+    "sugarPer100g": null,
+    "sodiumPer100g": 0.845,
+    "servingSizeG": 45,
+    "aliases": [
+      "груша"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2710830,
+    "name": "Крупы, сырой, сухой · вариант 4",
+    "originalName": "Khorasan, grain, dry, raw",
+    "category": "Крупы",
+    "caloriesPer100g": 371,
+    "proteinPer100g": 14.8,
+    "fatPer100g": 2.8,
+    "carbsPer100g": 71.8,
+    "fiberPer100g": 10.5,
+    "sugarPer100g": null,
+    "sodiumPer100g": 3.94,
+    "servingSizeG": 45,
+    "aliases": [
+      "крупы"
     ],
     "sourceVersion": "Foundation Foods · 2026-04-30"
   },
@@ -10596,6 +12748,24 @@
     "sourceVersion": "Foundation Foods · 2026-04-30"
   },
   {
+    "fdcId": 2710825,
+    "name": "Крупы, сырой",
+    "originalName": "Rice, black, unenriched, raw",
+    "category": "Крупы",
+    "caloriesPer100g": 370,
+    "proteinPer100g": 7.57,
+    "fatPer100g": 3.44,
+    "carbsPer100g": 77.2,
+    "fiberPer100g": 4.18,
+    "sugarPer100g": null,
+    "sodiumPer100g": 0,
+    "servingSizeG": 45,
+    "aliases": [
+      "крупы"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
     "fdcId": 2710832,
     "name": "Семена, сырой",
     "originalName": "Mandarin, seedless, peeled, raw",
@@ -10628,6 +12798,60 @@
     "servingSizeG": 140,
     "aliases": [
       "манго"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2710836,
+    "name": "Груша, сырой · вариант 2",
+    "originalName": "Pear, Anjou, green, with skin, raw",
+    "category": "Фрукты",
+    "caloriesPer100g": 63.7,
+    "proteinPer100g": 0.312,
+    "fatPer100g": 0.371,
+    "carbsPer100g": 14.8,
+    "fiberPer100g": 2.64,
+    "sugarPer100g": null,
+    "sodiumPer100g": 0.398,
+    "servingSizeG": 140,
+    "aliases": [
+      "груша"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2710831,
+    "name": "Киви, сырой · вариант 2",
+    "originalName": "Kiwifruit (kiwi), green, peeled, raw",
+    "category": "Фрукты",
+    "caloriesPer100g": 65.1,
+    "proteinPer100g": 1.01,
+    "fatPer100g": 0.64,
+    "carbsPer100g": 13.8,
+    "fiberPer100g": 2.13,
+    "sugarPer100g": null,
+    "sodiumPer100g": 2.28,
+    "servingSizeG": 140,
+    "aliases": [
+      "киви"
+    ],
+    "sourceVersion": "Foundation Foods · 2026-04-30"
+  },
+  {
+    "fdcId": 2747676,
+    "name": "Дыня, сырой · вариант 3",
+    "originalName": "Watermelon, seedless, rind only, raw",
+    "category": "Фрукты",
+    "caloriesPer100g": 19.4,
+    "proteinPer100g": 0.531,
+    "fatPer100g": 0.07,
+    "carbsPer100g": 4.17,
+    "fiberPer100g": 1.54,
+    "sugarPer100g": null,
+    "sodiumPer100g": 3.76,
+    "servingSizeG": 100,
+    "aliases": [
+      "дыня"
     ],
     "sourceVersion": "Foundation Foods · 2026-04-30"
   },
@@ -10671,8 +12895,116 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
+    "fdcId": 2705822,
+    "name": "Говядина · вариант 5",
+    "originalName": "Beef, NFS",
+    "category": "Мясо",
+    "caloriesPer100g": 231,
+    "proteinPer100g": 27.1,
+    "fatPer100g": 13,
+    "carbsPer100g": 0,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 372,
+    "servingSizeG": 17,
+    "aliases": [
+      "говядина"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705862,
+    "name": "Свинина · вариант 4",
+    "originalName": "Pork, NFS",
+    "category": "Мясо",
+    "caloriesPer100g": 192,
+    "proteinPer100g": 27.1,
+    "fatPer100g": 8.67,
+    "carbsPer100g": 0,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 348,
+    "servingSizeG": 30,
+    "aliases": [
+      "свинина"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706766,
+    "name": "Свинина · вариант 5",
+    "originalName": "Pork hash",
+    "category": "Мясо",
+    "caloriesPer100g": 186,
+    "proteinPer100g": 12.9,
+    "fatPer100g": 13.7,
+    "carbsPer100g": 1.96,
+    "fiberPer100g": 0.5,
+    "sugarPer100g": 0.56,
+    "sodiumPer100g": 486,
+    "servingSizeG": 142,
+    "aliases": [
+      "свинина"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705860,
+    "name": "Говядина · вариант 6",
+    "originalName": "Beef jerky",
+    "category": "Мясо",
+    "caloriesPer100g": 410,
+    "proteinPer100g": 33.2,
+    "fatPer100g": 25.6,
+    "carbsPer100g": 11,
+    "fiberPer100g": 1.8,
+    "sugarPer100g": 9,
+    "sodiumPer100g": 1780,
+    "servingSizeG": 18,
+    "aliases": [
+      "говядина"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705865,
+    "name": "Свинина · вариант 6",
+    "originalName": "Pork jerky",
+    "category": "Мясо",
+    "caloriesPer100g": 412,
+    "proteinPer100g": 35,
+    "fatPer100g": 24.7,
+    "carbsPer100g": 9.73,
+    "fiberPer100g": 0,
+    "sugarPer100g": 9.75,
+    "sodiumPer100g": 1810,
+    "servingSizeG": 20,
+    "aliases": [
+      "свинина"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707995,
+    "name": "Яблоко · вариант 3",
+    "originalName": "Pie, apple",
+    "category": "Фрукты",
+    "caloriesPer100g": 296,
+    "proteinPer100g": 2.7,
+    "fatPer100g": 15.3,
+    "carbsPer100g": 37.6,
+    "fiberPer100g": 1.8,
+    "sugarPer100g": 15.9,
+    "sodiumPer100g": 217,
+    "servingSizeG": 150,
+    "aliases": [
+      "яблоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
     "fdcId": 2705781,
-    "name": "Сыр · вариант 17",
+    "name": "Сыр · вариант 19",
     "originalName": "Cheese ball",
     "category": "Сыры",
     "caloriesPer100g": 441,
@@ -10690,7 +13022,7 @@
   },
   {
     "fdcId": 2706104,
-    "name": "Индейка · вариант 2",
+    "name": "Индейка · вариант 3",
     "originalName": "Turkey, NFS",
     "category": "Птица",
     "caloriesPer100g": 139,
@@ -10708,7 +13040,7 @@
   },
   {
     "fdcId": 2706180,
-    "name": "Сыр · вариант 18",
+    "name": "Сыр · вариант 20",
     "originalName": "Head cheese",
     "category": "Сыры",
     "caloriesPer100g": 157,
@@ -10744,6 +13076,24 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
+    "fdcId": 2709319,
+    "name": "Яблоко · вариант 4",
+    "originalName": "Apple cider",
+    "category": "Фрукты",
+    "caloriesPer100g": 46,
+    "proteinPer100g": 0.1,
+    "fatPer100g": 0.13,
+    "carbsPer100g": 11.3,
+    "fiberPer100g": 0.2,
+    "sugarPer100g": 9.62,
+    "sodiumPer100g": 4,
+    "servingSizeG": 31,
+    "aliases": [
+      "яблоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
     "fdcId": 2709382,
     "name": "Картофель · вариант 2",
     "originalName": "Potato, NFS",
@@ -10763,8 +13113,26 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
+    "fdcId": 2705660,
+    "name": "Банан · вариант 2",
+    "originalName": "Banana split",
+    "category": "Фрукты",
+    "caloriesPer100g": 199,
+    "proteinPer100g": 2.42,
+    "fatPer100g": 6.88,
+    "carbsPer100g": 32.6,
+    "fiberPer100g": 1,
+    "sugarPer100g": 24.2,
+    "sodiumPer100g": 97,
+    "servingSizeG": 490,
+    "aliases": [
+      "банан"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
     "fdcId": 2705708,
-    "name": "Сыр · вариант 19",
+    "name": "Сыр · вариант 21",
     "originalName": "Cheese, Brie",
     "category": "Сыры",
     "caloriesPer100g": 334,
@@ -10782,7 +13150,7 @@
   },
   {
     "fdcId": 2705714,
-    "name": "Сыр · вариант 20",
+    "name": "Сыр · вариант 22",
     "originalName": "Cheese, Feta",
     "category": "Сыры",
     "caloriesPer100g": 273,
@@ -10800,7 +13168,7 @@
   },
   {
     "fdcId": 2705716,
-    "name": "Сыр · вариант 21",
+    "name": "Сыр · вариант 23",
     "originalName": "Cheese, goat",
     "category": "Сыры",
     "caloriesPer100g": 364,
@@ -10818,7 +13186,7 @@
   },
   {
     "fdcId": 2705808,
-    "name": "Сыр · вариант 22",
+    "name": "Сыр · вариант 24",
     "originalName": "Cheese sauce",
     "category": "Сыры",
     "caloriesPer100g": 163,
@@ -10836,7 +13204,7 @@
   },
   {
     "fdcId": 2706127,
-    "name": "Индейка · вариант 3",
+    "name": "Индейка · вариант 4",
     "originalName": "Turkey, neck",
     "category": "Птица",
     "caloriesPer100g": 161,
@@ -10854,7 +13222,7 @@
   },
   {
     "fdcId": 2706130,
-    "name": "Индейка · вариант 4",
+    "name": "Индейка · вариант 5",
     "originalName": "Turkey, tail",
     "category": "Птица",
     "caloriesPer100g": 294,
@@ -10872,7 +13240,7 @@
   },
   {
     "fdcId": 2706131,
-    "name": "Индейка · вариант 5",
+    "name": "Индейка · вариант 6",
     "originalName": "Turkey, back",
     "category": "Птица",
     "caloriesPer100g": 203,
@@ -10927,6 +13295,24 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
+    "fdcId": 2708023,
+    "name": "Яблоко · вариант 5",
+    "originalName": "Crisp, apple",
+    "category": "Фрукты",
+    "caloriesPer100g": 215,
+    "proteinPer100g": 2.81,
+    "fatPer100g": 9.59,
+    "carbsPer100g": 30.2,
+    "fiberPer100g": 2.7,
+    "sugarPer100g": 15.8,
+    "sodiumPer100g": 119,
+    "servingSizeG": 125,
+    "aliases": [
+      "яблоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
     "fdcId": 2708602,
     "name": "Яйцо · вариант 5",
     "originalName": "Taquito, egg",
@@ -10942,6 +13328,24 @@
     "aliases": [
       "яйцо",
       "яйцо куриное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709196,
+    "name": "Яблоко, сухой",
+    "originalName": "Apple, dried",
+    "category": "Фрукты",
+    "caloriesPer100g": 243,
+    "proteinPer100g": 0.93,
+    "fatPer100g": 0.32,
+    "carbsPer100g": 65.9,
+    "fiberPer100g": 8.7,
+    "sugarPer100g": 57.2,
+    "sodiumPer100g": 87,
+    "servingSizeG": 40,
+    "aliases": [
+      "яблоко"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
@@ -10985,7 +13389,7 @@
   },
   {
     "fdcId": 2705706,
-    "name": "Сыр · вариант 23",
+    "name": "Сыр · вариант 25",
     "originalName": "Cheese, Brick",
     "category": "Сыры",
     "caloriesPer100g": 371,
@@ -11003,7 +13407,7 @@
   },
   {
     "fdcId": 2705712,
-    "name": "Сыр · вариант 24",
+    "name": "Сыр · вариант 26",
     "originalName": "Cheese, Colby",
     "category": "Сыры",
     "caloriesPer100g": 394,
@@ -11021,7 +13425,7 @@
   },
   {
     "fdcId": 2705791,
-    "name": "Сыр · вариант 25",
+    "name": "Сыр · вариант 27",
     "originalName": "Cheese fondue",
     "category": "Сыры",
     "caloriesPer100g": 276,
@@ -11058,7 +13462,7 @@
   },
   {
     "fdcId": 2710155,
-    "name": "Масло сливочное · вариант 8",
+    "name": "Масло сливочное · вариант 9",
     "originalName": "Butter, stick",
     "category": "Масла",
     "caloriesPer100g": 743,
@@ -11076,7 +13480,7 @@
   },
   {
     "fdcId": 2710157,
-    "name": "Масло сливочное · вариант 9",
+    "name": "Масло сливочное · вариант 10",
     "originalName": "Butter, light",
     "category": "Масла",
     "caloriesPer100g": 499,
@@ -11112,7 +13516,7 @@
   },
   {
     "fdcId": 2705740,
-    "name": "Сыр · вариант 26",
+    "name": "Сыр · вариант 28",
     "originalName": "Cheese, paneer",
     "category": "Сыры",
     "caloriesPer100g": 299,
@@ -11130,7 +13534,7 @@
   },
   {
     "fdcId": 2705792,
-    "name": "Сыр · вариант 27",
+    "name": "Сыр · вариант 29",
     "originalName": "Cheese souffle",
     "category": "Сыры",
     "caloriesPer100g": 207,
@@ -11166,7 +13570,7 @@
   },
   {
     "fdcId": 2706133,
-    "name": "Индейка · вариант 6",
+    "name": "Индейка · вариант 7",
     "originalName": "Turkey, ground",
     "category": "Птица",
     "caloriesPer100g": 211,
@@ -11203,7 +13607,7 @@
   },
   {
     "fdcId": 2707545,
-    "name": "Масло сливочное · вариант 10",
+    "name": "Масло сливочное · вариант 11",
     "originalName": "Soy nut butter",
     "category": "Масла",
     "caloriesPer100g": 613,
@@ -11220,26 +13624,8 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
-    "fdcId": 2707842,
-    "name": "Сыр · вариант 28",
-    "originalName": "Muffin, cheese",
-    "category": "Хлеб",
-    "caloriesPer100g": 367,
-    "proteinPer100g": 9.72,
-    "fatPer100g": 23,
-    "carbsPer100g": 30.5,
-    "fiberPer100g": 1,
-    "sugarPer100g": 1.88,
-    "sodiumPer100g": 491,
-    "servingSizeG": 130,
-    "aliases": [
-      "сыр"
-    ],
-    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
     "fdcId": 2707845,
-    "name": "Морковь",
+    "name": "Морковь · вариант 3",
     "originalName": "Muffin, carrot",
     "category": "Хлеб",
     "caloriesPer100g": 314,
@@ -11276,26 +13662,8 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
-    "fdcId": 2707900,
-    "name": "Миндаль · вариант 3",
-    "originalName": "Cookie, almond",
-    "category": "Орехи",
-    "caloriesPer100g": 514,
-    "proteinPer100g": 5.37,
-    "fatPer100g": 26.2,
-    "carbsPer100g": 63.8,
-    "fiberPer100g": 1.3,
-    "sugarPer100g": 21.6,
-    "sodiumPer100g": 353,
-    "servingSizeG": 5,
-    "aliases": [
-      "миндаль"
-    ],
-    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
     "fdcId": 2709552,
-    "name": "Картофель · вариант 5",
+    "name": "Торт · вариант 10",
     "originalName": "Potato pancake",
     "category": "Картофель",
     "caloriesPer100g": 196,
@@ -11307,8 +13675,7 @@
     "sodiumPer100g": 402,
     "servingSizeG": 70,
     "aliases": [
-      "картофель",
-      "картошка"
+      "торт"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
@@ -11332,7 +13699,7 @@
   },
   {
     "fdcId": 2705715,
-    "name": "Сыр · вариант 29",
+    "name": "Сыр · вариант 30",
     "originalName": "Cheese, Fontina",
     "category": "Сыры",
     "caloriesPer100g": 389,
@@ -11350,7 +13717,7 @@
   },
   {
     "fdcId": 2705718,
-    "name": "Сыр · вариант 30",
+    "name": "Сыр · вариант 31",
     "originalName": "Cheese, Gruyere",
     "category": "Сыры",
     "caloriesPer100g": 413,
@@ -11368,7 +13735,7 @@
   },
   {
     "fdcId": 2705750,
-    "name": "Сыр · вариант 31",
+    "name": "Сыр · вариант 32",
     "originalName": "Cheese, Ricotta",
     "category": "Сыры",
     "caloriesPer100g": 148,
@@ -11386,7 +13753,7 @@
   },
   {
     "fdcId": 2706134,
-    "name": "Индейка · вариант 7",
+    "name": "Индейка · вариант 8",
     "originalName": "Turkey, nuggets",
     "category": "Птица",
     "caloriesPer100g": 236,
@@ -11399,42 +13766,6 @@
     "servingSizeG": 85,
     "aliases": [
       "индейка"
-    ],
-    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
-    "fdcId": 2706170,
-    "name": "Индейка · вариант 8",
-    "originalName": "Hot dog, turkey",
-    "category": "Птица",
-    "caloriesPer100g": 223,
-    "proteinPer100g": 12.2,
-    "fatPer100g": 17.3,
-    "carbsPer100g": 3.81,
-    "fiberPer100g": 0,
-    "sugarPer100g": 1.21,
-    "sodiumPer100g": 865,
-    "servingSizeG": 10,
-    "aliases": [
-      "индейка"
-    ],
-    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
-    "fdcId": 2707487,
-    "name": "Миндаль · вариант 4",
-    "originalName": "Almonds, salted",
-    "category": "Орехи",
-    "caloriesPer100g": 601,
-    "proteinPer100g": 20.1,
-    "fatPer100g": 53.4,
-    "carbsPer100g": 20.2,
-    "fiberPer100g": 10.5,
-    "sugarPer100g": 4.67,
-    "sodiumPer100g": 386,
-    "servingSizeG": 50,
-    "aliases": [
-      "миндаль"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
@@ -11480,7 +13811,7 @@
   },
   {
     "fdcId": 2707806,
-    "name": "Сыр · вариант 32",
+    "name": "Сыр · вариант 33",
     "originalName": "Biscuit, cheese",
     "category": "Хлеб",
     "caloriesPer100g": 374,
@@ -11518,7 +13849,7 @@
   },
   {
     "fdcId": 2708042,
-    "name": "Сыр · вариант 33",
+    "name": "Сыр · вариант 34",
     "originalName": "Strudel, cheese",
     "category": "Сыры",
     "caloriesPer100g": 358,
@@ -11554,8 +13885,26 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
+    "fdcId": 2708721,
+    "name": "Сыр · вариант 35",
+    "originalName": "Gnocchi, cheese",
+    "category": "Сыры",
+    "caloriesPer100g": 178,
+    "proteinPer100g": 8.51,
+    "fatPer100g": 12,
+    "carbsPer100g": 9.38,
+    "fiberPer100g": 0.2,
+    "sugarPer100g": 0.14,
+    "sodiumPer100g": 263,
+    "servingSizeG": 70,
+    "aliases": [
+      "сыр"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
     "fdcId": 2708722,
-    "name": "Картофель · вариант 6",
+    "name": "Картофель · вариант 5",
     "originalName": "Gnocchi, potato",
     "category": "Картофель",
     "caloriesPer100g": 135,
@@ -11592,7 +13941,7 @@
   },
   {
     "fdcId": 2709554,
-    "name": "Картофель · вариант 7",
+    "name": "Картофель · вариант 6",
     "originalName": "Stewed potatoes",
     "category": "Картофель",
     "caloriesPer100g": 103,
@@ -11610,20 +13959,74 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
-    "fdcId": 2705410,
-    "name": "Молоко · вариант 27",
-    "originalName": "Almond milk, NFS",
-    "category": "Орехи",
-    "caloriesPer100g": 20,
-    "proteinPer100g": 0.54,
-    "fatPer100g": 1.21,
-    "carbsPer100g": 1.53,
+    "fdcId": 2705720,
+    "name": "Сыр · вариант 36",
+    "originalName": "Cheese, Monterey",
+    "category": "Сыры",
+    "caloriesPer100g": 392,
+    "proteinPer100g": 22.6,
+    "fatPer100g": 32.6,
+    "carbsPer100g": 1.9,
     "fiberPer100g": 0,
-    "sugarPer100g": 1.2,
-    "sodiumPer100g": 59,
-    "servingSizeG": 30.5,
+    "sugarPer100g": 0.5,
+    "sodiumPer100g": 662,
+    "servingSizeG": 21,
     "aliases": [
-      "молоко"
+      "сыр"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705726,
+    "name": "Сыр · вариант 37",
+    "originalName": "Cheese, Muenster",
+    "category": "Сыры",
+    "caloriesPer100g": 368,
+    "proteinPer100g": 23.4,
+    "fatPer100g": 30,
+    "carbsPer100g": 1.12,
+    "fiberPer100g": 0,
+    "sugarPer100g": 1.12,
+    "sodiumPer100g": 628,
+    "servingSizeG": 132,
+    "aliases": [
+      "сыр"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705764,
+    "name": "Сыр · вариант 38",
+    "originalName": "Cheese, American",
+    "category": "Сыры",
+    "caloriesPer100g": 340,
+    "proteinPer100g": 16.8,
+    "fatPer100g": 27.2,
+    "carbsPer100g": 7.16,
+    "fiberPer100g": 0,
+    "sugarPer100g": 4.72,
+    "sodiumPer100g": 1430,
+    "servingSizeG": 113,
+    "aliases": [
+      "сыр"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705777,
+    "name": "Сыр · вариант 39",
+    "originalName": "Imitation cheese",
+    "category": "Сыры",
+    "caloriesPer100g": 390,
+    "proteinPer100g": 25,
+    "fatPer100g": 32,
+    "carbsPer100g": 1,
+    "fiberPer100g": 0,
+    "sugarPer100g": 1,
+    "sodiumPer100g": 670,
+    "servingSizeG": 17.7,
+    "aliases": [
+      "сыр"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
@@ -11648,6 +14051,24 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
+    "fdcId": 2708150,
+    "name": "Сыр · вариант 40",
+    "originalName": "Crackers, cheese",
+    "category": "Сыры",
+    "caloriesPer100g": 489,
+    "proteinPer100g": 10.9,
+    "fatPer100g": 22.7,
+    "carbsPer100g": 59.4,
+    "fiberPer100g": 2.3,
+    "sugarPer100g": 4.53,
+    "sodiumPer100g": 973,
+    "servingSizeG": 1,
+    "aliases": [
+      "сыр"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
     "fdcId": 2708984,
     "name": "Яйцо · вариант 9",
     "originalName": "Congee, with egg",
@@ -11668,7 +14089,7 @@
   },
   {
     "fdcId": 2709511,
-    "name": "Картофель · вариант 8",
+    "name": "Картофель · вариант 7",
     "originalName": "Potato tots, NFS",
     "category": "Картофель",
     "caloriesPer100g": 237,
@@ -11682,6 +14103,43 @@
     "aliases": [
       "картофель",
       "картошка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705707,
+    "name": "Сыр · вариант 41",
+    "originalName": "Cheese, Camembert",
+    "category": "Сыры",
+    "caloriesPer100g": 300,
+    "proteinPer100g": 19.8,
+    "fatPer100g": 24.3,
+    "carbsPer100g": 0.46,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0.46,
+    "sodiumPer100g": 842,
+    "servingSizeG": 246,
+    "aliases": [
+      "сыр"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705719,
+    "name": "Бургер · вариант 14",
+    "originalName": "Cheese, Limburger",
+    "category": "Сыры",
+    "caloriesPer100g": 327,
+    "proteinPer100g": 20,
+    "fatPer100g": 27.2,
+    "carbsPer100g": 0.49,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0.49,
+    "sodiumPer100g": 800,
+    "servingSizeG": 21,
+    "aliases": [
+      "бургер",
+      "гамбургер"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
@@ -11761,26 +14219,8 @@
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   },
   {
-    "fdcId": 2707489,
-    "name": "Миндаль, без соли",
-    "originalName": "Almonds, unsalted",
-    "category": "Орехи",
-    "caloriesPer100g": 607,
-    "proteinPer100g": 20.3,
-    "fatPer100g": 54,
-    "carbsPer100g": 20.4,
-    "fiberPer100g": 10.6,
-    "sugarPer100g": 4.71,
-    "sodiumPer100g": 3,
-    "servingSizeG": 28,
-    "aliases": [
-      "миндаль"
-    ],
-    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
-  },
-  {
     "fdcId": 2707490,
-    "name": "Миндаль · вариант 5",
+    "name": "Миндаль · вариант 4",
     "originalName": "Almonds, flavored",
     "category": "Орехи",
     "caloriesPer100g": 599,
@@ -11878,7 +14318,7 @@
   },
   {
     "fdcId": 2708012,
-    "name": "Картофель · вариант 9",
+    "name": "Картофель · вариант 8",
     "originalName": "Pie, sweet potato",
     "category": "Картофель",
     "caloriesPer100g": 269,
@@ -11892,6 +14332,3100 @@
     "aliases": [
       "картофель",
       "картошка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708745,
+    "name": "Хлеб · вариант 25",
+    "originalName": "Chicken cornbread",
+    "category": "Птица",
+    "caloriesPer100g": 167,
+    "proteinPer100g": 13.8,
+    "fatPer100g": 8.21,
+    "carbsPer100g": 9.38,
+    "fiberPer100g": 0.4,
+    "sugarPer100g": 0.24,
+    "sodiumPer100g": 458,
+    "servingSizeG": 7.6,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709421,
+    "name": "Картофель · вариант 9",
+    "originalName": "Potato chips, NFS",
+    "category": "Картофель",
+    "caloriesPer100g": 532,
+    "proteinPer100g": 6.39,
+    "fatPer100g": 34,
+    "carbsPer100g": 53.8,
+    "fiberPer100g": 3.1,
+    "sugarPer100g": 0.33,
+    "sodiumPer100g": 527,
+    "servingSizeG": 28,
+    "aliases": [
+      "картофель",
+      "картошка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709491,
+    "name": "Картофель · вариант 10",
+    "originalName": "Potato skins, NFS",
+    "category": "Картофель",
+    "caloriesPer100g": 199,
+    "proteinPer100g": 6.07,
+    "fatPer100g": 12.4,
+    "carbsPer100g": 16.3,
+    "fiberPer100g": 1.5,
+    "sugarPer100g": 1.08,
+    "sodiumPer100g": 417,
+    "servingSizeG": 35,
+    "aliases": [
+      "картофель",
+      "картошка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709697,
+    "name": "Картофель · вариант 11",
+    "originalName": "Sweet potato, NFS",
+    "category": "Картофель",
+    "caloriesPer100g": 115,
+    "proteinPer100g": 1.58,
+    "fatPer100g": 4.53,
+    "carbsPer100g": 17.1,
+    "fiberPer100g": 3,
+    "sugarPer100g": 6,
+    "sodiumPer100g": 161,
+    "servingSizeG": 235,
+    "aliases": [
+      "картофель",
+      "картошка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709715,
+    "name": "Картофель · вариант 12",
+    "originalName": "Sweet potato tots",
+    "category": "Картофель",
+    "caloriesPer100g": 191,
+    "proteinPer100g": 2.26,
+    "fatPer100g": 9.35,
+    "carbsPer100g": 37.3,
+    "fiberPer100g": 6,
+    "sugarPer100g": 13.5,
+    "sodiumPer100g": 315,
+    "servingSizeG": 130,
+    "aliases": [
+      "картофель",
+      "картошка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710684,
+    "name": "Яйцо · вариант 11",
+    "originalName": "Eggnog, alcoholic",
+    "category": "Яйца",
+    "caloriesPer100g": 113,
+    "proteinPer100g": 3.74,
+    "fatPer100g": 3.45,
+    "carbsPer100g": 6.62,
+    "fiberPer100g": 0,
+    "sugarPer100g": 6.62,
+    "sodiumPer100g": 45,
+    "servingSizeG": 30,
+    "aliases": [
+      "яйцо",
+      "яйцо куриное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706242,
+    "name": "Треска · вариант 3",
+    "originalName": "Fish, cod, grilled",
+    "category": "Рыба",
+    "caloriesPer100g": 108,
+    "proteinPer100g": 19.4,
+    "fatPer100g": 2.79,
+    "carbsPer100g": 0,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 346,
+    "servingSizeG": 20,
+    "aliases": [
+      "треска"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706245,
+    "name": "Треска, на пару",
+    "originalName": "Fish, cod, steamed",
+    "category": "Рыба",
+    "caloriesPer100g": 87,
+    "proteinPer100g": 19.3,
+    "fatPer100g": 0.52,
+    "carbsPer100g": 0,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 235,
+    "servingSizeG": 135,
+    "aliases": [
+      "треска"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706311,
+    "name": "Тунец, консервированный · вариант 2",
+    "originalName": "Fish, tuna, canned",
+    "category": "Рыба",
+    "caloriesPer100g": 85,
+    "proteinPer100g": 19,
+    "fatPer100g": 0.94,
+    "carbsPer100g": 0.08,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 219,
+    "servingSizeG": 135,
+    "aliases": [
+      "тунец"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707334,
+    "name": "Яичный белок · вариант 2",
+    "originalName": "Egg white sandwich",
+    "category": "Яйца",
+    "caloriesPer100g": 166,
+    "proteinPer100g": 9.41,
+    "fatPer100g": 3.62,
+    "carbsPer100g": 24.1,
+    "fiberPer100g": 1.8,
+    "sugarPer100g": 2.16,
+    "sodiumPer100g": 357,
+    "servingSizeG": 175,
+    "aliases": [
+      "яичный белок"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707486,
+    "name": "Миндаль, запечённый",
+    "originalName": "Almonds, unroasted",
+    "category": "Орехи",
+    "caloriesPer100g": 626,
+    "proteinPer100g": 21.4,
+    "fatPer100g": 51.1,
+    "carbsPer100g": 20,
+    "fiberPer100g": 10.8,
+    "sugarPer100g": 4.35,
+    "sodiumPer100g": 0,
+    "servingSizeG": 18,
+    "aliases": [
+      "миндаль"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707709,
+    "name": "Хлеб, цельный",
+    "originalName": "Bread, whole wheat",
+    "category": "Хлеб",
+    "caloriesPer100g": 254,
+    "proteinPer100g": 12.3,
+    "fatPer100g": 3.55,
+    "carbsPer100g": 43.1,
+    "fiberPer100g": 6,
+    "sugarPer100g": 4.41,
+    "sodiumPer100g": 430,
+    "servingSizeG": 36,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707797,
+    "name": "Хлеб · вариант 26",
+    "originalName": "Bread, gluten free",
+    "category": "Хлеб",
+    "caloriesPer100g": 248,
+    "proteinPer100g": 4.31,
+    "fatPer100g": 5.24,
+    "carbsPer100g": 45.8,
+    "fiberPer100g": 4.3,
+    "sugarPer100g": 3.53,
+    "sodiumPer100g": 447,
+    "servingSizeG": 2.8,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708700,
+    "name": "Яйцо · вариант 12",
+    "originalName": "Egg roll, meatless",
+    "category": "Хлеб",
+    "caloriesPer100g": 270,
+    "proteinPer100g": 5.62,
+    "fatPer100g": 14.1,
+    "carbsPer100g": 30,
+    "fiberPer100g": 2.3,
+    "sugarPer100g": 5.63,
+    "sodiumPer100g": 463,
+    "servingSizeG": 64,
+    "aliases": [
+      "яйцо",
+      "яйцо куриное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708963,
+    "name": "Лосось · вариант 4",
+    "originalName": "Sushi roll, salmon",
+    "category": "Хлеб",
+    "caloriesPer100g": 103,
+    "proteinPer100g": 6.88,
+    "fatPer100g": 1.28,
+    "carbsPer100g": 15.3,
+    "fiberPer100g": 0.7,
+    "sugarPer100g": 0.92,
+    "sodiumPer100g": 350,
+    "servingSizeG": 30,
+    "aliases": [
+      "лосось",
+      "сёмга"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709383,
+    "name": "Картофель приготовленный, запечённый",
+    "originalName": "Potato, baked, NFS",
+    "category": "Картофель",
+    "caloriesPer100g": 93,
+    "proteinPer100g": 1.95,
+    "fatPer100g": 0.1,
+    "carbsPer100g": 21.4,
+    "fiberPer100g": 1.5,
+    "sugarPer100g": 1.69,
+    "sodiumPer100g": 181,
+    "servingSizeG": 230,
+    "aliases": [
+      "картофель приготовленный",
+      "картошка готовая"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709710,
+    "name": "Картофель · вариант 13",
+    "originalName": "Sweet potato chips",
+    "category": "Картофель",
+    "caloriesPer100g": 529,
+    "proteinPer100g": 2.92,
+    "fatPer100g": 32.2,
+    "carbsPer100g": 56.5,
+    "fiberPer100g": 8.8,
+    "sugarPer100g": 8.78,
+    "sodiumPer100g": 227,
+    "servingSizeG": 28,
+    "aliases": [
+      "картофель",
+      "картошка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710170,
+    "name": "Масло сливочное · вариант 12",
+    "originalName": "Lemon-butter sauce",
+    "category": "Масла",
+    "caloriesPer100g": 671,
+    "proteinPer100g": 0.8,
+    "fatPer100g": 74,
+    "carbsPer100g": 0.74,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0.77,
+    "sodiumPer100g": 472,
+    "servingSizeG": 16,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710308,
+    "name": "Картофель · вариант 14",
+    "originalName": "Sweet potato paste",
+    "category": "Картофель",
+    "caloriesPer100g": 305,
+    "proteinPer100g": 0.49,
+    "fatPer100g": 0.34,
+    "carbsPer100g": 75.1,
+    "fiberPer100g": 0.9,
+    "sugarPer100g": 71.8,
+    "sodiumPer100g": 1,
+    "servingSizeG": 22,
+    "aliases": [
+      "картофель",
+      "картошка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706152,
+    "name": "Индейка · вариант 10",
+    "originalName": "Baby Toddler turkey",
+    "category": "Птица",
+    "caloriesPer100g": 111,
+    "proteinPer100g": 11.5,
+    "fatPer100g": 6.2,
+    "carbsPer100g": 1.4,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 49,
+    "servingSizeG": 15,
+    "aliases": [
+      "индейка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706289,
+    "name": "Лосось, жареный",
+    "originalName": "Fish, salmon, fried",
+    "category": "Рыба",
+    "caloriesPer100g": 307,
+    "proteinPer100g": 17.4,
+    "fatPer100g": 20.7,
+    "carbsPer100g": 11.7,
+    "fiberPer100g": 0.5,
+    "sugarPer100g": 0.2,
+    "sodiumPer100g": 391,
+    "servingSizeG": 17,
+    "aliases": [
+      "лосось",
+      "сёмга"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706840,
+    "name": "Тунец · вариант 4",
+    "originalName": "Tuna salad with egg",
+    "category": "Рыба",
+    "caloriesPer100g": 190,
+    "proteinPer100g": 10.3,
+    "fatPer100g": 15.4,
+    "carbsPer100g": 2.74,
+    "fiberPer100g": 0.4,
+    "sugarPer100g": 1.99,
+    "sodiumPer100g": 393,
+    "servingSizeG": 119,
+    "aliases": [
+      "тунец"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707167,
+    "name": "Яйцо, цельный · вариант 2",
+    "originalName": "Egg, whole, pickled",
+    "category": "Яйца",
+    "caloriesPer100g": 154,
+    "proteinPer100g": 12.5,
+    "fatPer100g": 10.5,
+    "carbsPer100g": 1.11,
+    "fiberPer100g": 0,
+    "sugarPer100g": 1.11,
+    "sodiumPer100g": 392,
+    "servingSizeG": 50,
+    "aliases": [
+      "яйцо",
+      "яйцо куриное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707624,
+    "name": "Хлеб · вариант 27",
+    "originalName": "Bread, egg, Challah",
+    "category": "Хлеб",
+    "caloriesPer100g": 287,
+    "proteinPer100g": 9.5,
+    "fatPer100g": 6,
+    "carbsPer100g": 47.8,
+    "fiberPer100g": 2.3,
+    "sugarPer100g": 1.78,
+    "sodiumPer100g": 380,
+    "servingSizeG": 3.7,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707648,
+    "name": "Картофель · вариант 15",
+    "originalName": "Bread, sweet potato",
+    "category": "Хлеб",
+    "caloriesPer100g": 241,
+    "proteinPer100g": 8.64,
+    "fatPer100g": 2.87,
+    "carbsPer100g": 45.4,
+    "fiberPer100g": 1.7,
+    "sugarPer100g": 3.53,
+    "sodiumPer100g": 474,
+    "servingSizeG": 13,
+    "aliases": [
+      "картофель",
+      "картошка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707653,
+    "name": "Хлеб, жареный",
+    "originalName": "Bread, dough, fried",
+    "category": "Хлеб",
+    "caloriesPer100g": 384,
+    "proteinPer100g": 9.36,
+    "fatPer100g": 18.8,
+    "carbsPer100g": 45,
+    "fiberPer100g": 1.5,
+    "sugarPer100g": 3.55,
+    "sodiumPer100g": 177,
+    "servingSizeG": 8.2,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707756,
+    "name": "Хлеб ржаной · вариант 2",
+    "originalName": "Bread, rye, toasted",
+    "category": "Хлеб",
+    "caloriesPer100g": 285,
+    "proteinPer100g": 9.34,
+    "fatPer100g": 3.63,
+    "carbsPer100g": 53.1,
+    "fiberPer100g": 6.4,
+    "sugarPer100g": 4.23,
+    "sodiumPer100g": 626,
+    "servingSizeG": 22,
+    "aliases": [
+      "хлеб ржаной",
+      "чёрный хлеб"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707760,
+    "name": "Хлеб · вариант 28",
+    "originalName": "Bread, pumpernickel",
+    "category": "Хлеб",
+    "caloriesPer100g": 250,
+    "proteinPer100g": 8.7,
+    "fatPer100g": 3.1,
+    "carbsPer100g": 47.5,
+    "fiberPer100g": 6.5,
+    "sugarPer100g": 0.53,
+    "sodiumPer100g": 596,
+    "servingSizeG": 15,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707791,
+    "name": "Хлеб · вариант 29",
+    "originalName": "Bread, soy, toasted",
+    "category": "Хлеб",
+    "caloriesPer100g": 293,
+    "proteinPer100g": 18,
+    "fatPer100g": 4.22,
+    "carbsPer100g": 46.1,
+    "fiberPer100g": 4.8,
+    "sugarPer100g": 6.6,
+    "sodiumPer100g": 648,
+    "servingSizeG": 25,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707847,
+    "name": "Хлеб · вариант 30",
+    "originalName": "Bread, Boston Brown",
+    "category": "Хлеб",
+    "caloriesPer100g": 274,
+    "proteinPer100g": 10.7,
+    "fatPer100g": 4.53,
+    "carbsPer100g": 47.5,
+    "fiberPer100g": 4,
+    "sugarPer100g": 5.73,
+    "sodiumPer100g": 450,
+    "servingSizeG": 45,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709422,
+    "name": "Картофель · вариант 16",
+    "originalName": "Potato chips, plain",
+    "category": "Картофель",
+    "caloriesPer100g": 532,
+    "proteinPer100g": 6.39,
+    "fatPer100g": 34,
+    "carbsPer100g": 53.8,
+    "fiberPer100g": 3.1,
+    "sugarPer100g": 0.33,
+    "sodiumPer100g": 527,
+    "servingSizeG": 25,
+    "aliases": [
+      "картофель",
+      "картошка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709492,
+    "name": "Картофель · вариант 17",
+    "originalName": "Potato, mashed, NFS",
+    "category": "Картофель",
+    "caloriesPer100g": 114,
+    "proteinPer100g": 2.15,
+    "fatPer100g": 4.07,
+    "carbsPer100g": 17.6,
+    "fiberPer100g": 1.2,
+    "sugarPer100g": 2.13,
+    "sodiumPer100g": 210,
+    "servingSizeG": 147,
+    "aliases": [
+      "картофель",
+      "картошка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709513,
+    "name": "Картофель · вариант 18",
+    "originalName": "Potato tots, school",
+    "category": "Картофель",
+    "caloriesPer100g": 166,
+    "proteinPer100g": 2.02,
+    "fatPer100g": 9.16,
+    "carbsPer100g": 19.3,
+    "fiberPer100g": 1.7,
+    "sugarPer100g": 1.3,
+    "sodiumPer100g": 147,
+    "servingSizeG": 130,
+    "aliases": [
+      "картофель",
+      "картошка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706291,
+    "name": "Лосось, консервированный",
+    "originalName": "Fish, salmon, canned",
+    "category": "Рыба",
+    "caloriesPer100g": 136,
+    "proteinPer100g": 24.6,
+    "fatPer100g": 4.21,
+    "carbsPer100g": 0,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 378,
+    "servingSizeG": 75,
+    "aliases": [
+      "лосось",
+      "сёмга"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706292,
+    "name": "Лосось · вариант 5",
+    "originalName": "Fish, salmon, smoked",
+    "category": "Рыба",
+    "caloriesPer100g": 117,
+    "proteinPer100g": 18.3,
+    "fatPer100g": 4.32,
+    "carbsPer100g": 0,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 672,
+    "servingSizeG": 85,
+    "aliases": [
+      "лосось",
+      "сёмга"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706987,
+    "name": "Индейка · вариант 11",
+    "originalName": "Turkey sandwich wrap",
+    "category": "Птица",
+    "caloriesPer100g": 232,
+    "proteinPer100g": 12.8,
+    "fatPer100g": 9.4,
+    "carbsPer100g": 23.3,
+    "fiberPer100g": 1.5,
+    "sugarPer100g": 2.42,
+    "sodiumPer100g": 792,
+    "servingSizeG": 135,
+    "aliases": [
+      "индейка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707194,
+    "name": "Курица · вариант 5",
+    "originalName": "Chicken egg foo yung",
+    "category": "Птица",
+    "caloriesPer100g": 137,
+    "proteinPer100g": 12.8,
+    "fatPer100g": 7.38,
+    "carbsPer100g": 4.78,
+    "fiberPer100g": 0.3,
+    "sugarPer100g": 3.05,
+    "sodiumPer100g": 401,
+    "servingSizeG": 131,
+    "aliases": [
+      "курица"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709402,
+    "name": "Картофель, запечённый",
+    "originalName": "Potato, roasted, NFS",
+    "category": "Картофель",
+    "caloriesPer100g": 126,
+    "proteinPer100g": 1.87,
+    "fatPer100g": 4.25,
+    "carbsPer100g": 20.4,
+    "fiberPer100g": 1.4,
+    "sugarPer100g": 1.62,
+    "sodiumPer100g": 166,
+    "servingSizeG": 160,
+    "aliases": [
+      "картофель",
+      "картошка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709444,
+    "name": "Картофель · вариант 19",
+    "originalName": "Potato sticks, plain",
+    "category": "Картофель",
+    "caloriesPer100g": 522,
+    "proteinPer100g": 6.7,
+    "fatPer100g": 34.4,
+    "carbsPer100g": 53.3,
+    "fiberPer100g": 3.4,
+    "sugarPer100g": 0.22,
+    "sodiumPer100g": 633,
+    "servingSizeG": 28,
+    "aliases": [
+      "картофель",
+      "картошка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706287,
+    "name": "Лосось · вариант 6",
+    "originalName": "Fish, salmon, grilled",
+    "category": "Рыба",
+    "caloriesPer100g": 259,
+    "proteinPer100g": 25.9,
+    "fatPer100g": 16.5,
+    "carbsPer100g": 0,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 288,
+    "servingSizeG": 140,
+    "aliases": [
+      "лосось",
+      "сёмга"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706290,
+    "name": "Лосось, на пару",
+    "originalName": "Fish, salmon, steamed",
+    "category": "Рыба",
+    "caloriesPer100g": 237,
+    "proteinPer100g": 25.8,
+    "fatPer100g": 14.1,
+    "carbsPer100g": 0,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 177,
+    "servingSizeG": 140,
+    "aliases": [
+      "лосось",
+      "сёмга"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707328,
+    "name": "Яйцо · вариант 13",
+    "originalName": "Egg sandwich on bagel",
+    "category": "Хлеб",
+    "caloriesPer100g": 251,
+    "proteinPer100g": 12,
+    "fatPer100g": 8.43,
+    "carbsPer100g": 31.8,
+    "fiberPer100g": 0.9,
+    "sugarPer100g": 5.36,
+    "sodiumPer100g": 437,
+    "servingSizeG": 185,
+    "aliases": [
+      "яйцо",
+      "яйцо куриное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706088,
+    "name": "Хлеб · вариант 31",
+    "originalName": "Chicken patty, breaded",
+    "category": "Птица",
+    "caloriesPer100g": 287,
+    "proteinPer100g": 14.8,
+    "fatPer100g": 19.6,
+    "carbsPer100g": 12.8,
+    "fiberPer100g": 0.3,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 532,
+    "servingSizeG": 75,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706527,
+    "name": "Курица · вариант 6",
+    "originalName": "Chicken or turkey hash",
+    "category": "Птица",
+    "caloriesPer100g": 110,
+    "proteinPer100g": 9.57,
+    "fatPer100g": 4.1,
+    "carbsPer100g": 8.27,
+    "fiberPer100g": 1.3,
+    "sugarPer100g": 0.94,
+    "sodiumPer100g": 259,
+    "servingSizeG": 190,
+    "aliases": [
+      "курица"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706839,
+    "name": "Тунец · вариант 5",
+    "originalName": "Tuna salad with cheese",
+    "category": "Рыба",
+    "caloriesPer100g": 214,
+    "proteinPer100g": 11.3,
+    "fatPer100g": 17.6,
+    "carbsPer100g": 2.85,
+    "fiberPer100g": 0.4,
+    "sugarPer100g": 1.91,
+    "sodiumPer100g": 440,
+    "servingSizeG": 238,
+    "aliases": [
+      "тунец"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707491,
+    "name": "Миндаль, запечённый · вариант 2",
+    "originalName": "Almonds, honey roasted",
+    "category": "Орехи",
+    "caloriesPer100g": 579,
+    "proteinPer100g": 14.1,
+    "fatPer100g": 45.3,
+    "carbsPer100g": 35.8,
+    "fiberPer100g": 7.3,
+    "sugarPer100g": 25,
+    "sodiumPer100g": 385,
+    "servingSizeG": 18,
+    "aliases": [
+      "миндаль"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707532,
+    "name": "Грецкий орех, запечённый",
+    "originalName": "Walnuts, honey roasted",
+    "category": "Орехи",
+    "caloriesPer100g": 668,
+    "proteinPer100g": 9.8,
+    "fatPer100g": 56.9,
+    "carbsPer100g": 29,
+    "fiberPer100g": 3.5,
+    "sugarPer100g": 23.5,
+    "sodiumPer100g": 383,
+    "servingSizeG": 28.35,
+    "aliases": [
+      "грецкий орех"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708972,
+    "name": "Яйцо · вариант 14",
+    "originalName": "Sushi, topped with egg",
+    "category": "Яйца",
+    "caloriesPer100g": 119,
+    "proteinPer100g": 7.32,
+    "fatPer100g": 5.23,
+    "carbsPer100g": 10.2,
+    "fiberPer100g": 0.4,
+    "sugarPer100g": 0.69,
+    "sodiumPer100g": 338,
+    "servingSizeG": 50,
+    "aliases": [
+      "яйцо",
+      "яйцо куриное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710168,
+    "name": "Масло сливочное · вариант 13",
+    "originalName": "Ghee, clarified butter",
+    "category": "Масла",
+    "caloriesPer100g": 876,
+    "proteinPer100g": 0.28,
+    "fatPer100g": 99.5,
+    "carbsPer100g": 0,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 2,
+    "servingSizeG": 14,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706089,
+    "name": "Хлеб · вариант 32",
+    "originalName": "Chicken fillet, breaded",
+    "category": "Птица",
+    "caloriesPer100g": 240,
+    "proteinPer100g": 14.6,
+    "fatPer100g": 13.6,
+    "carbsPer100g": 14.9,
+    "fiberPer100g": 1.7,
+    "sugarPer100g": 0.57,
+    "sodiumPer100g": 527,
+    "servingSizeG": 120,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706789,
+    "name": "Курица · вариант 7",
+    "originalName": "Chicken or turkey divan",
+    "category": "Птица",
+    "caloriesPer100g": 140,
+    "proteinPer100g": 15.5,
+    "fatPer100g": 7.26,
+    "carbsPer100g": 4.01,
+    "fiberPer100g": 1.3,
+    "sugarPer100g": 0.95,
+    "sodiumPer100g": 295,
+    "servingSizeG": 236,
+    "aliases": [
+      "курица"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707488,
+    "name": "Миндаль · вариант 5",
+    "originalName": "Almonds, lightly salted",
+    "category": "Орехи",
+    "caloriesPer100g": 604,
+    "proteinPer100g": 20.2,
+    "fatPer100g": 53.7,
+    "carbsPer100g": 20.3,
+    "fiberPer100g": 10.5,
+    "sugarPer100g": 4.69,
+    "sodiumPer100g": 195,
+    "servingSizeG": 28,
+    "aliases": [
+      "миндаль"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708146,
+    "name": "Масло сливочное · вариант 14",
+    "originalName": "Crackers, butter, plain",
+    "category": "Масла",
+    "caloriesPer100g": 510,
+    "proteinPer100g": 6.64,
+    "fatPer100g": 26.4,
+    "carbsPer100g": 61.3,
+    "fiberPer100g": 2.3,
+    "sugarPer100g": 8.18,
+    "sodiumPer100g": 726,
+    "servingSizeG": 1,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708148,
+    "name": "Масло сливочное · вариант 15",
+    "originalName": "Crackers, butter (Ritz)",
+    "category": "Масла",
+    "caloriesPer100g": 510,
+    "proteinPer100g": 6.64,
+    "fatPer100g": 26.4,
+    "carbsPer100g": 61.3,
+    "fiberPer100g": 2.3,
+    "sugarPer100g": 8.18,
+    "sodiumPer100g": 726,
+    "servingSizeG": 3,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708971,
+    "name": "Тунец · вариант 6",
+    "originalName": "Sushi, topped with tuna",
+    "category": "Рыба",
+    "caloriesPer100g": 100,
+    "proteinPer100g": 9.66,
+    "fatPer100g": 0.29,
+    "carbsPer100g": 13.4,
+    "fiberPer100g": 0.6,
+    "sugarPer100g": 0.8,
+    "sodiumPer100g": 306,
+    "servingSizeG": 35,
+    "aliases": [
+      "тунец"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706981,
+    "name": "Индейка · вариант 12",
+    "originalName": "Turkey sandwich on white",
+    "category": "Птица",
+    "caloriesPer100g": 189,
+    "proteinPer100g": 12,
+    "fatPer100g": 3.68,
+    "carbsPer100g": 26.5,
+    "fiberPer100g": 1.2,
+    "sugarPer100g": 3.2,
+    "sodiumPer100g": 624,
+    "servingSizeG": 175,
+    "aliases": [
+      "индейка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706983,
+    "name": "Индейка · вариант 13",
+    "originalName": "Turkey sandwich on wheat",
+    "category": "Птица",
+    "caloriesPer100g": 187,
+    "proteinPer100g": 13,
+    "fatPer100g": 3.88,
+    "carbsPer100g": 24.6,
+    "fiberPer100g": 2.8,
+    "sugarPer100g": 3.13,
+    "sodiumPer100g": 619,
+    "servingSizeG": 175,
+    "aliases": [
+      "индейка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707038,
+    "name": "Тунец · вариант 7",
+    "originalName": "Tuna salad sandwich wrap",
+    "category": "Рыба",
+    "caloriesPer100g": 244,
+    "proteinPer100g": 10.6,
+    "fatPer100g": 14.8,
+    "carbsPer100g": 17,
+    "fiberPer100g": 1.3,
+    "sugarPer100g": 2.64,
+    "sodiumPer100g": 564,
+    "servingSizeG": 200,
+    "aliases": [
+      "тунец"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708543,
+    "name": "Курица · вариант 8",
+    "originalName": "Burrito, chicken, cheese",
+    "category": "Птица",
+    "caloriesPer100g": 244,
+    "proteinPer100g": 13.7,
+    "fatPer100g": 8.06,
+    "carbsPer100g": 28.3,
+    "fiberPer100g": 2,
+    "sugarPer100g": 2.16,
+    "sodiumPer100g": 456,
+    "servingSizeG": 110,
+    "aliases": [
+      "курица"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708699,
+    "name": "Яйцо · вариант 15",
+    "originalName": "Breakfast pizza with egg",
+    "category": "Яйца",
+    "caloriesPer100g": 292,
+    "proteinPer100g": 14,
+    "fatPer100g": 14.5,
+    "carbsPer100g": 25.6,
+    "fiberPer100g": 1.1,
+    "sugarPer100g": 2.86,
+    "sodiumPer100g": 594,
+    "servingSizeG": 104,
+    "aliases": [
+      "яйцо",
+      "яйцо куриное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706200,
+    "name": "Курица · вариант 9",
+    "originalName": "Turkey or chicken sausage",
+    "category": "Птица",
+    "caloriesPer100g": 193,
+    "proteinPer100g": 19.6,
+    "fatPer100g": 12.2,
+    "carbsPer100g": 1.09,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 705,
+    "servingSizeG": 75,
+    "aliases": [
+      "курица"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706546,
+    "name": "Курица · вариант 10",
+    "originalName": "Chicken or turkey souffle",
+    "category": "Птица",
+    "caloriesPer100g": 171,
+    "proteinPer100g": 11.7,
+    "fatPer100g": 11.3,
+    "carbsPer100g": 5.59,
+    "fiberPer100g": 0.1,
+    "sugarPer100g": 2.23,
+    "sodiumPer100g": 380,
+    "servingSizeG": 159,
+    "aliases": [
+      "курица"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707319,
+    "name": "Яйцо · вариант 16",
+    "originalName": "Egg sandwich on croissant",
+    "category": "Яйца",
+    "caloriesPer100g": 309,
+    "proteinPer100g": 11.4,
+    "fatPer100g": 19.7,
+    "carbsPer100g": 21.4,
+    "fiberPer100g": 1.1,
+    "sugarPer100g": 5.48,
+    "sodiumPer100g": 388,
+    "servingSizeG": 205,
+    "aliases": [
+      "яйцо",
+      "яйцо куриное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708969,
+    "name": "Лосось · вариант 7",
+    "originalName": "Sushi, topped with salmon",
+    "category": "Рыба",
+    "caloriesPer100g": 107,
+    "proteinPer100g": 8.92,
+    "fatPer100g": 1.74,
+    "carbsPer100g": 13.4,
+    "fiberPer100g": 0.6,
+    "sugarPer100g": 0.8,
+    "sodiumPer100g": 317,
+    "servingSizeG": 210,
+    "aliases": [
+      "лосось",
+      "сёмга"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709381,
+    "name": "Йогурт · вариант 8",
+    "originalName": "Baby Toddler yogurt melts",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 380,
+    "proteinPer100g": 14.3,
+    "fatPer100g": 4,
+    "carbsPer100g": 71.8,
+    "fiberPer100g": 2.3,
+    "sugarPer100g": 57.1,
+    "sodiumPer100g": 286,
+    "servingSizeG": 7,
+    "aliases": [
+      "йогурт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705420,
+    "name": "Йогурт, обезжиренный · вариант 2",
+    "originalName": "Yogurt, nonfat milk, plain",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 50,
+    "proteinPer100g": 4.23,
+    "fatPer100g": 0.09,
+    "carbsPer100g": 8.08,
+    "fiberPer100g": 0,
+    "sugarPer100g": 7.68,
+    "sodiumPer100g": 51,
+    "servingSizeG": 170,
+    "aliases": [
+      "йогурт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705444,
+    "name": "Йогурт · вариант 9",
+    "originalName": "Chipotle dip, yogurt based",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 189,
+    "proteinPer100g": 7.93,
+    "fatPer100g": 16,
+    "carbsPer100g": 3.33,
+    "fiberPer100g": 0,
+    "sugarPer100g": 2.97,
+    "sodiumPer100g": 636,
+    "servingSizeG": 60,
+    "aliases": [
+      "йогурт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705457,
+    "name": "Йогурт, замороженный · вариант 4",
+    "originalName": "Frozen yogurt bar, vanilla",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 127,
+    "proteinPer100g": 3,
+    "fatPer100g": 3.6,
+    "carbsPer100g": 21.6,
+    "fiberPer100g": 0,
+    "sugarPer100g": 19.9,
+    "sodiumPer100g": 63,
+    "servingSizeG": 65,
+    "aliases": [
+      "йогурт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705464,
+    "name": "Йогурт · вариант 10",
+    "originalName": "Baby Toddler yogurt, plain",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 78,
+    "proteinPer100g": 3.82,
+    "fatPer100g": 4.48,
+    "carbsPer100g": 5.57,
+    "fiberPer100g": 0,
+    "sugarPer100g": 4.09,
+    "sodiumPer100g": 42,
+    "servingSizeG": 110,
+    "aliases": [
+      "йогурт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707158,
+    "name": "Яйцо, жареный, цельный",
+    "originalName": "Egg, whole, fried with oil",
+    "category": "Яйца",
+    "caloriesPer100g": 192,
+    "proteinPer100g": 11.6,
+    "fatPer100g": 15.8,
+    "carbsPer100g": 0.9,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0.19,
+    "sodiumPer100g": 228,
+    "servingSizeG": 55,
+    "aliases": [
+      "яйцо",
+      "яйцо куриное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708147,
+    "name": "Масло сливочное · вариант 16",
+    "originalName": "Crackers, butter, flavored",
+    "category": "Масла",
+    "caloriesPer100g": 510,
+    "proteinPer100g": 6.64,
+    "fatPer100g": 26.4,
+    "carbsPer100g": 61.3,
+    "fiberPer100g": 2.3,
+    "sugarPer100g": 8.18,
+    "sodiumPer100g": 726,
+    "servingSizeG": 115,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710161,
+    "name": "Масло сливочное · вариант 17",
+    "originalName": "Butter replacement, liquid",
+    "category": "Масла",
+    "caloriesPer100g": 533,
+    "proteinPer100g": 0.17,
+    "fatPer100g": 59.8,
+    "carbsPer100g": 0.86,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 615,
+    "servingSizeG": 28,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710163,
+    "name": "Масло сливочное · вариант 18",
+    "originalName": "Butter replacement, powder",
+    "category": "Масла",
+    "caloriesPer100g": 373,
+    "proteinPer100g": 2,
+    "fatPer100g": 1,
+    "carbsPer100g": 89,
+    "fiberPer100g": 0,
+    "sugarPer100g": 5.3,
+    "sodiumPer100g": 1200,
+    "servingSizeG": 2,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705419,
+    "name": "Йогурт · вариант 11",
+    "originalName": "Yogurt, low fat milk, plain",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 63,
+    "proteinPer100g": 5.25,
+    "fatPer100g": 1.55,
+    "carbsPer100g": 7.04,
+    "fiberPer100g": 0,
+    "sugarPer100g": 7.04,
+    "sodiumPer100g": 70,
+    "servingSizeG": 245,
+    "aliases": [
+      "йогурт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705460,
+    "name": "Йогурт, замороженный · вариант 5",
+    "originalName": "Frozen yogurt cone, vanilla",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 139,
+    "proteinPer100g": 3.2,
+    "fatPer100g": 3.73,
+    "carbsPer100g": 23.9,
+    "fiberPer100g": 0.1,
+    "sugarPer100g": 19.4,
+    "sodiumPer100g": 71,
+    "servingSizeG": 125,
+    "aliases": [
+      "йогурт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706241,
+    "name": "Треска, запечённый",
+    "originalName": "Fish, cod, baked or broiled",
+    "category": "Рыба",
+    "caloriesPer100g": 126,
+    "proteinPer100g": 19,
+    "fatPer100g": 5.04,
+    "carbsPer100g": 0.01,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0.01,
+    "sodiumPer100g": 351,
+    "servingSizeG": 135,
+    "aliases": [
+      "треска"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706429,
+    "name": "Курица · вариант 11",
+    "originalName": "Chicken or turkey fricassee",
+    "category": "Птица",
+    "caloriesPer100g": 121,
+    "proteinPer100g": 10.7,
+    "fatPer100g": 7.16,
+    "carbsPer100g": 3.54,
+    "fiberPer100g": 0.1,
+    "sugarPer100g": 0.26,
+    "sodiumPer100g": 418,
+    "servingSizeG": 244,
+    "aliases": [
+      "курица"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707280,
+    "name": "Яичный белок · вариант 3",
+    "originalName": "Egg salad sandwich on white",
+    "category": "Яйца",
+    "caloriesPer100g": 260,
+    "proteinPer100g": 9.98,
+    "fatPer100g": 16.6,
+    "carbsPer100g": 17.1,
+    "fiberPer100g": 0.8,
+    "sugarPer100g": 2.45,
+    "sodiumPer100g": 402,
+    "servingSizeG": 90,
+    "aliases": [
+      "яичный белок"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707281,
+    "name": "Яйцо · вариант 17",
+    "originalName": "Egg salad sandwich on wheat",
+    "category": "Яйца",
+    "caloriesPer100g": 259,
+    "proteinPer100g": 10.6,
+    "fatPer100g": 16.8,
+    "carbsPer100g": 15.8,
+    "fiberPer100g": 1.8,
+    "sugarPer100g": 2.41,
+    "sodiumPer100g": 399,
+    "servingSizeG": 180,
+    "aliases": [
+      "яйцо",
+      "яйцо куриное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707534,
+    "name": "Масло сливочное · вариант 19",
+    "originalName": "Almond butter, lower sodium",
+    "category": "Орехи",
+    "caloriesPer100g": 645,
+    "proteinPer100g": 20.8,
+    "fatPer100g": 53,
+    "carbsPer100g": 21.2,
+    "fiberPer100g": 9.7,
+    "sugarPer100g": 4.43,
+    "sodiumPer100g": 1,
+    "servingSizeG": 16,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705470,
+    "name": "Шоколад · вариант 4",
+    "originalName": "Chocolate milk, low fat (1%)",
+    "category": "Десерты",
+    "caloriesPer100g": 64,
+    "proteinPer100g": 3.46,
+    "fatPer100g": 1.11,
+    "carbsPer100g": 10.2,
+    "fiberPer100g": 0.1,
+    "sugarPer100g": 9.94,
+    "sodiumPer100g": 65,
+    "servingSizeG": 248,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705585,
+    "name": "Молоко, сухой",
+    "originalName": "Milk, dry, not reconstituted",
+    "category": "Молоко",
+    "caloriesPer100g": 362,
+    "proteinPer100g": 36.2,
+    "fatPer100g": 0.77,
+    "carbsPer100g": 52,
+    "fiberPer100g": 0,
+    "sugarPer100g": 52,
+    "sodiumPer100g": 535,
+    "servingSizeG": 128,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706421,
+    "name": "Курица · вариант 12",
+    "originalName": "Chicken or turkey cacciatore",
+    "category": "Птица",
+    "caloriesPer100g": 174,
+    "proteinPer100g": 13.2,
+    "fatPer100g": 10.6,
+    "carbsPer100g": 6.92,
+    "fiberPer100g": 1.1,
+    "sugarPer100g": 1.6,
+    "sodiumPer100g": 664,
+    "servingSizeG": 244,
+    "aliases": [
+      "курица"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707034,
+    "name": "Тунец · вариант 8",
+    "originalName": "Tuna salad sandwich on white",
+    "category": "Рыба",
+    "caloriesPer100g": 218,
+    "proteinPer100g": 9.86,
+    "fatPer100g": 11.8,
+    "carbsPer100g": 18.3,
+    "fiberPer100g": 1,
+    "sugarPer100g": 3.16,
+    "sodiumPer100g": 429,
+    "servingSizeG": 180,
+    "aliases": [
+      "тунец"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707036,
+    "name": "Тунец · вариант 9",
+    "originalName": "Tuna salad sandwich on wheat",
+    "category": "Рыба",
+    "caloriesPer100g": 217,
+    "proteinPer100g": 10.5,
+    "fatPer100g": 11.9,
+    "carbsPer100g": 17.1,
+    "fiberPer100g": 2.1,
+    "sugarPer100g": 3.12,
+    "sodiumPer100g": 425,
+    "servingSizeG": 270,
+    "aliases": [
+      "тунец"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707166,
+    "name": "Яйцо, запечённый, цельный",
+    "originalName": "Egg, whole, baked, fat added",
+    "category": "Яйца",
+    "caloriesPer100g": 185,
+    "proteinPer100g": 11.6,
+    "fatPer100g": 15,
+    "carbsPer100g": 0.91,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0.2,
+    "sodiumPer100g": 248,
+    "servingSizeG": 55,
+    "aliases": [
+      "яйцо",
+      "яйцо куриное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707876,
+    "name": "Торт · вариант 11",
+    "originalName": "Cake or cupcake, gingerbread",
+    "category": "Десерты",
+    "caloriesPer100g": 276,
+    "proteinPer100g": 3.64,
+    "fatPer100g": 9.16,
+    "carbsPer100g": 45.3,
+    "fiberPer100g": 1,
+    "sugarPer100g": 28.3,
+    "sodiumPer100g": 411,
+    "servingSizeG": 100,
+    "aliases": [
+      "торт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707890,
+    "name": "Торт · вариант 12",
+    "originalName": "Cake, pineapple, upside down",
+    "category": "Десерты",
+    "caloriesPer100g": 273,
+    "proteinPer100g": 2.38,
+    "fatPer100g": 12.2,
+    "carbsPer100g": 39.1,
+    "fiberPer100g": 0.7,
+    "sugarPer100g": 28.2,
+    "sodiumPer100g": 214,
+    "servingSizeG": 115,
+    "aliases": [
+      "торт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708125,
+    "name": "Молоко · вариант 21",
+    "originalName": "Nutrition bar (Tiger's Milk)",
+    "category": "Молоко",
+    "caloriesPer100g": 387,
+    "proteinPer100g": 16.8,
+    "fatPer100g": 14.3,
+    "carbsPer100g": 56.5,
+    "fiberPer100g": 2.3,
+    "sugarPer100g": 36.4,
+    "sodiumPer100g": 168,
+    "servingSizeG": 35,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705459,
+    "name": "Шоколад, замороженный · вариант 3",
+    "originalName": "Frozen yogurt cone, chocolate",
+    "category": "Десерты",
+    "caloriesPer100g": 142,
+    "proteinPer100g": 3.2,
+    "fatPer100g": 3.73,
+    "carbsPer100g": 23.9,
+    "fiberPer100g": 2.3,
+    "sugarPer100g": 18.7,
+    "sodiumPer100g": 71,
+    "servingSizeG": 125,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707159,
+    "name": "Яйцо, жареный, цельный · вариант 2",
+    "originalName": "Egg, whole, fried with butter",
+    "category": "Яйца",
+    "caloriesPer100g": 182,
+    "proteinPer100g": 11.6,
+    "fatPer100g": 14.6,
+    "carbsPer100g": 0.9,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0.22,
+    "sodiumPer100g": 263,
+    "servingSizeG": 55,
+    "aliases": [
+      "яйцо",
+      "яйцо куриное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707568,
+    "name": "Молоко · вариант 22",
+    "originalName": "Coconut milk, used in cooking",
+    "category": "Молоко",
+    "caloriesPer100g": 230,
+    "proteinPer100g": 2.29,
+    "fatPer100g": 23.8,
+    "carbsPer100g": 5.54,
+    "fiberPer100g": 2.2,
+    "sugarPer100g": 3.34,
+    "sodiumPer100g": 15,
+    "servingSizeG": 30,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707907,
+    "name": "Печенье · вариант 6",
+    "originalName": "Cookie, butterscotch, brownie",
+    "category": "Десерты",
+    "caloriesPer100g": 405,
+    "proteinPer100g": 4.8,
+    "fatPer100g": 16.3,
+    "carbsPer100g": 63.9,
+    "fiberPer100g": 2.1,
+    "sugarPer100g": 36.6,
+    "sodiumPer100g": 286,
+    "servingSizeG": 50,
+    "aliases": [
+      "печенье"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708149,
+    "name": "Масло сливочное · вариант 20",
+    "originalName": "Crackers, butter, reduced fat",
+    "category": "Масла",
+    "caloriesPer100g": 444,
+    "proteinPer100g": 9.34,
+    "fatPer100g": 13.4,
+    "carbsPer100g": 71.5,
+    "fiberPer100g": 3.4,
+    "sugarPer100g": 15,
+    "sodiumPer100g": 776,
+    "servingSizeG": 18,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708262,
+    "name": "Йогурт · вариант 12",
+    "originalName": "Pretzels, hard, yogurt coated",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 438,
+    "proteinPer100g": 5.94,
+    "fatPer100g": 12.2,
+    "carbsPer100g": 76.6,
+    "fiberPer100g": 1.1,
+    "sugarPer100g": 45.4,
+    "sodiumPer100g": 441,
+    "servingSizeG": 2,
+    "aliases": [
+      "йогурт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708727,
+    "name": "Яйцо · вариант 18",
+    "originalName": "Pastry, egg and cheese filled",
+    "category": "Яйца",
+    "caloriesPer100g": 349,
+    "proteinPer100g": 8.38,
+    "fatPer100g": 15.7,
+    "carbsPer100g": 43.8,
+    "fiberPer100g": 1.6,
+    "sugarPer100g": 6.18,
+    "sodiumPer100g": 216,
+    "servingSizeG": 100,
+    "aliases": [
+      "яйцо",
+      "яйцо куриное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705510,
+    "name": "Шоколад · вариант 5",
+    "originalName": "Milk shake, bottled, chocolate",
+    "category": "Десерты",
+    "caloriesPer100g": 150,
+    "proteinPer100g": 3.7,
+    "fatPer100g": 6.66,
+    "carbsPer100g": 20.4,
+    "fiberPer100g": 1.6,
+    "sugarPer100g": 13.4,
+    "sodiumPer100g": 80,
+    "servingSizeG": 372,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706286,
+    "name": "Лосось, запечённый",
+    "originalName": "Fish, salmon, baked or broiled",
+    "category": "Рыба",
+    "caloriesPer100g": 274,
+    "proteinPer100g": 25.4,
+    "fatPer100g": 18.4,
+    "carbsPer100g": 0.01,
+    "fiberPer100g": 0,
+    "sugarPer100g": 0.01,
+    "sodiumPer100g": 294,
+    "servingSizeG": 210,
+    "aliases": [
+      "лосось",
+      "сёмга"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706450,
+    "name": "Тунец · вариант 10",
+    "originalName": "Tuna with cream or white sauce",
+    "category": "Рыба",
+    "caloriesPer100g": 102,
+    "proteinPer100g": 14.4,
+    "fatPer100g": 3.71,
+    "carbsPer100g": 2.81,
+    "fiberPer100g": 0,
+    "sugarPer100g": 1.39,
+    "sodiumPer100g": 327,
+    "servingSizeG": 118,
+    "aliases": [
+      "тунец"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707881,
+    "name": "Торт · вариант 13",
+    "originalName": "Cake or cupcake, peanut butter",
+    "category": "Десерты",
+    "caloriesPer100g": 382,
+    "proteinPer100g": 6.12,
+    "fatPer100g": 19.8,
+    "carbsPer100g": 47.5,
+    "fiberPer100g": 2,
+    "sugarPer100g": 32.3,
+    "sodiumPer100g": 332,
+    "servingSizeG": 100,
+    "aliases": [
+      "торт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707955,
+    "name": "Печенье · вариант 7",
+    "originalName": "Cookie, peanut butter sandwich",
+    "category": "Десерты",
+    "caloriesPer100g": 478,
+    "proteinPer100g": 8.8,
+    "fatPer100g": 21.1,
+    "carbsPer100g": 65.6,
+    "fiberPer100g": 1.9,
+    "sugarPer100g": 35.4,
+    "sodiumPer100g": 368,
+    "servingSizeG": 42,
+    "aliases": [
+      "печенье"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705397,
+    "name": "Молоко, сухой, цельный",
+    "originalName": "Milk, dry, reconstituted, whole",
+    "category": "Молоко",
+    "caloriesPer100g": 76,
+    "proteinPer100g": 4.01,
+    "fatPer100g": 4.08,
+    "carbsPer100g": 5.86,
+    "fiberPer100g": 0,
+    "sugarPer100g": 5.86,
+    "sodiumPer100g": 60,
+    "servingSizeG": 61,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705469,
+    "name": "Шоколад, обезжиренный",
+    "originalName": "Chocolate milk, fat free (skim)",
+    "category": "Десерты",
+    "caloriesPer100g": 67,
+    "proteinPer100g": 3.39,
+    "fatPer100g": 0,
+    "carbsPer100g": 13.5,
+    "fiberPer100g": 0,
+    "sugarPer100g": 8.39,
+    "sodiumPer100g": 79,
+    "servingSizeG": 31,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707965,
+    "name": "Печенье · вариант 8",
+    "originalName": "Cookie, shortbread, reduced fat",
+    "category": "Десерты",
+    "caloriesPer100g": 451,
+    "proteinPer100g": 5.37,
+    "fatPer100g": 14,
+    "carbsPer100g": 76,
+    "fiberPer100g": 1.3,
+    "sugarPer100g": 21.6,
+    "sodiumPer100g": 571,
+    "servingSizeG": 60,
+    "aliases": [
+      "печенье"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705389,
+    "name": "Молоко · вариант 23",
+    "originalName": "Milk, lactose free, low fat (1%)",
+    "category": "Молоко",
+    "caloriesPer100g": 43,
+    "proteinPer100g": 3.38,
+    "fatPer100g": 0.95,
+    "carbsPer100g": 5.18,
+    "fiberPer100g": 0,
+    "sugarPer100g": 4.96,
+    "sodiumPer100g": 39,
+    "servingSizeG": 244,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705396,
+    "name": "Молоко, сухой, обезжиренный",
+    "originalName": "Milk, dry, reconstituted, nonfat",
+    "category": "Молоко",
+    "caloriesPer100g": 32,
+    "proteinPer100g": 3.2,
+    "fatPer100g": 0.07,
+    "carbsPer100g": 4.6,
+    "fiberPer100g": 0,
+    "sugarPer100g": 4.6,
+    "sodiumPer100g": 51,
+    "servingSizeG": 61,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705422,
+    "name": "Йогурт греческий, цельный · вариант 2",
+    "originalName": "Yogurt, Greek, whole milk, plain",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 94,
+    "proteinPer100g": 8.78,
+    "fatPer100g": 4.39,
+    "carbsPer100g": 4.75,
+    "fiberPer100g": 0,
+    "sugarPer100g": 3.25,
+    "sodiumPer100g": 34,
+    "servingSizeG": 245,
+    "aliases": [
+      "йогурт греческий"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705468,
+    "name": "Шоколад · вариант 6",
+    "originalName": "Chocolate milk, reduced fat (2%)",
+    "category": "Десерты",
+    "caloriesPer100g": 76,
+    "proteinPer100g": 2.99,
+    "fatPer100g": 1.9,
+    "carbsPer100g": 12.1,
+    "fiberPer100g": 0.7,
+    "sugarPer100g": 9.55,
+    "sodiumPer100g": 66,
+    "servingSizeG": 248,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705508,
+    "name": "Шоколад · вариант 7",
+    "originalName": "Milk shake, fast food, chocolate",
+    "category": "Десерты",
+    "caloriesPer100g": 150,
+    "proteinPer100g": 3.7,
+    "fatPer100g": 6.66,
+    "carbsPer100g": 20.4,
+    "fiberPer100g": 1.6,
+    "sugarPer100g": 13.4,
+    "sodiumPer100g": 80,
+    "servingSizeG": 690,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706828,
+    "name": "Тунец · вариант 11",
+    "originalName": "Tuna salad, made with mayonnaise",
+    "category": "Рыба",
+    "caloriesPer100g": 194,
+    "proteinPer100g": 10.1,
+    "fatPer100g": 15.8,
+    "carbsPer100g": 2.89,
+    "fiberPer100g": 0.4,
+    "sugarPer100g": 2.07,
+    "sodiumPer100g": 418,
+    "servingSizeG": 119,
+    "aliases": [
+      "тунец"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707531,
+    "name": "Грецкий орех, запечённый · вариант 2",
+    "originalName": "Walnuts, excluding honey roasted",
+    "category": "Орехи",
+    "caloriesPer100g": 730,
+    "proteinPer100g": 14.6,
+    "fatPer100g": 69.7,
+    "carbsPer100g": 10.9,
+    "fiberPer100g": 5.2,
+    "sugarPer100g": 2.61,
+    "sodiumPer100g": 0,
+    "servingSizeG": 120,
+    "aliases": [
+      "грецкий орех"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708141,
+    "name": "Масло сливочное · вариант 21",
+    "originalName": "Crackers, butter, reduced sodium",
+    "category": "Масла",
+    "caloriesPer100g": 443,
+    "proteinPer100g": 8.8,
+    "fatPer100g": 17.2,
+    "carbsPer100g": 68.6,
+    "fiberPer100g": 10.5,
+    "sugarPer100g": 0.37,
+    "sodiumPer100g": 186,
+    "servingSizeG": 50,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710326,
+    "name": "Шоколад · вариант 8",
+    "originalName": "Almonds, chocolate covered candy",
+    "category": "Десерты",
+    "caloriesPer100g": 560,
+    "proteinPer100g": 13,
+    "fatPer100g": 38.8,
+    "carbsPer100g": 44,
+    "fiberPer100g": 6.4,
+    "sugarPer100g": 32.8,
+    "sodiumPer100g": 49,
+    "servingSizeG": 55,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705401,
+    "name": "Молоко, обезжиренный · вариант 4",
+    "originalName": "Milk, evaporated, fat free (skim)",
+    "category": "Молоко",
+    "caloriesPer100g": 78,
+    "proteinPer100g": 7.55,
+    "fatPer100g": 0.2,
+    "carbsPer100g": 11.4,
+    "fiberPer100g": 0,
+    "sugarPer100g": 11.4,
+    "sodiumPer100g": 115,
+    "servingSizeG": 63,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705424,
+    "name": "Йогурт греческий, обезжиренный · вариант 3",
+    "originalName": "Yogurt, Greek, nonfat milk, plain",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 59,
+    "proteinPer100g": 10.3,
+    "fatPer100g": 0.37,
+    "carbsPer100g": 3.64,
+    "fiberPer100g": 0,
+    "sugarPer100g": 3.27,
+    "sodiumPer100g": 36,
+    "servingSizeG": 150,
+    "aliases": [
+      "йогурт греческий"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706578,
+    "name": "Лосось · вариант 8",
+    "originalName": "Stewed salmon, Puerto Rican style",
+    "category": "Рыба",
+    "caloriesPer100g": 146,
+    "proteinPer100g": 12,
+    "fatPer100g": 7.02,
+    "carbsPer100g": 8.47,
+    "fiberPer100g": 1.3,
+    "sugarPer100g": 1.27,
+    "sodiumPer100g": 448,
+    "servingSizeG": 106,
+    "aliases": [
+      "лосось",
+      "сёмга"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707990,
+    "name": "Печенье · вариант 9",
+    "originalName": "Cookie, peanut butter, sugar free",
+    "category": "Десерты",
+    "caloriesPer100g": 523,
+    "proteinPer100g": 10.3,
+    "fatPer100g": 31,
+    "carbsPer100g": 50.5,
+    "fiberPer100g": 3.4,
+    "sugarPer100g": 0,
+    "sodiumPer100g": 448,
+    "servingSizeG": 20,
+    "aliases": [
+      "печенье"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705400,
+    "name": "Молоко · вариант 24",
+    "originalName": "Milk, evaporated, reduced fat (2%)",
+    "category": "Молоко",
+    "caloriesPer100g": 92,
+    "proteinPer100g": 7.42,
+    "fatPer100g": 1.96,
+    "carbsPer100g": 11.2,
+    "fiberPer100g": 0,
+    "sugarPer100g": 11.2,
+    "sodiumPer100g": 113,
+    "servingSizeG": 16,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705423,
+    "name": "Йогурт греческий · вариант 2",
+    "originalName": "Yogurt, Greek, low fat milk, plain",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 67,
+    "proteinPer100g": 10.2,
+    "fatPer100g": 1.36,
+    "carbsPer100g": 3.6,
+    "fiberPer100g": 0,
+    "sugarPer100g": 3.24,
+    "sodiumPer100g": 36,
+    "servingSizeG": 245,
+    "aliases": [
+      "йогурт греческий"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705454,
+    "name": "Йогурт, замороженный · вариант 6",
+    "originalName": "Frozen yogurt, soft serve, vanilla",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 159,
+    "proteinPer100g": 4,
+    "fatPer100g": 5.6,
+    "carbsPer100g": 24.2,
+    "fiberPer100g": 0,
+    "sugarPer100g": 24,
+    "sodiumPer100g": 87,
+    "servingSizeG": 175,
+    "aliases": [
+      "йогурт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705471,
+    "name": "Шоколад · вариант 9",
+    "originalName": "Chocolate milk, reduced sugar, NFS",
+    "category": "Десерты",
+    "caloriesPer100g": 65,
+    "proteinPer100g": 3.09,
+    "fatPer100g": 1.99,
+    "carbsPer100g": 8.56,
+    "fiberPer100g": 0,
+    "sugarPer100g": 7.85,
+    "sodiumPer100g": 46,
+    "servingSizeG": 248,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705503,
+    "name": "Шоколад · вариант 10",
+    "originalName": "Milk shake, home recipe, chocolate",
+    "category": "Десерты",
+    "caloriesPer100g": 120,
+    "proteinPer100g": 3.47,
+    "fatPer100g": 6.14,
+    "carbsPer100g": 13.5,
+    "fiberPer100g": 0.5,
+    "sugarPer100g": 12.6,
+    "sodiumPer100g": 52,
+    "servingSizeG": 224,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707544,
+    "name": "Шоколад · вариант 11",
+    "originalName": "Peanut butter and chocolate spread",
+    "category": "Десерты",
+    "caloriesPer100g": 498,
+    "proteinPer100g": 11.7,
+    "fatPer100g": 34.5,
+    "carbsPer100g": 42.8,
+    "fiberPer100g": 3,
+    "sugarPer100g": 34.1,
+    "sodiumPer100g": 304,
+    "servingSizeG": 16,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710388,
+    "name": "Молоко · вариант 25",
+    "originalName": "Coffee, Latte, with non-dairy milk",
+    "category": "Молоко",
+    "caloriesPer100g": 28,
+    "proteinPer100g": 0.97,
+    "fatPer100g": 1.36,
+    "carbsPer100g": 2.81,
+    "fiberPer100g": 0.1,
+    "sugarPer100g": 1.69,
+    "sodiumPer100g": 44,
+    "servingSizeG": 240,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705390,
+    "name": "Молоко, обезжиренный · вариант 5",
+    "originalName": "Milk, lactose free, fat free (skim)",
+    "category": "Молоко",
+    "caloriesPer100g": 34,
+    "proteinPer100g": 3.43,
+    "fatPer100g": 0.08,
+    "carbsPer100g": 4.92,
+    "fiberPer100g": 0,
+    "sugarPer100g": 5.05,
+    "sodiumPer100g": 41,
+    "servingSizeG": 61,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706243,
+    "name": "Треска, запечённый · вариант 2",
+    "originalName": "Fish, cod, baked or broiled, coated",
+    "category": "Рыба",
+    "caloriesPer100g": 152,
+    "proteinPer100g": 17.3,
+    "fatPer100g": 5.28,
+    "carbsPer100g": 7.79,
+    "fiberPer100g": 0.3,
+    "sugarPer100g": 0.14,
+    "sodiumPer100g": 377,
+    "servingSizeG": 140,
+    "aliases": [
+      "треска"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708227,
+    "name": "Масло сливочное · вариант 22",
+    "originalName": "Popcorn, microwave, butter flavored",
+    "category": "Масла",
+    "caloriesPer100g": 518,
+    "proteinPer100g": 9.13,
+    "fatPer100g": 30.6,
+    "carbsPer100g": 55,
+    "fiberPer100g": 10.2,
+    "sugarPer100g": 0.61,
+    "sodiumPer100g": 764,
+    "servingSizeG": 1,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708944,
+    "name": "Макароны сухие · вариант 18",
+    "originalName": "Macaroni or pasta salad with shrimp",
+    "category": "Макароны",
+    "caloriesPer100g": 203,
+    "proteinPer100g": 6.86,
+    "fatPer100g": 9.99,
+    "carbsPer100g": 20.9,
+    "fiberPer100g": 1.2,
+    "sugarPer100g": 1.57,
+    "sodiumPer100g": 304,
+    "servingSizeG": 204,
+    "aliases": [
+      "макароны сухие",
+      "паста",
+      "спагетти"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708947,
+    "name": "Макароны сухие · вариант 19",
+    "originalName": "Macaroni or pasta salad with cheese",
+    "category": "Макароны",
+    "caloriesPer100g": 246,
+    "proteinPer100g": 6.89,
+    "fatPer100g": 14.4,
+    "carbsPer100g": 21.8,
+    "fiberPer100g": 1.3,
+    "sugarPer100g": 1.66,
+    "sodiumPer100g": 262,
+    "servingSizeG": 204,
+    "aliases": [
+      "макароны сухие",
+      "паста",
+      "спагетти"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2709749,
+    "name": "Помидор · вариант 5",
+    "originalName": "Vodka sauce with tomatoes and cream",
+    "category": "Молоко",
+    "caloriesPer100g": 75,
+    "proteinPer100g": 1.15,
+    "fatPer100g": 6.57,
+    "carbsPer100g": 3.56,
+    "fiberPer100g": 1.3,
+    "sugarPer100g": 2.49,
+    "sodiumPer100g": 247,
+    "servingSizeG": 260,
+    "aliases": [
+      "помидор",
+      "томат"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705391,
+    "name": "Молоко · вариант 26",
+    "originalName": "Milk, lactose free, reduced fat (2%)",
+    "category": "Молоко",
+    "caloriesPer100g": 50,
+    "proteinPer100g": 3.36,
+    "fatPer100g": 1.9,
+    "carbsPer100g": 4.9,
+    "fiberPer100g": 0,
+    "sugarPer100g": 4.89,
+    "sodiumPer100g": 39,
+    "servingSizeG": 2.5,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705417,
+    "name": "Йогурт · вариант 13",
+    "originalName": "Yogurt, NS as to type of milk, plain",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 63,
+    "proteinPer100g": 5.25,
+    "fatPer100g": 1.55,
+    "carbsPer100g": 7.04,
+    "fiberPer100g": 0,
+    "sugarPer100g": 7.04,
+    "sodiumPer100g": 70,
+    "servingSizeG": 245,
+    "aliases": [
+      "йогурт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705455,
+    "name": "Шоколад, замороженный · вариант 4",
+    "originalName": "Frozen yogurt, soft serve, chocolate",
+    "category": "Десерты",
+    "caloriesPer100g": 160,
+    "proteinPer100g": 4.31,
+    "fatPer100g": 5.76,
+    "carbsPer100g": 24.9,
+    "fiberPer100g": 0.7,
+    "sugarPer100g": 23.6,
+    "sodiumPer100g": 86,
+    "servingSizeG": 175,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705479,
+    "name": "Шоколад, цельный · вариант 2",
+    "originalName": "Chocolate milk, reduced sugar, whole",
+    "category": "Десерты",
+    "caloriesPer100g": 73,
+    "proteinPer100g": 3.04,
+    "fatPer100g": 2.92,
+    "carbsPer100g": 8.38,
+    "fiberPer100g": 0,
+    "sugarPer100g": 7.79,
+    "sodiumPer100g": 46,
+    "servingSizeG": 31,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706720,
+    "name": "Треска · вариант 4",
+    "originalName": "Biscayne codfish, Puerto Rican style",
+    "category": "Рыба",
+    "caloriesPer100g": 190,
+    "proteinPer100g": 9.2,
+    "fatPer100g": 12.2,
+    "carbsPer100g": 11.1,
+    "fiberPer100g": 1.9,
+    "sugarPer100g": 1.85,
+    "sodiumPer100g": 300,
+    "servingSizeG": 88,
+    "aliases": [
+      "треска"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707060,
+    "name": "Говядина · вариант 7",
+    "originalName": "Hot dog sandwich, beef, on white bun",
+    "category": "Фастфуд",
+    "caloriesPer100g": 296,
+    "proteinPer100g": 10.8,
+    "fatPer100g": 17.4,
+    "carbsPer100g": 23.7,
+    "fiberPer100g": 0.8,
+    "sugarPer100g": 3.92,
+    "sodiumPer100g": 681,
+    "servingSizeG": 102,
+    "aliases": [
+      "говядина"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707061,
+    "name": "Говядина · вариант 8",
+    "originalName": "Hot dog sandwich, beef, on wheat bun",
+    "category": "Фастфуд",
+    "caloriesPer100g": 290,
+    "proteinPer100g": 11.6,
+    "fatPer100g": 17.4,
+    "carbsPer100g": 21.6,
+    "fiberPer100g": 2.4,
+    "sugarPer100g": 3,
+    "sodiumPer100g": 657,
+    "servingSizeG": 102,
+    "aliases": [
+      "говядина"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708219,
+    "name": "Масло сливочное · вариант 23",
+    "originalName": "Popcorn, air-popped, no butter added",
+    "category": "Масла",
+    "caloriesPer100g": 385,
+    "proteinPer100g": 12.9,
+    "fatPer100g": 4.52,
+    "carbsPer100g": 77.5,
+    "fiberPer100g": 14.4,
+    "sugarPer100g": 0.87,
+    "sodiumPer100g": 162,
+    "servingSizeG": 1,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708946,
+    "name": "Макароны сухие · вариант 20",
+    "originalName": "Macaroni or pasta salad with chicken",
+    "category": "Макароны",
+    "caloriesPer100g": 213,
+    "proteinPer100g": 7.82,
+    "fatPer100g": 10.8,
+    "carbsPer100g": 20.9,
+    "fiberPer100g": 1.2,
+    "sugarPer100g": 1.57,
+    "sodiumPer100g": 225,
+    "servingSizeG": 136,
+    "aliases": [
+      "макароны сухие",
+      "паста",
+      "спагетти"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710735,
+    "name": "Молоко · вариант 27",
+    "originalName": "Nutritional powder mix (Muscle Milk)",
+    "category": "Молоко",
+    "caloriesPer100g": 411,
+    "proteinPer100g": 45.7,
+    "fatPer100g": 17.1,
+    "carbsPer100g": 18.5,
+    "fiberPer100g": 7.1,
+    "sugarPer100g": 5.71,
+    "sodiumPer100g": 329,
+    "servingSizeG": 35,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2706832,
+    "name": "Тунец · вариант 12",
+    "originalName": "Tuna salad, made with creamy dressing",
+    "category": "Рыба",
+    "caloriesPer100g": 148,
+    "proteinPer100g": 9.98,
+    "fatPer100g": 10.3,
+    "carbsPer100g": 4.02,
+    "fiberPer100g": 0.4,
+    "sugarPer100g": 2.95,
+    "sodiumPer100g": 460,
+    "servingSizeG": 238,
+    "aliases": [
+      "тунец"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707058,
+    "name": "Хлеб · вариант 33",
+    "originalName": "Hot dog sandwich, NFS, on white bread",
+    "category": "Фастфуд",
+    "caloriesPer100g": 295,
+    "proteinPer100g": 10.9,
+    "fatPer100g": 19.6,
+    "carbsPer100g": 18.9,
+    "fiberPer100g": 0.8,
+    "sugarPer100g": 2.67,
+    "sodiumPer100g": 698,
+    "servingSizeG": 87,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707059,
+    "name": "Хлеб · вариант 34",
+    "originalName": "Hot dog sandwich, NFS, on wheat bread",
+    "category": "Фастфуд",
+    "caloriesPer100g": 294,
+    "proteinPer100g": 11.6,
+    "fatPer100g": 19.7,
+    "carbsPer100g": 17.6,
+    "fiberPer100g": 1.9,
+    "sugarPer100g": 2.62,
+    "sodiumPer100g": 694,
+    "servingSizeG": 87,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707953,
+    "name": "Печенье · вариант 10",
+    "originalName": "Cookie, peanut butter, with chocolate",
+    "category": "Десерты",
+    "caloriesPer100g": 475,
+    "proteinPer100g": 7.8,
+    "fatPer100g": 25.3,
+    "carbsPer100g": 59.5,
+    "fiberPer100g": 3,
+    "sugarPer100g": 34.7,
+    "sodiumPer100g": 356,
+    "servingSizeG": 60,
+    "aliases": [
+      "печенье"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708857,
+    "name": "Макароны сухие · вариант 21",
+    "originalName": "Pasta with cream sauce, ready-to-heat",
+    "category": "Макароны",
+    "caloriesPer100g": 167,
+    "proteinPer100g": 3.94,
+    "fatPer100g": 9.35,
+    "carbsPer100g": 16.5,
+    "fiberPer100g": 0.9,
+    "sugarPer100g": 0.71,
+    "sodiumPer100g": 401,
+    "servingSizeG": 170,
+    "aliases": [
+      "макароны сухие",
+      "паста",
+      "спагетти"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710347,
+    "name": "Шоколад · вариант 12",
+    "originalName": "Chocolate candy, peanut butter filled",
+    "category": "Десерты",
+    "caloriesPer100g": 487,
+    "proteinPer100g": 7.82,
+    "fatPer100g": 24.7,
+    "carbsPer100g": 64.1,
+    "fiberPer100g": 2.8,
+    "sugarPer100g": 46.5,
+    "sodiumPer100g": 294,
+    "servingSizeG": 180,
+    "aliases": [
+      "шоколад"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705398,
+    "name": "Молоко · вариант 28",
+    "originalName": "Milk, evaporated, NS as to fat content",
+    "category": "Молоко",
+    "caloriesPer100g": 134,
+    "proteinPer100g": 6.81,
+    "fatPer100g": 7.56,
+    "carbsPer100g": 10,
+    "fiberPer100g": 0,
+    "sugarPer100g": 10,
+    "sodiumPer100g": 106,
+    "servingSizeG": 31.5,
+    "aliases": [
+      "молоко"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707018,
+    "name": "Бургер · вариант 15",
+    "originalName": "Turkey or chicken burger, on white bun",
+    "category": "Фастфуд",
+    "caloriesPer100g": 234,
+    "proteinPer100g": 20,
+    "fatPer100g": 7.69,
+    "carbsPer100g": 20.7,
+    "fiberPer100g": 0.7,
+    "sugarPer100g": 3,
+    "sodiumPer100g": 356,
+    "servingSizeG": 145,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707019,
+    "name": "Бургер · вариант 16",
+    "originalName": "Turkey or chicken burger, on wheat bun",
+    "category": "Фастфуд",
+    "caloriesPer100g": 227,
+    "proteinPer100g": 20.7,
+    "fatPer100g": 7.72,
+    "carbsPer100g": 18.7,
+    "fiberPer100g": 2.2,
+    "sugarPer100g": 2.15,
+    "sodiumPer100g": 334,
+    "servingSizeG": 145,
+    "aliases": [
+      "бургер",
+      "гамбургер"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707062,
+    "name": "Хлеб · вариант 35",
+    "originalName": "Hot dog sandwich, beef, on white bread",
+    "category": "Фастфуд",
+    "caloriesPer100g": 295,
+    "proteinPer100g": 10.9,
+    "fatPer100g": 19.6,
+    "carbsPer100g": 18.9,
+    "fiberPer100g": 0.8,
+    "sugarPer100g": 2.67,
+    "sodiumPer100g": 698,
+    "servingSizeG": 87,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707063,
+    "name": "Хлеб · вариант 36",
+    "originalName": "Hot dog sandwich, beef, on wheat bread",
+    "category": "Фастфуд",
+    "caloriesPer100g": 294,
+    "proteinPer100g": 11.6,
+    "fatPer100g": 19.7,
+    "carbsPer100g": 17.6,
+    "fiberPer100g": 1.9,
+    "sugarPer100g": 2.62,
+    "sodiumPer100g": 694,
+    "servingSizeG": 87,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707068,
+    "name": "Индейка · вариант 14",
+    "originalName": "Hot dog sandwich, turkey, on white bun",
+    "category": "Фастфуд",
+    "caloriesPer100g": 248,
+    "proteinPer100g": 11.1,
+    "fatPer100g": 11.4,
+    "carbsPer100g": 24.2,
+    "fiberPer100g": 0.8,
+    "sugarPer100g": 3.89,
+    "sodiumPer100g": 702,
+    "servingSizeG": 102,
+    "aliases": [
+      "индейка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707069,
+    "name": "Индейка · вариант 15",
+    "originalName": "Hot dog sandwich, turkey, on wheat bun",
+    "category": "Фастфуд",
+    "caloriesPer100g": 241,
+    "proteinPer100g": 11.9,
+    "fatPer100g": 11.4,
+    "carbsPer100g": 22.2,
+    "fiberPer100g": 2.4,
+    "sugarPer100g": 2.97,
+    "sodiumPer100g": 678,
+    "servingSizeG": 102,
+    "aliases": [
+      "индейка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707077,
+    "name": "Хлеб · вариант 37",
+    "originalName": "Hot dog sandwich, vegetarian, on bread",
+    "category": "Фастфуд",
+    "caloriesPer100g": 243,
+    "proteinPer100g": 16.6,
+    "fatPer100g": 10.7,
+    "carbsPer100g": 20.2,
+    "fiberPer100g": 3.4,
+    "sugarPer100g": 1.6,
+    "sodiumPer100g": 448,
+    "servingSizeG": 100,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707080,
+    "name": "Хлеб · вариант 38",
+    "originalName": "Chili hot dog sandwich, on white bread",
+    "category": "Фастфуд",
+    "caloriesPer100g": 215,
+    "proteinPer100g": 9.89,
+    "fatPer100g": 12.7,
+    "carbsPer100g": 15.4,
+    "fiberPer100g": 1.8,
+    "sugarPer100g": 2.14,
+    "sodiumPer100g": 553,
+    "servingSizeG": 151,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2707081,
+    "name": "Хлеб · вариант 39",
+    "originalName": "Chili hot dog sandwich, on wheat bread",
+    "category": "Фастфуд",
+    "caloriesPer100g": 215,
+    "proteinPer100g": 10.3,
+    "fatPer100g": 12.8,
+    "carbsPer100g": 14.7,
+    "fiberPer100g": 2.4,
+    "sugarPer100g": 2.11,
+    "sodiumPer100g": 551,
+    "servingSizeG": 151,
+    "aliases": [
+      "хлеб",
+      "батон",
+      "буханка"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708079,
+    "name": "Торт · вариант 14",
+    "originalName": "Coffee cake, crumb or quick-bread type",
+    "category": "Десерты",
+    "caloriesPer100g": 396,
+    "proteinPer100g": 6.49,
+    "fatPer100g": 18.4,
+    "carbsPer100g": 51.3,
+    "fiberPer100g": 1.4,
+    "sugarPer100g": 26.6,
+    "sodiumPer100g": 319,
+    "servingSizeG": 501,
+    "aliases": [
+      "торт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708220,
+    "name": "Масло сливочное · вариант 24",
+    "originalName": "Popcorn, air-popped, with added butter",
+    "category": "Масла",
+    "caloriesPer100g": 430,
+    "proteinPer100g": 11,
+    "fatPer100g": 15.3,
+    "carbsPer100g": 65.8,
+    "fiberPer100g": 12.2,
+    "sugarPer100g": 0.79,
+    "sodiumPer100g": 227,
+    "servingSizeG": 28,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708235,
+    "name": "Масло сливочное · вариант 25",
+    "originalName": "Popcorn, ready-to-eat, butter flavored",
+    "category": "Масла",
+    "caloriesPer100g": 530,
+    "proteinPer100g": 8.88,
+    "fatPer100g": 32.5,
+    "carbsPer100g": 53.4,
+    "fiberPer100g": 10,
+    "sugarPer100g": 0.6,
+    "sodiumPer100g": 764,
+    "servingSizeG": 14,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708810,
+    "name": "Макароны сухие · вариант 22",
+    "originalName": "Macaroni with tuna, Puerto Rican style",
+    "category": "Макароны",
+    "caloriesPer100g": 147,
+    "proteinPer100g": 7.71,
+    "fatPer100g": 4.74,
+    "carbsPer100g": 18.1,
+    "fiberPer100g": 0.9,
+    "sugarPer100g": 2.14,
+    "sodiumPer100g": 359,
+    "servingSizeG": 225,
+    "aliases": [
+      "макароны сухие",
+      "паста",
+      "спагетти"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708943,
+    "name": "Макароны сухие · вариант 23",
+    "originalName": "Macaroni or pasta salad with crab meat",
+    "category": "Макароны",
+    "caloriesPer100g": 201,
+    "proteinPer100g": 6.48,
+    "fatPer100g": 9.9,
+    "carbsPer100g": 20.9,
+    "fiberPer100g": 1.2,
+    "sugarPer100g": 1.57,
+    "sodiumPer100g": 233,
+    "servingSizeG": 136,
+    "aliases": [
+      "макароны сухие",
+      "паста",
+      "спагетти"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2705416,
+    "name": "Йогурт · вариант 14",
+    "originalName": "Yogurt, NS as to type of milk or flavor",
+    "category": "Кисломолочные продукты",
+    "caloriesPer100g": 93,
+    "proteinPer100g": 4.57,
+    "fatPer100g": 1.34,
+    "carbsPer100g": 15.7,
+    "fiberPer100g": 0.2,
+    "sugarPer100g": 12.8,
+    "sodiumPer100g": 65,
+    "servingSizeG": 170,
+    "aliases": [
+      "йогурт"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708218,
+    "name": "Масло сливочное · вариант 26",
+    "originalName": "Popcorn, movie theater, no butter added",
+    "category": "Масла",
+    "caloriesPer100g": 603,
+    "proteinPer100g": 6.18,
+    "fatPer100g": 48.7,
+    "carbsPer100g": 39.9,
+    "fiberPer100g": 6.9,
+    "sugarPer100g": 0.37,
+    "sodiumPer100g": 762,
+    "servingSizeG": 66,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708221,
+    "name": "Масло сливочное · вариант 27",
+    "originalName": "Popcorn, popped in oil, no butter added",
+    "category": "Масла",
+    "caloriesPer100g": 498,
+    "proteinPer100g": 8.96,
+    "fatPer100g": 28,
+    "carbsPer100g": 57.9,
+    "fiberPer100g": 10,
+    "sugarPer100g": 0.54,
+    "sodiumPer100g": 157,
+    "servingSizeG": 11,
+    "aliases": [
+      "масло сливочное"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708814,
+    "name": "Макароны сухие, консервированный",
+    "originalName": "Macaroni or noodles with cheese, canned",
+    "category": "Макароны",
+    "caloriesPer100g": 82,
+    "proteinPer100g": 3.38,
+    "fatPer100g": 2.46,
+    "carbsPer100g": 11.5,
+    "fiberPer100g": 0.5,
+    "sugarPer100g": 0.5,
+    "sodiumPer100g": 302,
+    "servingSizeG": 230,
+    "aliases": [
+      "макароны сухие",
+      "паста",
+      "спагетти"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2708822,
+    "name": "Макароны сухие · вариант 24",
+    "originalName": "Macaroni or noodles with cheese and egg",
+    "category": "Макароны",
+    "caloriesPer100g": 185,
+    "proteinPer100g": 5.91,
+    "fatPer100g": 9.52,
+    "carbsPer100g": 19,
+    "fiberPer100g": 0.8,
+    "sugarPer100g": 2.96,
+    "sodiumPer100g": 176,
+    "servingSizeG": 230,
+    "aliases": [
+      "макароны сухие",
+      "паста",
+      "спагетти"
+    ],
+    "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
+  },
+  {
+    "fdcId": 2710412,
+    "name": "Молоко · вариант 29",
+    "originalName": "Coffee, Cafe Mocha, with non-dairy milk",
+    "category": "Молоко",
+    "caloriesPer100g": 50,
+    "proteinPer100g": 0.88,
+    "fatPer100g": 1.24,
+    "carbsPer100g": 8.76,
+    "fiberPer100g": 0.1,
+    "sugarPer100g": 7.08,
+    "sodiumPer100g": 54,
+    "servingSizeG": 496,
+    "aliases": [
+      "молоко"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31"
   }

@@ -2,11 +2,11 @@
   "expo": {
     "name": "Точка Роста",
     "slug": "tochka-rosta-app",
-    "version": "0.1.0",
+    "version": "0.3.0",
     "orientation": "portrait",
     "icon": "./assets/brand/app-icon.png",
     "scheme": "tochkarostaapp",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "backgroundColor": "#061009",
     "ios": {
       "supportsTablet": true,
@@ -50,8 +50,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Разрешите «Точке Роста» выбирать фотографии продуктов.",
-          "cameraPermission": "Разрешите «Точке Роста» фотографировать продукты.",
+          "photosPermission": "Разрешите «Точке Роста» выбирать фотографии профиля и продуктов.",
+          "cameraPermission": "Разрешите «Точке Роста» фотографировать профиль и продукты.",
           "microphonePermission": false
         }
       ]
