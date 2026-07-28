@@ -22,6 +22,15 @@ export function shouldCommitTabNavigation(alreadyCommitted: boolean) {
   return !alreadyCommitted;
 }
 
+export function createTabNavigationGate(windowMs = 90) {
+  let lastAcceptedAt = Number.NEGATIVE_INFINITY;
+  return (now = Date.now()) => {
+    if (now - lastAcceptedAt < windowMs) return false;
+    lastAcceptedAt = now;
+    return true;
+  };
+}
+
 export function performTabPress<T extends { key: string; name: string }>(input: {
   routes: readonly T[];
   activeIndex: number;

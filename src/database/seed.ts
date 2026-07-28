@@ -1,5 +1,6 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 import usdaFoods from './data/usda-common-foods.json';
+import { normalizeSearchText } from '@/services/productSearch';
 
 interface UsdaSeedFood { fdcId: number; name: string; originalName: string; category: string; caloriesPer100g: number; proteinPer100g: number; fatPer100g: number; carbsPer100g: number; fiberPer100g: number | null; sugarPer100g: number | null; sodiumPer100g: number | null; servingSizeG: number; aliases: string[]; sourceVersion: string; }
 
@@ -17,9 +18,9 @@ export async function seedDatabase(db: SQLiteDatabase) {
     slug, name, description, ingredients, serving_size_g, calories, protein_g, fat_g, carbs_g, price, image_key,
     category, meal_tags, goal_tags, diet_tags, allergens, qr_code, is_available, data_status, source_type,
     source_id, source_name, locale, is_user_created, calories_per_100g, protein_per_100g, fat_per_100g,
-    carbs_per_100g, created_at, updated_at
+    carbs_per_100g, created_at, updated_at, normalized_name
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'demo', 'tochka_rosta', ?, 'Точка Роста', 'ru', 0,
-    ? * 100.0 / ?, ? * 100.0 / ?, ? * 100.0 / ?, ? * 100.0 / ?, ?, ?)`);
+    ? * 100.0 / ?, ? * 100.0 / ?, ? * 100.0 / ?, ? * 100.0 / ?, ?, ?, ?)`);
   const now = new Date().toISOString();
   try {
     for (const product of demoProducts) {
@@ -27,7 +28,7 @@ export async function seedDatabase(db: SQLiteDatabase) {
       await statement.executeAsync(slug, name, description, ingredients, servingSize, calories, protein, fat, carbs, price,
         imageKey, category, JSON.stringify(mealTags), JSON.stringify(goalTags), JSON.stringify(dietTags),
         JSON.stringify(allergens), qrCode, slug, calories, servingSize, protein, servingSize, fat, servingSize, carbs,
-        servingSize, now, now);
+        servingSize, now, now, normalizeSearchText(name));
     }
   } finally {
     await statement.finalizeAsync();
@@ -37,9 +38,9 @@ export async function seedDatabase(db: SQLiteDatabase) {
     category, meal_tags, goal_tags, diet_tags, allergens, aliases, is_available, data_status, source_type, source_id,
     source_name, source_version, imported_at, locale, is_user_created, basis_type, basis_amount, basis_unit,
     calories_per_100g, protein_per_100g, fat_per_100g, carbs_per_100g, fiber_per_100g, sugar_per_100g,
-    sodium_per_100g, created_at, updated_at
+    sodium_per_100g, created_at, updated_at, normalized_name
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, '', ?, '[]', '[]', '[]', '[]', ?, 1, 'imported', 'usda', ?,
-    'USDA FoodData Central', ?, ?, 'ru', 0, 'per100g', 100, 'g', ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+    'USDA FoodData Central', ?, ?, 'ru', 0, 'per100g', 100, 'g', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
   try {
     for (const food of usdaFoods as UsdaSeedFood[]) {
       const serving = food.servingSizeG || 100;
@@ -47,7 +48,7 @@ export async function seedDatabase(db: SQLiteDatabase) {
         food.caloriesPer100g * serving / 100, food.proteinPer100g * serving / 100, food.fatPer100g * serving / 100,
         food.carbsPer100g * serving / 100, food.category, JSON.stringify(food.aliases), String(food.fdcId),
         food.sourceVersion, now, food.caloriesPer100g, food.proteinPer100g, food.fatPer100g, food.carbsPer100g,
-        food.fiberPer100g, food.sugarPer100g, food.sodiumPer100g, now, now);
+        food.fiberPer100g, food.sugarPer100g, food.sodiumPer100g, now, now, normalizeSearchText(food.name));
     }
   } finally { await usdaStatement.finalizeAsync(); }
   await db.runAsync(`INSERT OR IGNORE INTO food_sources (product_id, source_type, source_id, source_name, original_name,

@@ -2,6 +2,7 @@ import { migrationV1 } from './migrations/v1';
 import { migrationV2 } from './migrations/v2';
 import { migrationV3 } from './migrations/v3';
 import { migrationV4 } from './migrations/v4';
+import { migrationV5 } from './migrations/v5';
 
 export const databaseName = 'tochka-rosta.db';
 export const migrations = [
@@ -9,5 +10,6 @@ export const migrations = [
   { version: 2, up: migrationV2 },
   { version: 3, up: migrationV3 },
   { version: 4, up: migrationV4 },
+  { version: 5, up: migrationV5 },
 ] as const;
 export const currentDatabaseVersion = migrations.at(-1)?.version ?? 0;

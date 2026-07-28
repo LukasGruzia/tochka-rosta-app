@@ -1,6 +1,9 @@
 import { calculateForWeight, normalizeTo100g, validateProductDraft } from '@/services/foodMath';
 import type { DataStatus, ExternalFoodPreview, FoodSourceType, Goal, MealType, Product, ProductDraft } from '@/types/domain';
 import { getDatabase } from '../database';
+import { profileQuery } from '@/performance/queryProfiler';
+import { normalizeSearchText } from '@/services/productSearch';
+import { clearRecommendationCache } from '@/services/recommendationCache';
 
 interface ProductRow {
   id: number;
@@ -108,19 +111,98 @@ export function mapProductRow(row: ProductRow): Product {
 const productSelect = `SELECT p.*, f.id AS favorite_id FROM products p
   LEFT JOIN favorites f ON f.product_id = p.id`;
 
+export const PRODUCT_PAGE_SIZE = 32;
+const MAX_SEARCH_CACHE_ENTRIES = 12;
+const searchPageCache = new Map<string, Product[]>();
+
+export function invalidateProductSearchCache() {
+  searchPageCache.clear();
+  clearRecommendationCache();
+}
+
+export interface ProductPageOptions {
+  offset?: number;
+  limit?: number;
+  query?: string;
+  category?: string;
+  sourceType?: FoodSourceType;
+  favoritesOnly?: boolean;
+  userCreatedOnly?: boolean;
+  includeUnavailable?: boolean;
+}
+
+function buildProductWhere(options: ProductPageOptions) {
+  const conditions = ['p.deleted_at IS NULL'];
+  const params: (string | number)[] = [];
+  if (!options.includeUnavailable) conditions.push('p.is_available=1');
+  if (options.category && options.category !== 'Все') { conditions.push('p.category=?'); params.push(options.category); }
+  if (options.sourceType) { conditions.push('p.source_type=?'); params.push(options.sourceType); }
+  if (options.favoritesOnly) conditions.push('f.id IS NOT NULL');
+  if (options.userCreatedOnly) conditions.push('p.is_user_created=1');
+  const normalized = normalizeSearchText(options.query ?? '');
+  if (normalized) {
+    const pattern = `%${normalized}%`;
+    conditions.push('(p.normalized_name LIKE ? OR p.normalized_name LIKE ? OR p.name LIKE ? COLLATE NOCASE OR COALESCE(p.original_name,\'\') LIKE ? COLLATE NOCASE OR COALESCE(p.aliases,\'\') LIKE ? COLLATE NOCASE)');
+    params.push(`${normalized}%`, pattern, pattern, pattern, pattern);
+  }
+  return { where: conditions.join(' AND '), params, normalized };
+}
+
+export async function loadProductsPage(options: ProductPageOptions = {}) {
+  const db = await getDatabase();
+  const limit = Math.max(1, Math.min(options.limit ?? PRODUCT_PAGE_SIZE, 100));
+  const offset = Math.max(0, options.offset ?? 0);
+  const { where, params, normalized } = buildProductWhere(options);
+  const order = normalized
+    ? `CASE WHEN p.normalized_name=? THEN 0 WHEN p.normalized_name LIKE ? THEN 1 ELSE 2 END, p.is_user_created DESC, p.name COLLATE NOCASE`
+    : 'p.is_user_created DESC, p.name COLLATE NOCASE';
+  const orderParams = normalized ? [normalized, `${normalized}%`] : [];
+  const cacheKey = normalized && offset === 0
+    ? JSON.stringify({ ...options, query: normalized, limit, offset })
+    : null;
+  const cached = cacheKey ? searchPageCache.get(cacheKey) : undefined;
+  if (cached) return cached;
+  return profileQuery('products:page', async () => {
+    const rows = await db.getAllAsync<ProductRow>(`${productSelect} WHERE ${where} ORDER BY ${order} LIMIT ? OFFSET ?`, ...params, ...orderParams, limit, offset);
+    const products = rows.map(mapProductRow);
+    if (cacheKey) {
+      searchPageCache.set(cacheKey, products);
+      while (searchPageCache.size > MAX_SEARCH_CACHE_ENTRIES) {
+        searchPageCache.delete(searchPageCache.keys().next().value as string);
+      }
+    }
+    return products;
+  });
+}
+
+export async function countProducts(options: ProductPageOptions = {}) {
+  const db = await getDatabase();
+  const { where, params } = buildProductWhere(options);
+  const row = await profileQuery('products:count', () => db.getFirstAsync<{ count: number }>(`SELECT COUNT(*) AS count FROM products p LEFT JOIN favorites f ON f.product_id=p.id WHERE ${where}`, ...params));
+  return row?.count ?? 0;
+}
+
+export async function loadProductCategories() {
+  const db = await getDatabase();
+  const rows = await profileQuery('products:categories', () => db.getAllAsync<{ category: string }>(`SELECT DISTINCT category FROM products WHERE deleted_at IS NULL AND is_available=1 AND category<>'' ORDER BY category COLLATE NOCASE LIMIT 40`));
+  return rows.map((row) => row.category);
+}
+
 export async function loadProducts(options?: { includeUnavailable?: boolean; sourceType?: FoodSourceType }) {
   const db = await getDatabase();
   const conditions = ['p.deleted_at IS NULL'];
   const params: (string | number)[] = [];
   if (!options?.includeUnavailable) conditions.push('p.is_available = 1');
   if (options?.sourceType) { conditions.push('p.source_type = ?'); params.push(options.sourceType); }
-  const rows = await db.getAllAsync<ProductRow>(`${productSelect} WHERE ${conditions.join(' AND ')} ORDER BY p.is_user_created DESC, p.name COLLATE NOCASE`, ...params);
-  return rows.map(mapProductRow);
+  return profileQuery('products:all', async () => {
+    const rows = await db.getAllAsync<ProductRow>(`${productSelect} WHERE ${conditions.join(' AND ')} ORDER BY p.is_user_created DESC, p.name COLLATE NOCASE`, ...params);
+    return rows.map(mapProductRow);
+  });
 }
 
 export async function getProductById(id: number) {
   const db = await getDatabase();
-  const row = await db.getFirstAsync<ProductRow>(`${productSelect} WHERE p.id = ? AND p.deleted_at IS NULL`, id);
+  const row = await profileQuery('products:by_id', () => db.getFirstAsync<ProductRow>(`${productSelect} WHERE p.id = ? AND p.deleted_at IS NULL`, id));
   return row ? mapProductRow(row) : null;
 }
 
@@ -149,15 +231,16 @@ export async function createCustomProduct(draft: ProductDraft) {
     calories_per_100g, protein_per_100g, fat_per_100g, carbs_per_100g, fiber_per_100g, sugar_per_100g,
     sodium_per_100g, price, image_key, image_uri, category, meal_tags, goal_tags, diet_tags, allergens, aliases,
     barcode, qr_code, is_available, data_status, source_type, source_id, source_name, locale, is_user_created,
-    basis_type, basis_amount, basis_unit, note, created_at, updated_at
+    basis_type, basis_amount, basis_unit, note, created_at, updated_at, normalized_name
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, '', ?, ?, '[]', '[]', '[]', ?, '[]', ?, ?, 1,
-    'custom', 'user_product', ?, 'Пользователь', 'ru', 1, ?, ?, ?, ?, ?, ?)`,
+    'custom', 'user_product', ?, 'Пользователь', 'ru', 1, ?, ?, ?, ?, ?, ?, ?)`,
     slug, draft.name.trim(), draft.description?.trim() ?? '', draft.ingredients?.trim() || null,
     draft.servingSizeG, draft.packageSizeG ?? null, servingValues.calories, servingValues.proteinG, servingValues.fatG,
     servingValues.carbsG, normalized.calories, normalized.proteinG, normalized.fatG, normalized.carbsG,
     normalized.fiberG, normalized.sugarG, normalized.sodiumMg, draft.imageUri ?? null, draft.category,
     JSON.stringify(draft.allergens), draft.barcode?.trim() || null, draft.barcode?.trim() || null, slug,
-    draft.basisType, draft.basisAmount, draft.basisUnit, draft.note?.trim() || null, now, now);
+    draft.basisType, draft.basisAmount, draft.basisUnit, draft.note?.trim() || null, now, now, normalizeSearchText(draft.name));
+  invalidateProductSearchCache();
   return getProductById(Number(result.lastInsertRowId));
 }
 
@@ -172,13 +255,14 @@ export async function updateCustomProduct(id: number, draft: ProductDraft) {
   await db.runAsync(`UPDATE products SET name=?, description=?, ingredients=?, serving_size_g=?, package_size_g=?, calories=?,
     protein_g=?, fat_g=?, carbs_g=?, calories_per_100g=?, protein_per_100g=?, fat_per_100g=?, carbs_per_100g=?,
     fiber_per_100g=?, sugar_per_100g=?, sodium_per_100g=?, image_uri=?, category=?, allergens=?, barcode=?, qr_code=?,
-    basis_type=?, basis_amount=?, basis_unit=?, note=?, updated_at=? WHERE id=?`,
+    basis_type=?, basis_amount=?, basis_unit=?, note=?, updated_at=?, normalized_name=? WHERE id=?`,
     draft.name.trim(), draft.description?.trim() ?? '', draft.ingredients?.trim() || null, draft.servingSizeG,
     draft.packageSizeG ?? null, serving.calories, serving.proteinG, serving.fatG, serving.carbsG, normalized.calories,
     normalized.proteinG, normalized.fatG, normalized.carbsG, normalized.fiberG, normalized.sugarG, normalized.sodiumMg,
     draft.imageUri ?? null, draft.category, JSON.stringify(draft.allergens), draft.barcode?.trim() || null,
     draft.barcode?.trim() || null, draft.basisType, draft.basisAmount, draft.basisUnit, draft.note?.trim() || null,
-    new Date().toISOString(), id);
+    new Date().toISOString(), normalizeSearchText(draft.name), id);
+  invalidateProductSearchCache();
   return getProductById(id);
 }
 
@@ -204,6 +288,7 @@ export async function deleteCustomProduct(id: number) {
     await txn.runAsync('UPDATE products SET deleted_at=?, is_available=0, updated_at=? WHERE id=?', new Date().toISOString(), new Date().toISOString(), id);
     if (product.sourceType === 'user_recipe') await txn.runAsync('UPDATE recipes SET deleted_at=?, updated_at=? WHERE product_id=?', new Date().toISOString(), new Date().toISOString(), id);
   });
+  invalidateProductSearchCache();
 }
 
 export async function toggleFavorite(productId: number) {
@@ -211,6 +296,7 @@ export async function toggleFavorite(productId: number) {
   const favorite = await db.getFirstAsync<{ id: number }>('SELECT id FROM favorites WHERE product_id = ?', productId);
   if (favorite) await db.runAsync('DELETE FROM favorites WHERE id = ?', favorite.id);
   else await db.runAsync('INSERT INTO favorites (product_id, created_at) VALUES (?, ?)', productId, new Date().toISOString());
+  invalidateProductSearchCache();
   return !favorite;
 }
 
@@ -230,16 +316,18 @@ export async function saveExternalFoodProduct(preview: ExternalFoodPreview, corr
     slug, name, original_name, description, ingredients, serving_size_g, calories, protein_g, fat_g, carbs_g,
     calories_per_100g, protein_per_100g, fat_per_100g, carbs_per_100g, price, image_key, image_uri, category,
     meal_tags, goal_tags, diet_tags, allergens, aliases, barcode, qr_code, is_available, data_status, source_type,
-    source_id, source_name, source_version, imported_at, locale, is_user_created, created_at, updated_at
+    source_id, source_name, source_version, imported_at, locale, is_user_created, created_at, updated_at,
+    normalized_name
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, '', ?, 'По штрихкоду', '[]', '[]', '[]', ?, '[]', ?, ?, 1,
-    'community', 'open_food_facts', ?, 'Open Food Facts', 'API v3.6', ?, 'ru', 0, ?, ?)`,
+    'community', 'open_food_facts', ?, 'Open Food Facts', 'API v3.6', ?, 'ru', 0, ?, ?, ?)`,
     slug, corrections?.name?.trim() || preview.name, preview.name, preview.brand ?? '', preview.ingredients, servingSizeG,
     caloriesPer100g * servingSizeG / 100, proteinPer100g == null ? null : proteinPer100g * servingSizeG / 100,
     fatPer100g == null ? null : fatPer100g * servingSizeG / 100,
     carbsPer100g == null ? null : carbsPer100g * servingSizeG / 100, caloriesPer100g, proteinPer100g, fatPer100g,
     carbsPer100g, preview.imageUrl, JSON.stringify(preview.allergens), preview.barcode, preview.barcode, preview.barcode,
-    now, now, now);
+    now, now, now, normalizeSearchText(corrections?.name?.trim() || preview.name));
   const id = Number(result.lastInsertRowId);
+  invalidateProductSearchCache();
   await db.runAsync(`INSERT OR IGNORE INTO food_sources (product_id, source_type, source_id, source_name, original_name,
     source_version, source_locale, source_updated_at, imported_at) VALUES (?, 'open_food_facts', ?, 'Open Food Facts', ?,
     'API v3.6', 'multi', ?, ?)`, id, preview.barcode, preview.name, preview.sourceUpdatedAt, now);

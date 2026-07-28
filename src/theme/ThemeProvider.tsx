@@ -41,7 +41,9 @@ export function ThemeProvider({ children }: PropsWithChildren) {
       return;
     }
     opacity.setValue(0.92);
-    Animated.timing(opacity, { toValue: 1, duration: 260, useNativeDriver: true }).start();
+    const animation = Animated.timing(opacity, { toValue: 1, duration: 260, useNativeDriver: true });
+    animation.start();
+    return () => animation.stop();
   }, [flags.enableAnimatedThemeTransition, opacity, reducedMotion, resolvedMode]);
 
   const value = useMemo<ThemeValue>(
