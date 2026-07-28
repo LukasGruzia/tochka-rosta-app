@@ -1,6 +1,6 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
-import { Modal, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { InteractionManager, Modal, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppIcon } from '@/components/AppIcon';
 import { AppText } from '@/components/AppText';
@@ -13,29 +13,64 @@ import { TabScreen } from '@/components/TabScreen';
 import { WaterCard } from '@/components/WaterCard';
 import { QuickAddSheet } from '@/components/QuickAddSheet';
 import { useTabBarLayout } from '@/contexts/TabBarLayoutContext';
+import { loadProductsPage } from '@/database/repositories/productRepository';
+import { useRenderTracker } from '@/performance/renderTracker';
+import { useScreenProfiler } from '@/performance/screenProfiler';
 import { mealLabels } from '@/constants/options';
 import { roundNutrition } from '@/services/nutritionCalculator';
 import { rankPersonalRecommendations } from '@/services/personalRecommendations';
+import { getCachedRecommendation, hasCachedRecommendation, setCachedRecommendation } from '@/services/recommendationCache';
+import { seedDataVersion } from '@/database/database';
 import { getSmartNextStep } from '@/services/smartNextStep';
 import { useAppStore } from '@/store/appStore';
 import { useTheme } from '@/theme/ThemeProvider';
 import { getHomeLayout } from '@/theme/layout';
 import { radii, spacing } from '@/theme/tokens';
 import { getDayGreeting, getLocalDateKey } from '@/utils/date';
-import type { MealType } from '@/types/domain';
+import type { MealType, Product } from '@/types/domain';
 
 const meals: MealType[] = ['breakfast', 'lunch', 'snack', 'dinner'];
 
 export default function HomeScreen() {
-  const { profile, target, diary, flow, products, setDiaryDate, refreshFlow } = useAppStore();
+  useRenderTracker('HomeScreen');
+  useScreenProfiler('home');
+  const profile = useAppStore((state) => state.profile);
+  const target = useAppStore((state) => state.target);
+  const diary = useAppStore((state) => state.diary);
+  const flow = useAppStore((state) => state.flow);
+  const setDiaryDate = useAppStore((state) => state.setDiaryDate);
+  const refreshFlow = useAppStore((state) => state.refreshFlow);
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
   const { contentInset } = useTabBarLayout();
   const [details, setDetails] = useState(false);
   const [quickAdd, setQuickAdd] = useState(false);
+  const [recommendation, setRecommendation] = useState<Product | undefined>();
   useFocusEffect(useCallback(() => { void Promise.all([setDiaryDate(getLocalDateKey()), refreshFlow()]); }, [refreshFlow, setDiaryDate]));
   const next = getSmartNextStep(diary, new Date().getHours());
-  const recommendation = useMemo(() => profile && target ? rankPersonalRecommendations(products, profile, Math.max(0, target.calories - (diary?.consumedCalories ?? 0)), next.meal)[0] : undefined, [diary?.consumedCalories, next.meal, products, profile, target]);
+  useEffect(() => {
+    if (!profile || !target) { setRecommendation(undefined); return; }
+    const recommendationKey = [seedDataVersion, profile.goal, profile.dietPreference, profile.restrictions.join(','), target.calories, Math.round((diary?.consumedCalories ?? 0) / 50), next.meal].join('|');
+    if (hasCachedRecommendation(recommendationKey)) {
+      setRecommendation(getCachedRecommendation(recommendationKey) ?? undefined);
+      return;
+    }
+    let active = true;
+    const task = InteractionManager.runAfterInteractions(() => {
+      void loadProductsPage({ limit: 24 }).then((products) => {
+        const nextRecommendation = rankPersonalRecommendations(products, profile, Math.max(0, target.calories - (diary?.consumedCalories ?? 0)), next.meal)[0];
+        setCachedRecommendation(recommendationKey, nextRecommendation);
+        if (active) setRecommendation(nextRecommendation);
+      }).catch((error) => { if (__DEV__) console.warn('[HomeScreen] recommendation', error); });
+    });
+    return () => { active = false; task.cancel(); };
+  }, [diary?.consumedCalories, next.meal, profile, target]);
+  const quickActions = useMemo(() => [
+    { icon: 'add' as const, label: 'Добавить блюдо', onPress: () => setQuickAdd(true) },
+    { icon: 'target' as const, label: 'Закрыть остаток', onPress: () => router.push({ pathname: '/remainder-match' as never, params: { meal: next.meal } } as never) },
+    { icon: 'calendar' as const, label: 'План на неделю', onPress: () => router.push('/my-week' as never) },
+    { icon: 'cart' as const, label: 'Список покупок', onPress: () => router.push('/shopping-list' as never) },
+  ], [next.meal]);
 
   if (!profile || !target) return <TabScreen title="Загружаем профиль…"><AppText tone="secondary">Данные появятся через мгновение.</AppText></TabScreen>;
   const rounded = roundNutrition(target);
@@ -65,12 +100,7 @@ export default function HomeScreen() {
         onDetails={() => setDetails(true)}
       />
 
-      <HomeQuickActions actions={[
-        { icon: 'add', label: 'Добавить блюдо', onPress: () => setQuickAdd(true) },
-        { icon: 'target', label: 'Закрыть остаток', onPress: () => router.push({ pathname: '/remainder-match' as never, params: { meal: next.meal } } as never) },
-        { icon: 'calendar', label: 'План на неделю', onPress: () => router.push('/my-week' as never) },
-        { icon: 'cart', label: 'Список покупок', onPress: () => router.push('/shopping-list' as never) },
-      ]} />
+      <HomeQuickActions actions={quickActions} />
 
       <GlassCard variant="interactive" onPress={() => router.push({ pathname: '/food-search' as never, params: { meal: next.meal } } as never)} accessibilityLabel={next.title}>
         <View style={styles.next}><View style={[styles.nextIcon, { backgroundColor: colors.greenGlow }]}><AppText tone="green">→</AppText></View><View style={styles.nextCopy}><AppText variant="heading">{next.title}</AppText><AppText tone="secondary">{next.description}</AppText></View><AppText tone="muted">›</AppText></View>
@@ -87,8 +117,8 @@ export default function HomeScreen() {
       {recommendation ? <GlassCard variant="compact" onPress={() => router.push(`/product/${recommendation.id}` as never)}><AppText variant="caption" tone="green">РЕКОМЕНДАЦИЯ ДНЯ</AppText><AppText variant="heading">{recommendation.name}</AppText><AppText tone="secondary">{Math.round(recommendation.caloriesPer100g)} ккал на 100 г · открыть карточку</AppText></GlassCard> : null}
       </ScrollView>
     </SafeAreaView></HomeBackground>
-    <CalorieDetails visible={details} onClose={() => setDetails(false)} consumed={consumed} target={rounded.calories} bmr={target.bmr} tdee={target.tdee} />
-    <QuickAddSheet visible={quickAdd} onClose={() => setQuickAdd(false)} date={getLocalDateKey()} mealType={next.meal}/>
+    {details ? <CalorieDetails visible onClose={() => setDetails(false)} consumed={consumed} target={rounded.calories} bmr={target.bmr} tdee={target.tdee} /> : null}
+    {quickAdd ? <QuickAddSheet visible onClose={() => setQuickAdd(false)} date={getLocalDateKey()} mealType={next.meal}/> : null}
   </>;
 }
 

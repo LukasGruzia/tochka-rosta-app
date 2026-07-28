@@ -14,7 +14,7 @@ import { colors, radii, spacing } from '@/theme/tokens';
 import type { MealPlanItem } from '@/types/domain';
 
 export default function MealPlanScreen() {
-  const { diaryDate, mealPlan, generatePlan, loadPlan, resetPlan, addToDiary } = useAppStore(); const [busy, setBusy] = useState(false);const[quick,setQuick]=useState(false);const[meals,setMeals]=useState<3|4|5>(4);const[mode,setMode]=useState<'mixed'|'budget'|'highProtein'|'quick'>('mixed');
+  const diaryDate = useAppStore((state) => state.diaryDate); const mealPlan = useAppStore((state) => state.mealPlan); const generatePlan = useAppStore((state) => state.generatePlan); const loadPlan = useAppStore((state) => state.loadPlan); const resetPlan = useAppStore((state) => state.resetPlan); const addToDiary = useAppStore((state) => state.addToDiary); const [busy, setBusy] = useState(false);const[quick,setQuick]=useState(false);const[meals,setMeals]=useState<3|4|5>(4);const[mode,setMode]=useState<'mixed'|'budget'|'highProtein'|'quick'>('mixed');
   useFocusEffect(useCallback(() => { void loadPlan(); }, [loadPlan]));
   const generate = async () => { try { setBusy(true); await generatePlan(undefined,undefined,{mealsPerDay:meals,mode}); } catch (error) { Alert.alert('Не удалось собрать рацион', error instanceof Error ? error.message : 'Попробуй позже'); } finally { setBusy(false); } };
   const addItem = async (item: MealPlanItem) => { if (item.isAddedToDiary) return; await addToDiary({ date: diaryDate, product: item.product, mealType: item.mealType, servings: item.servings }); if (item.id) await markMealPlanItemAdded(item.id); await loadPlan(); };

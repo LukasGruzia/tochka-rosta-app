@@ -11,16 +11,30 @@ import { goalLabels } from '@/constants/options';
 import { loadProfileOverview } from '@/database/repositories/analyticsRepository';
 import { useAppStore } from '@/store/appStore';
 import { spacing } from '@/theme/tokens';
+import { performanceModeLabels } from '@/config/performance';
+import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
+import { createSectionErrorBoundary } from '@/components/ScreenErrorFallback';
+import { useRenderTracker } from '@/performance/renderTracker';
+
+export const ErrorBoundary = createSectionErrorBoundary('ProfileScreen');
 
 export default function ProfileScreen() {
+  useRenderTracker('ProfileScreen');
   const profile = useAppStore((state) => state.profile);
   const flow = useAppStore((state) => state.flow);
   const themeMode = useAppStore((state) => state.themeMode);
   const setAvatar = useAppStore((state) => state.setAvatar);
   const reset = useAppStore((state) => state.reset);
+  const { performanceMode } = useFeatureFlags();
   const [overview, setOverview] = useState({ trackedDays: 0, entryCount: 0, currentWeight: null as number | null });
 
-  useEffect(() => { void loadProfileOverview().then(setOverview); }, []);
+  useEffect(() => {
+    let active = true;
+    void loadProfileOverview().then((next) => {
+      if (active) setOverview(next);
+    }).catch((error) => { if (__DEV__) console.warn('[ProfileScreen] overview', error); });
+    return () => { active = false; };
+  }, []);
 
   if (!profile) return <TabScreen title="Профиль"><AppText tone="secondary">Профиль ещё не создан.</AppText></TabScreen>;
   const weight = overview.currentWeight ?? profile.weightKg;
@@ -66,9 +80,11 @@ export default function ProfileScreen() {
 
     <ProfileMenuSection title="Приложение">
       <ProfileMenuRow icon="◐" label="Оформление" value={themeLabel} onPress={() => router.push('/appearance' as never)} />
+      <ProfileMenuRow icon="◇" label="Качество эффектов" value={performanceModeLabels[performanceMode]} onPress={() => router.push('/performance-effects' as never)} />
       <ProfileMenuRow icon="▦" label="Источники данных" onPress={() => router.push('/data-sources' as never)} />
       <ProfileMenuRow icon="⇅" label="Резервная копия" onPress={() => router.push('/data-management' as never)} />
       {__DEV__ ? <ProfileMenuRow icon="⌘" label="Диагностика" onPress={() => router.push('/developer' as never)} /> : null}
+      {__DEV__ ? <ProfileMenuRow icon="⌁" label="Performance Diagnostics" onPress={() => router.push('/performance-diagnostics' as never)} /> : null}
     </ProfileMenuSection>
 
     <ProfileMenuSection title="Другое">

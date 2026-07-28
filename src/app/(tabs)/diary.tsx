@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import * as Haptics from 'expo-haptics';
 import { Alert, Modal, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { AppText } from '@/components/AppText';
 import { CopyDiarySheet } from '@/components/CopyDiarySheet';
@@ -13,7 +12,7 @@ import { TabScreen } from '@/components/TabScreen';
 import { DiaryCalendarSheet } from '@/components/DiaryCalendarSheet';
 import { QuickAddButton, QuickAddSheet } from '@/components/QuickAddSheet';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { runOnJS, type SharedValue, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { cancelAnimation, runOnJS, type SharedValue, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring } from 'react-native-reanimated';
 import { mealLabels } from '@/constants/options';
 import { useAppStore } from '@/store/appStore';
 import { radii, spacing } from '@/theme/tokens';
@@ -22,14 +21,19 @@ import type { DiaryEntry, MealType } from '@/types/domain';
 import { getLocalDateKey } from '@/utils/date';
 import { safelyRunHaptic } from '@/services/haptics';
 import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
+import { createSectionErrorBoundary } from '@/components/ScreenErrorFallback';
+import { useRenderTracker } from '@/performance/renderTracker';
+
+export const ErrorBoundary = createSectionErrorBoundary('DiaryScreen');
 
 const mealOrder: MealType[] = ['breakfast', 'lunch', 'snack', 'dinner'];
 function shiftDate(date: string, amount: number) { const value = new Date(`${date}T12:00:00`); value.setDate(value.getDate() + amount); return getLocalDateKey(value); }
 function formatDate(date: string) { const today = getLocalDateKey(); if (date === today) return 'Сегодня'; if (date === shiftDate(today, -1)) return 'Вчера'; if (date === shiftDate(today, 1)) return 'Завтра'; return new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long' }).format(new Date(`${date}T12:00:00`)); }
 
-function DiaryDateSwipe({children,offset,onChangeDay}:{children:ReactNode;offset:SharedValue<number>;onChangeDay:(amount:number)=>void}){'use no memo';const gesture=Gesture.Pan().activeOffsetX([-22,22]).failOffsetY([-12,12]).onUpdate((event)=>{offset.set(event.translationX*.22);}).onEnd((event)=>{if(Math.abs(event.translationX)>60)runOnJS(onChangeDay)(event.translationX<0?1:-1);offset.set(withSpring(0,{damping:20,stiffness:220}));}).onFinalize(()=>{offset.set(withSpring(0,{damping:20,stiffness:220}));});return <GestureDetector gesture={gesture}>{children}</GestureDetector>;}
+function DiaryDateSwipe({children,offset,onChangeDay}:{children:ReactNode;offset:SharedValue<number>;onChangeDay:(amount:number)=>void}){'use no memo';const gesture=Gesture.Pan().activeOffsetX([-22,22]).failOffsetY([-12,12]).onBegin(()=>{cancelAnimation(offset);}).onUpdate((event)=>{offset.set(event.translationX*.22);}).onEnd((event)=>{if(Math.abs(event.translationX)>60)runOnJS(onChangeDay)(event.translationX<0?1:-1);offset.set(withSpring(0,{damping:20,stiffness:220}));}).onFinalize(()=>{offset.set(withSpring(0,{damping:20,stiffness:220}));});return <GestureDetector gesture={gesture}>{children}</GestureDetector>;}
 
 export default function DiaryScreen() {
+  useRenderTracker('DiaryScreen');
   const params=useLocalSearchParams<{calendar?:string}>();
   const { colors } = useTheme();
   const { flags } = useFeatureFlags();
@@ -48,9 +52,9 @@ export default function DiaryScreen() {
   useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
   const consumed = diary?.consumedCalories ?? 0; const target = diary?.targetCalories ?? 0;
   const remaining = Math.round(target - consumed);
-  const changeDay=async(amount:number)=>{void safelyRunHaptic('selection');await setDate(shiftDate(diaryDate,amount));};
+  const changeDay=async(amount:number)=>{if(flags.enableHaptics)void safelyRunHaptic('selection');await setDate(shiftDate(diaryDate,amount));};
   const dateAnimated=useAnimatedStyle(()=>{const current=dragX.get();return{transform:[{translateX:reduced?0:current}],opacity:reduced?1:1-Math.min(.16,Math.abs(current)/180)};});
-  const complete = () => Alert.alert('Закрыть день?', 'После закрытия записи этого дня нельзя будет изменить.', [{ text: 'Отмена', style: 'cancel' }, { text: 'Закрыть', onPress: async () => { try { await closeDay(); await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); Alert.alert('Поток продолжается', 'День закрыт, а огонёк стал ярче.'); } catch (error) { Alert.alert('Не удалось закрыть день', error instanceof Error ? error.message : 'Попробуй ещё раз'); } } }]);
+  const complete = () => Alert.alert('Закрыть день?', 'После закрытия записи этого дня нельзя будет изменить.', [{ text: 'Отмена', style: 'cancel' }, { text: 'Закрыть', onPress: async () => { try { await closeDay(); if (flags.enableHaptics) await safelyRunHaptic('success'); Alert.alert('Поток продолжается', 'День закрыт, а огонёк стал ярче.'); } catch (error) { Alert.alert('Не удалось закрыть день', error instanceof Error ? error.message : 'Попробуй ещё раз'); } } }]);
   const dateControl=<Animated.View style={[styles.dateNav,dateAnimated]}><Pressable accessibilityLabel="Предыдущий день" style={[styles.arrow, { backgroundColor: colors.surface }]} onPress={() => void changeDay(-1)}><AppText>‹</AppText></Pressable><Pressable accessibilityRole="button" accessibilityLabel="Открыть календарь" onPress={() => setCalendar(true)} style={styles.dateCopy}><AppText variant="heading">{formatDate(diaryDate)}　▣</AppText><AppText variant="caption" tone="muted">{new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date(`${diaryDate}T12:00:00`))}</AppText></Pressable><Pressable accessibilityLabel="Следующий день" style={[styles.arrow, { backgroundColor: colors.surface }]} onPress={() => void changeDay(1)}><AppText>›</AppText></Pressable></Animated.View>;
   return <>
     <TabScreen title="Дневник" subtitle="Питание и дневной баланс">
@@ -68,18 +72,18 @@ export default function DiaryScreen() {
       {!diary?.isCompleted?<QuickAddButton onPress={()=>setQuick(true)}/>:null}
       <AppText variant="caption" tone="muted">Цель рассчитывается по данным профиля. История хранится локально на устройстве.</AppText>
     </TabScreen>
-    <EntryEditor entry={selected} onClose={() => setSelected(null)} onSave={async (entry, meal, grams) => { await editEntry(entry.id, meal, grams / entry.servingSizeG, grams); setSelected(null); }} onDelete={(entry) => Alert.alert('Удалить запись?', entry.productName, [{ text: 'Отмена', style: 'cancel' }, { text: 'Удалить', style: 'destructive', onPress: async () => { await removeEntry(entry.id); setSelected(null); } }])}/>
-    {targetNutrition ? <CopyDiarySheet visible={copying} sourceDate={diaryDate} diary={diary} target={targetNutrition} onClose={() => setCopying(false)} onCopied={() => refresh(diaryDate)} /> : null}
-    <DiaryCalendarSheet visible={calendar} selectedDate={diaryDate} onClose={()=>setCalendar(false)} onOpen={(date)=>{void setDate(date);}}/>
-    <QuickAddSheet visible={quick} onClose={()=>setQuick(false)} date={diaryDate}/>
+    {selected ? <EntryEditor entry={selected} onClose={() => setSelected(null)} onSave={async (entry, meal, grams) => { await editEntry(entry.id, meal, grams / entry.servingSizeG, grams); setSelected(null); }} onDelete={(entry) => Alert.alert('Удалить запись?', entry.productName, [{ text: 'Отмена', style: 'cancel' }, { text: 'Удалить', style: 'destructive', onPress: async () => { await removeEntry(entry.id); setSelected(null); } }])}/> : null}
+    {targetNutrition && copying ? <CopyDiarySheet visible sourceDate={diaryDate} diary={diary} target={targetNutrition} onClose={() => setCopying(false)} onCopied={() => refresh(diaryDate)} /> : null}
+    {calendar ? <DiaryCalendarSheet visible selectedDate={diaryDate} onClose={()=>setCalendar(false)} onOpen={(date)=>{void setDate(date);}}/> : null}
+    {quick ? <QuickAddSheet visible onClose={()=>setQuick(false)} date={diaryDate}/> : null}
   </>;
 }
 
-function EntryEditor({ entry, onClose, onSave, onDelete }: { entry: DiaryEntry | null; onClose: () => void; onSave: (entry: DiaryEntry, meal: MealType, grams: number) => Promise<void>; onDelete: (entry: DiaryEntry) => void }) {
+function EntryEditor({ entry, onClose, onSave, onDelete }: { entry: DiaryEntry; onClose: () => void; onSave: (entry: DiaryEntry, meal: MealType, grams: number) => Promise<void>; onDelete: (entry: DiaryEntry) => void }) {
   const { colors } = useTheme();
   const [meal, setMeal] = useState<MealType>('snack'); const [quantity, setQuantity] = useState('100'); const [saving, setSaving] = useState(false);
   useEffect(() => { if (entry) { setMeal(entry.mealType); setQuantity(String(Math.round(entry.quantityG))); } }, [entry]);
-  if (!entry) return null; const grams = Number(quantity.replace(',', '.')) || 0;
+  const grams = Number(quantity.replace(',', '.')) || 0;
   return <Modal visible transparent animationType="slide" onRequestClose={onClose}><Pressable style={[styles.scrim, { backgroundColor: colors.blackScrim }]} onPress={onClose}/><View style={[styles.sheet, { backgroundColor: colors.surfaceSolid, borderColor: colors.glassBorderStrong }]}><ScrollView contentContainerStyle={styles.sheetContent}><AppText variant="heading">Изменить запись</AppText><AppText tone="secondary">{entry.productName}</AppText><View style={styles.chips}>{mealOrder.map((item) => <FilterChip key={item} label={mealLabels[item]} selected={meal === item} onPress={() => setMeal(item)}/>)}</View><View style={[styles.quantity, { backgroundColor: colors.surface }]}><TextInput value={quantity} onChangeText={setQuantity} keyboardType="decimal-pad" style={[styles.input, { color: colors.textPrimary }]}/><AppText tone="secondary">г</AppText></View><PrimaryButton label={saving ? 'Сохраняем…' : 'Сохранить'} disabled={saving || grams <= 0} onPress={async () => { try { setSaving(true); await onSave(entry, meal, grams); } finally { setSaving(false); } }}/><PrimaryButton label="Удалить запись" secondary onPress={() => onDelete(entry)}/><PrimaryButton label="Отмена" secondary onPress={onClose}/></ScrollView></View></Modal>;
 }
 

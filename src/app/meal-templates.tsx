@@ -18,10 +18,10 @@ import type { MealTemplate, MealTemplateItem, MealType } from '@/types/domain';
 const meals: MealType[] = ['breakfast', 'lunch', 'snack', 'dinner'];
 
 export default function MealTemplatesScreen() {
-  const diary = useAppStore((state) => state.diary); const products = useAppStore((state) => state.products); const addToDiary = useAppStore((state) => state.addToDiary); const diaryDate = useAppStore((state) => state.diaryDate);
+  const diary = useAppStore((state) => state.diary); const products = useAppStore((state) => state.products); const addToDiary = useAppStore((state) => state.addToDiary); const diaryDate = useAppStore((state) => state.diaryDate); const ensureProductsLoaded = useAppStore((state) => state.ensureProductsLoaded);
   const { colors } = useTheme(); const [templates, setTemplates] = useState<MealTemplate[]>([]); const [creating, setCreating] = useState(false); const [name, setName] = useState(''); const [meal, setMeal] = useState<MealType>('breakfast'); const [busy, setBusy] = useState<number | null>(null);
   const refresh = useCallback(async () => setTemplates(await loadMealTemplates()), []); useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
-  useEffect(() => { if (creating) setName(`${mealLabels[meal]} · мой набор`); }, [creating, meal]);
+  useEffect(() => { if (creating) { setName(`${mealLabels[meal]} · мой набор`); void ensureProductsLoaded(); } }, [creating, ensureProductsLoaded, meal]);
 
   const currentItems = (): MealTemplateItem[] => (diary?.entries.filter((entry) => entry.mealType === meal) ?? []).flatMap((entry) => { const product = products.find((item) => item.id === entry.productId); return product ? [{ product, mealType: meal, servings: entry.servings, quantityG: entry.quantityG }] : []; });
   const save = async () => { try { await saveMealTemplate({ name, defaultMealType: meal, items: currentItems() }); setCreating(false); await refresh(); } catch (error) { Alert.alert('Не удалось создать набор', error instanceof Error ? error.message : 'Проверь данные.'); } };

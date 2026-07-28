@@ -13,7 +13,11 @@ import { useTheme } from '@/theme/ThemeProvider';
 
 export default function SplashRoute() {
   const { colors } = useTheme();
-  const { status, error, onboardingCompleted, onboardingStep, initialize } = useAppStore();
+  const status = useAppStore((state) => state.status);
+  const error = useAppStore((state) => state.error);
+  const onboardingCompleted = useAppStore((state) => state.onboardingCompleted);
+  const onboardingStep = useAppStore((state) => state.onboardingStep);
+  const initialize = useAppStore((state) => state.initialize);
   const reducedMotion = useReducedMotion();
   useEffect(() => {
     if (status !== 'ready') return;

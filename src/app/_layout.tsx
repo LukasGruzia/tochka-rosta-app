@@ -9,16 +9,20 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AppBackground } from '@/components/AppBackground';
 import { AppText } from '@/components/AppText';
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { PerformanceOverlay } from '@/components/PerformanceOverlay';
 import { FeatureFlagsProvider } from '@/contexts/FeatureFlagsContext';
 import { migrations } from '@/database/schema';
 import { buildTechnicalReport, getUiDiagnosticsSnapshot, recordRoute, recordUiAction } from '@/services/uiDiagnostics';
 import { useAppStore } from '@/store/appStore';
 import { spacing } from '@/theme/tokens';
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
+import { setPerformanceMetric } from '@/performance/performanceLogger';
+import { useRenderTracker } from '@/performance/renderTracker';
 
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  useRenderTracker('RootLayout');
   const initialize = useAppStore((state) => state.initialize);
   useEffect(() => {
     recordUiAction('database_request_started', 'initialize_database');
@@ -41,10 +45,12 @@ export default function RootLayout() {
 }
 
 function ThemedStack() {
+  useRenderTracker('ThemedStack');
   const { colors, isDark } = useTheme();
   return (
     <>
       <RouteDiagnostics />
+      <PerformanceOverlay />
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.backgroundPrimary }, animation: 'fade' }}>
         <Stack.Screen name="index" />
@@ -58,12 +64,13 @@ function ThemedStack() {
 
 function RouteDiagnostics() {
   const pathname = usePathname();
-  useEffect(() => { recordRoute(pathname); }, [pathname]);
+  useEffect(() => { recordRoute(pathname); setPerformanceMetric('activeRoute', pathname); }, [pathname]);
   return null;
 }
 
 export function ErrorBoundary({ error, retry }: { error: Error; retry: () => void }) {
   const { resolvedMode } = useTheme();
+  const setPerformanceMode = useAppStore((state) => state.setPerformanceMode);
   const databaseVersion = migrations[migrations.length - 1]?.version ?? 'unknown';
   const report = buildTechnicalReport({ theme: resolvedMode, databaseVersion, component: 'ExpoRouterRoot', error });
   recordUiAction('error_occurred', 'route_error_boundary', error.message);
@@ -74,6 +81,7 @@ export function ErrorBoundary({ error, retry }: { error: Error; retry: () => voi
         <AppText tone="secondary">Экран не удалось открыть. Данные на устройстве не изменены.</AppText>
         <PrimaryButton label="Попробовать снова" onPress={retry} />
         <PrimaryButton label="Вернуться на главную" secondary onPress={() => router.replace('/(tabs)')} />
+        <PrimaryButton label="Включить безопасный режим" secondary onPress={async () => { await setPerformanceMode('safe'); retry(); }} />
         <PrimaryButton label="Скопировать технические данные" secondary onPress={async () => { await Clipboard.setStringAsync(report); }} />
         {__DEV__ ? <View style={styles.technical}>
           <AppText variant="caption" tone="muted">route: {getUiDiagnosticsSnapshot().currentRoute}</AppText>

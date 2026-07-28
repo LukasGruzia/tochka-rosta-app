@@ -1,13 +1,357 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { router } from 'expo-router';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
-import { AppText } from '@/components/AppText';import{FilterChip}from'@/components/FilterChip';import{GlassCard}from'@/components/GlassCard';import{PrimaryButton}from'@/components/PrimaryButton';import{QuickAddButton,QuickAddSheet}from'@/components/QuickAddSheet';import{TabScreen}from'@/components/TabScreen';import{mealLabels}from'@/constants/options';import{loadBudgetSettings}from'@/database/repositories/budgetRepository';import{saveShoppingList}from'@/database/repositories/shoppingRepository';import{loadWeeklyPlan,saveWeeklyPlan}from'@/database/repositories/weeklyPlanRepository';import{getWeekStart,shiftLocalDate}from'@/services/calendar';import{buildShoppingList}from'@/services/shoppingList';import{copyWeeklyDay,generateWeeklyPlan,moveWeeklyItem}from'@/services/weeklyPlanner';import{useAppStore}from'@/store/appStore';import{useTheme}from'@/theme/ThemeProvider';import{radii,spacing}from'@/theme/tokens';import type{BudgetSettings,WeeklyPlan,WeeklyPlanSettings}from'@/types/domain';
-const defaults:WeeklyPlanSettings={mealsPerDay:4,mode:'mixed',maxRepeats:2,trainingDays:[],awayDays:[],quickDays:[]};
-const modeLabels:Record<WeeklyPlanSettings['mode'],string>={tochka:'Только «Точка Роста»',mixed:'Смешанный',home:'Домашний',budget:'Бюджетный',highProtein:'Высокобелковый',quick:'Быстрый'};
-function dateTitle(date:string){return new Intl.DateTimeFormat('ru-RU',{weekday:'short',day:'numeric',month:'short'}).format(new Date(`${date}T12:00:00`));}
-export default function MyWeekScreen(){const{profile,target,products,addToDiary}=useAppStore();const{colors}=useTheme();const weekStart=useMemo(()=>getWeekStart(),[]);const[settings,setSettings]=useState(defaults);const[budget,setBudget]=useState<BudgetSettings|null>(null);const[plan,setPlan]=useState<WeeklyPlan|null>(null);const[busy,setBusy]=useState(false);const[quickDate,setQuickDate]=useState<string|null>(null);const reload=useCallback(async()=>{const[b,p]=await Promise.all([loadBudgetSettings(),loadWeeklyPlan(weekStart)]);setBudget(b);setPlan(p);if(p)setSettings(p.settings);},[weekStart]);useEffect(()=>{void reload();},[reload]);const generate=async()=>{if(!profile||!target)return;try{setBusy(true);const next=generateWeeklyPlan(weekStart,products,target,profile,settings,budget);await saveWeeklyPlan(next);setPlan(await loadWeeklyPlan(weekStart));}catch(error){Alert.alert('Не удалось собрать неделю',error instanceof Error?error.message:'Попробуй изменить настройки');}finally{setBusy(false);}};const persist=async(next:WeeklyPlan)=>{setPlan(next);await saveWeeklyPlan(next);setPlan(await loadWeeklyPlan(weekStart));};const days=Array.from({length:7},(_,index)=>shiftLocalDate(weekStart,index));return <><TabScreen title="Моя неделя" subtitle="План можно полностью изменить вручную" headerRight={<Pressable style={[styles.close,{backgroundColor:colors.surface}]} onPress={()=>router.back()}><AppText>×</AppText></Pressable>}>
-  <GlassCard variant="accent"><AppText variant="heading">Собрать неделю</AppText><AppText tone="secondary">Цели, ограничения, разнообразие и стоимость считаются локально.</AppText><View style={styles.chips}>{([3,4,5]as const).map((count)=><FilterChip key={count} label={`${count} приёма`} selected={settings.mealsPerDay===count} onPress={()=>setSettings({...settings,mealsPerDay:count})}/>)}</View><View style={styles.chips}>{(Object.keys(modeLabels)as WeeklyPlanSettings['mode'][]).map((mode)=><FilterChip key={mode} label={modeLabels[mode]} selected={settings.mode===mode} onPress={()=>setSettings({...settings,mode})}/>)}</View>{budget?.weeklyBudget?<AppText variant="caption" tone="muted">Ориентир недели: {Math.round(budget.weeklyBudget)} ₽</AppText>:<Pressable onPress={()=>router.push('/nutrition-budget' as never)}><AppText variant="caption" tone="green">Настроить бюджет</AppText></Pressable>}<PrimaryButton label={busy?'Собираем…':plan?'Пересобрать неделю':'Собрать неделю'} disabled={busy} onPress={generate}/></GlassCard>
-  {plan?<><GlassCard variant="compact"><View style={styles.summary}><View><AppText variant="caption" tone="green">ПЛАН НЕДЕЛИ</AppText><AppText variant="title">{Math.round(plan.estimatedCost)} ₽</AppText></View><AppText tone={plan.targetBudget&&plan.estimatedCost>plan.targetBudget?'warning':'secondary'}>{plan.targetBudget&&plan.estimatedCost>plan.targetBudget?'План немного выше ориентира':'Стоимость в пределах ориентира'}</AppText></View></GlassCard>{days.map((date)=>{const items=plan.items.filter((item)=>item.date===date);const calories=items.reduce((sum,item)=>sum+item.product.calories*item.servings,0);return <GlassCard key={date} variant="compact"><View style={styles.dayHead}><View><AppText variant="heading">{dateTitle(date)}</AppText><AppText variant="caption" tone="muted">{items.length?`${items.length} поз. · ${Math.round(calories)} ккал · ${Math.round(items.reduce((sum,item)=>sum+item.estimatedCost,0))} ₽`:'План пока пуст'}</AppText></View><Pressable accessibilityLabel={`Добавить на ${date}`} onPress={()=>setQuickDate(date)}><AppText tone="green">＋</AppText></Pressable></View>{items.map((item)=><View key={item.uuid} style={[styles.planItem,{borderTopColor:colors.glassBorder}]}><View style={styles.grow}><AppText style={styles.bold}>{item.product.name}</AppText><AppText variant="caption" tone="muted">{mealLabels[item.mealType]} · {Math.round(item.amountG)} г</AppText></View><Pressable accessibilityLabel="Добавить в дневник" onPress={async()=>{await addToDiary({date:item.date,product:item.product,mealType:item.mealType,servings:item.servings,quantityG:item.amountG});Alert.alert('Добавлено',`Запись сохранена на ${dateTitle(item.date)}.`);}}><AppText tone="green">＋</AppText></Pressable><Pressable accessibilityLabel="Перенести на следующий день" onPress={()=>void persist(moveWeeklyItem(plan,item.uuid,shiftLocalDate(item.date,1)))}><AppText tone="muted">→</AppText></Pressable></View>)}{date!==weekStart&&plan.items.some((item)=>item.date===weekStart)?<Pressable onPress={()=>void persist(copyWeeklyDay(plan,weekStart,date))}><AppText variant="caption" tone="green">Скопировать первый день сюда</AppText></Pressable>:null}</GlassCard>;})}<PrimaryButton label="Создать список покупок" onPress={async()=>{const list=buildShoppingList(plan);await saveShoppingList(list);router.push('/shopping-list' as never);}}/></>:<GlassCard><AppText variant="heading">Неделя пока не запланирована</AppText><AppText tone="secondary">Собери локальный план или добавляй блюда по дням вручную.</AppText></GlassCard>}
-  <QuickAddButton label="Добавить в выбранный день" onPress={()=>setQuickDate(weekStart)}/>
-  </TabScreen><QuickAddSheet visible={Boolean(quickDate)} onClose={()=>setQuickDate(null)} date={quickDate??weekStart}/></>}
-const styles=StyleSheet.create({close:{width:42,height:42,borderRadius:radii.pill,alignItems:'center',justifyContent:'center'},chips:{flexDirection:'row',flexWrap:'wrap',gap:spacing.xs,marginTop:spacing.sm},summary:{gap:spacing.sm},dayHead:{flexDirection:'row',alignItems:'center',justifyContent:'space-between'},planItem:{minHeight:58,flexDirection:'row',alignItems:'center',gap:spacing.md,borderTopWidth:StyleSheet.hairlineWidth,marginTop:spacing.sm,paddingTop:spacing.sm},grow:{flex:1},bold:{fontWeight:'700'}});
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { router } from "expo-router";
+import { Alert, Pressable, StyleSheet, View } from "react-native";
+import { AppText } from "@/components/AppText";
+import { FilterChip } from "@/components/FilterChip";
+import { GlassCard } from "@/components/GlassCard";
+import { PrimaryButton } from "@/components/PrimaryButton";
+import { QuickAddButton, QuickAddSheet } from "@/components/QuickAddSheet";
+import { TabScreen } from "@/components/TabScreen";
+import { mealLabels } from "@/constants/options";
+import { loadBudgetSettings } from "@/database/repositories/budgetRepository";
+import { saveShoppingList } from "@/database/repositories/shoppingRepository";
+import {
+  loadWeeklyPlan,
+  saveWeeklyPlan,
+} from "@/database/repositories/weeklyPlanRepository";
+import { getWeekStart, shiftLocalDate } from "@/services/calendar";
+import { buildShoppingList } from "@/services/shoppingList";
+import {
+  copyWeeklyDay,
+  generateWeeklyPlan,
+  moveWeeklyItem,
+} from "@/services/weeklyPlanner";
+import { useAppStore } from "@/store/appStore";
+import { useTheme } from "@/theme/ThemeProvider";
+import { radii, spacing } from "@/theme/tokens";
+import type {
+  BudgetSettings,
+  WeeklyPlan,
+  WeeklyPlanSettings,
+} from "@/types/domain";
+const defaults: WeeklyPlanSettings = {
+  mealsPerDay: 4,
+  mode: "mixed",
+  maxRepeats: 2,
+  trainingDays: [],
+  awayDays: [],
+  quickDays: [],
+};
+const modeLabels: Record<WeeklyPlanSettings["mode"], string> = {
+  tochka: "Только «Точка Роста»",
+  mixed: "Смешанный",
+  home: "Домашний",
+  budget: "Бюджетный",
+  highProtein: "Высокобелковый",
+  quick: "Быстрый",
+};
+function dateTitle(date: string) {
+  return new Intl.DateTimeFormat("ru-RU", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  }).format(new Date(`${date}T12:00:00`));
+}
+export default function MyWeekScreen() {
+  const profile = useAppStore((state) => state.profile);
+  const target = useAppStore((state) => state.target);
+  const addToDiary = useAppStore((state) => state.addToDiary);
+  const ensureProductsLoaded = useAppStore(
+    (state) => state.ensureProductsLoaded,
+  );
+  const { colors } = useTheme();
+  const weekStart = useMemo(() => getWeekStart(), []);
+  const [settings, setSettings] = useState(defaults);
+  const [budget, setBudget] = useState<BudgetSettings | null>(null);
+  const [plan, setPlan] = useState<WeeklyPlan | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [quickDate, setQuickDate] = useState<string | null>(null);
+  const reload = useCallback(async () => {
+    const [b, p] = await Promise.all([
+      loadBudgetSettings(),
+      loadWeeklyPlan(weekStart),
+      ensureProductsLoaded(),
+    ]);
+    setBudget(b);
+    setPlan(p);
+    if (p) setSettings(p.settings);
+  }, [ensureProductsLoaded, weekStart]);
+  useEffect(() => {
+    void reload();
+  }, [reload]);
+  const generate = async () => {
+    if (!profile || !target) return;
+    try {
+      setBusy(true);
+      await ensureProductsLoaded();
+      const candidates = useAppStore.getState().products;
+      const next = generateWeeklyPlan(
+        weekStart,
+        candidates,
+        target,
+        profile,
+        settings,
+        budget,
+      );
+      await saveWeeklyPlan(next);
+      setPlan(await loadWeeklyPlan(weekStart));
+    } catch (error) {
+      Alert.alert(
+        "Не удалось собрать неделю",
+        error instanceof Error ? error.message : "Попробуй изменить настройки",
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+  const persist = async (next: WeeklyPlan) => {
+    setPlan(next);
+    await saveWeeklyPlan(next);
+    setPlan(await loadWeeklyPlan(weekStart));
+  };
+  const days = Array.from({ length: 7 }, (_, index) =>
+    shiftLocalDate(weekStart, index),
+  );
+  return (
+    <>
+      <TabScreen
+        title="Моя неделя"
+        subtitle="План можно полностью изменить вручную"
+        headerRight={
+          <Pressable
+            style={[styles.close, { backgroundColor: colors.surface }]}
+            onPress={() => router.back()}
+          >
+            <AppText>×</AppText>
+          </Pressable>
+        }
+      >
+        <GlassCard variant="accent">
+          <AppText variant="heading">Собрать неделю</AppText>
+          <AppText tone="secondary">
+            Цели, ограничения, разнообразие и стоимость считаются локально.
+          </AppText>
+          <View style={styles.chips}>
+            {([3, 4, 5] as const).map((count) => (
+              <FilterChip
+                key={count}
+                label={`${count} приёма`}
+                selected={settings.mealsPerDay === count}
+                onPress={() => setSettings({ ...settings, mealsPerDay: count })}
+              />
+            ))}
+          </View>
+          <View style={styles.chips}>
+            {(Object.keys(modeLabels) as WeeklyPlanSettings["mode"][]).map(
+              (mode) => (
+                <FilterChip
+                  key={mode}
+                  label={modeLabels[mode]}
+                  selected={settings.mode === mode}
+                  onPress={() => setSettings({ ...settings, mode })}
+                />
+              ),
+            )}
+          </View>
+          {budget?.weeklyBudget ? (
+            <AppText variant="caption" tone="muted">
+              Ориентир недели: {Math.round(budget.weeklyBudget)} ₽
+            </AppText>
+          ) : (
+            <Pressable
+              onPress={() => router.push("/nutrition-budget" as never)}
+            >
+              <AppText variant="caption" tone="green">
+                Настроить бюджет
+              </AppText>
+            </Pressable>
+          )}
+          <PrimaryButton
+            label={
+              busy
+                ? "Собираем…"
+                : plan
+                  ? "Пересобрать неделю"
+                  : "Собрать неделю"
+            }
+            disabled={busy}
+            onPress={generate}
+          />
+        </GlassCard>
+        {plan ? (
+          <>
+            <GlassCard variant="compact">
+              <View style={styles.summary}>
+                <View>
+                  <AppText variant="caption" tone="green">
+                    ПЛАН НЕДЕЛИ
+                  </AppText>
+                  <AppText variant="title">
+                    {Math.round(plan.estimatedCost)} ₽
+                  </AppText>
+                </View>
+                <AppText
+                  tone={
+                    plan.targetBudget && plan.estimatedCost > plan.targetBudget
+                      ? "warning"
+                      : "secondary"
+                  }
+                >
+                  {plan.targetBudget && plan.estimatedCost > plan.targetBudget
+                    ? "План немного выше ориентира"
+                    : "Стоимость в пределах ориентира"}
+                </AppText>
+              </View>
+            </GlassCard>
+            {days.map((date) => {
+              const items = plan.items.filter((item) => item.date === date);
+              const calories = items.reduce(
+                (sum, item) => sum + item.product.calories * item.servings,
+                0,
+              );
+              return (
+                <GlassCard key={date} variant="compact">
+                  <View style={styles.dayHead}>
+                    <View>
+                      <AppText variant="heading">{dateTitle(date)}</AppText>
+                      <AppText variant="caption" tone="muted">
+                        {items.length
+                          ? `${items.length} поз. · ${Math.round(calories)} ккал · ${Math.round(items.reduce((sum, item) => sum + item.estimatedCost, 0))} ₽`
+                          : "План пока пуст"}
+                      </AppText>
+                    </View>
+                    <Pressable
+                      accessibilityLabel={`Добавить на ${date}`}
+                      onPress={() => setQuickDate(date)}
+                    >
+                      <AppText tone="green">＋</AppText>
+                    </Pressable>
+                  </View>
+                  {items.map((item) => (
+                    <View
+                      key={item.uuid}
+                      style={[
+                        styles.planItem,
+                        { borderTopColor: colors.glassBorder },
+                      ]}
+                    >
+                      <View style={styles.grow}>
+                        <AppText style={styles.bold}>
+                          {item.product.name}
+                        </AppText>
+                        <AppText variant="caption" tone="muted">
+                          {mealLabels[item.mealType]} ·{" "}
+                          {Math.round(item.amountG)} г
+                        </AppText>
+                      </View>
+                      <Pressable
+                        accessibilityLabel="Добавить в дневник"
+                        onPress={async () => {
+                          await addToDiary({
+                            date: item.date,
+                            product: item.product,
+                            mealType: item.mealType,
+                            servings: item.servings,
+                            quantityG: item.amountG,
+                          });
+                          Alert.alert(
+                            "Добавлено",
+                            `Запись сохранена на ${dateTitle(item.date)}.`,
+                          );
+                        }}
+                      >
+                        <AppText tone="green">＋</AppText>
+                      </Pressable>
+                      <Pressable
+                        accessibilityLabel="Перенести на следующий день"
+                        onPress={() =>
+                          void persist(
+                            moveWeeklyItem(
+                              plan,
+                              item.uuid,
+                              shiftLocalDate(item.date, 1),
+                            ),
+                          )
+                        }
+                      >
+                        <AppText tone="muted">→</AppText>
+                      </Pressable>
+                    </View>
+                  ))}
+                  {date !== weekStart &&
+                  plan.items.some((item) => item.date === weekStart) ? (
+                    <Pressable
+                      onPress={() =>
+                        void persist(copyWeeklyDay(plan, weekStart, date))
+                      }
+                    >
+                      <AppText variant="caption" tone="green">
+                        Скопировать первый день сюда
+                      </AppText>
+                    </Pressable>
+                  ) : null}
+                </GlassCard>
+              );
+            })}
+            <PrimaryButton
+              label="Создать список покупок"
+              onPress={async () => {
+                const list = buildShoppingList(plan);
+                await saveShoppingList(list);
+                router.push("/shopping-list" as never);
+              }}
+            />
+          </>
+        ) : (
+          <GlassCard>
+            <AppText variant="heading">Неделя пока не запланирована</AppText>
+            <AppText tone="secondary">
+              Собери локальный план или добавляй блюда по дням вручную.
+            </AppText>
+          </GlassCard>
+        )}
+        <QuickAddButton
+          label="Добавить в выбранный день"
+          onPress={() => setQuickDate(weekStart)}
+        />
+      </TabScreen>
+      <QuickAddSheet
+        visible={Boolean(quickDate)}
+        onClose={() => setQuickDate(null)}
+        date={quickDate ?? weekStart}
+      />
+    </>
+  );
+}
+const styles = StyleSheet.create({
+  close: {
+    width: 42,
+    height: 42,
+    borderRadius: radii.pill,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  chips: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.xs,
+    marginTop: spacing.sm,
+  },
+  summary: { gap: spacing.sm },
+  dayHead: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  planItem: {
+    minHeight: 58,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    marginTop: spacing.sm,
+    paddingTop: spacing.sm,
+  },
+  grow: { flex: 1 },
+  bold: { fontWeight: "700" },
+});
