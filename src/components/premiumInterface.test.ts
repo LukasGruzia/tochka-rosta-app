@@ -7,7 +7,8 @@ const read = (file: string) => readFileSync(resolve(process.cwd(), file), 'utf8'
 describe('premium interface composition', () => {
   it('uses the dynamic profile name and a standalone round avatar', () => {
     const header = read('src/components/HomeHeader.tsx');
-    expect(header).toContain('{name}');
+    expect(header).toContain('{userName}');
+    expect(header).toContain('useUserProfile()');
     expect(header).toContain('width: sizes.avatar');
     expect(header).toContain('borderRadius: sizes.avatar / 2');
   });

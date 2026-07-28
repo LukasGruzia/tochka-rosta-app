@@ -14,7 +14,7 @@ describe('critical UI stability wiring', () => {
 
   it('keeps tab drag behind a safe-mode-compatible feature flag', () => {
     const flags = read('src/config/features.ts'); const tabBar = read('src/components/LiquidTabBar.tsx');
-    expect(flags).toContain('enableLiquidTabDrag: false');
+    expect(flags).toContain('enableLiquidTabDrag: true');
     expect(tabBar).toContain('flags.enableLiquidTabDrag');
     expect(tabBar).toContain('performTabPress');
   });

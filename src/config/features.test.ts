@@ -3,9 +3,13 @@ import { defaultFeatureFlags, resolveFeatureFlags, resolveFeatureFlagsForPerform
 import { resolvePerformanceCapabilities } from './performance';
 
 describe('UI feature flags', () => {
-  it('keeps drag gestures conservative until a physical-device endurance test passes', () => {
-    expect(defaultFeatureFlags.enableLiquidTabDrag).toBe(false);
+  it('keeps drag available only when the selected performance mode allows it', () => {
+    expect(defaultFeatureFlags.enableLiquidTabDrag).toBe(true);
     expect(defaultFeatureFlags.enableSheetGestures).toBe(false);
+    const full = resolveFeatureFlagsForPerformance(defaultFeatureFlags, resolvePerformanceCapabilities('full', { platform: 'ios', reducedMotion: false, appActive: true }));
+    const balanced = resolveFeatureFlagsForPerformance(defaultFeatureFlags, resolvePerformanceCapabilities('balanced', { platform: 'ios', reducedMotion: false, appActive: true }));
+    expect(full.enableLiquidTabDrag).toBe(true);
+    expect(balanced.enableLiquidTabDrag).toBe(false);
   });
 
   it('turns continuous effects, blur, haptics and gestures off in reduced mode', () => {
