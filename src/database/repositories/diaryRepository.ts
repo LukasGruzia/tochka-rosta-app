@@ -132,10 +132,10 @@ export async function addDiaryEntry(input: DiaryEntryInput, target?: NutritionRe
   await db.withExclusiveTransactionAsync(async (txn) => {
     await txn.runAsync(`INSERT INTO diary_entries (
       diary_day_id, product_id, product_name_snapshot, meal_type, servings, serving_size_g, quantity_g,
-      calories, protein_g, fat_g, carbs_g, source_type, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, day.id, input.product.id, input.product.name,
+      calories, protein_g, fat_g, carbs_g, source_type, date, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, day.id, input.product.id, input.product.name,
     input.mealType, servings, input.product.servingSizeG, quantityG, values.calories, values.proteinG, values.fatG,
-    values.carbsG, input.product.sourceType, now, now);
+    values.carbsG, input.product.sourceType, input.date, now, now);
     await txn.runAsync(`UPDATE diary_days SET
       consumed_calories=COALESCE((SELECT SUM(calories) FROM diary_entries WHERE diary_day_id=?), 0),
       consumed_protein_g=COALESCE((SELECT SUM(protein_g) FROM diary_entries WHERE diary_day_id=?), 0),
@@ -204,3 +204,13 @@ export async function clearDiary() {
   const db = await getDatabase();
   await db.execAsync('DELETE FROM diary_entries; DELETE FROM diary_days;');
 }
+
+export async function clearMealEntries(date: string, mealType: MealType) {
+  const db = await getDatabase(); const day = await db.getFirstAsync<{ id: number; is_completed: number }>('SELECT id,is_completed FROM diary_days WHERE date=?', date); if (!day) return 0; if (day.is_completed) throw new Error('Закрытый день нельзя изменять'); const count = await db.getFirstAsync<{ count: number }>('SELECT COUNT(*) AS count FROM diary_entries WHERE diary_day_id=? AND meal_type=?', day.id, mealType); await db.withExclusiveTransactionAsync(async (txn) => { await txn.runAsync('DELETE FROM diary_entries WHERE diary_day_id=? AND meal_type=?', day.id, mealType); await txn.runAsync(`UPDATE diary_days SET consumed_calories=COALESCE((SELECT SUM(calories) FROM diary_entries WHERE diary_day_id=?),0), consumed_protein_g=COALESCE((SELECT SUM(protein_g) FROM diary_entries WHERE diary_day_id=?),0), consumed_fat_g=COALESCE((SELECT SUM(fat_g) FROM diary_entries WHERE diary_day_id=?),0), consumed_carbs_g=COALESCE((SELECT SUM(carbs_g) FROM diary_entries WHERE diary_day_id=?),0),updated_at=? WHERE id=?`, day.id, day.id, day.id, day.id, new Date().toISOString(), day.id); }); return count?.count ?? 0;
+}
+
+export async function copyDiaryEntries(sourceDate: string, targetDate: string, mealType: MealType | null, target: NutritionResult) {
+  if (sourceDate === targetDate) throw new Error('Выбери другую дату'); await ensureDiaryDay(targetDate, target); const db = await getDatabase(); const source = await db.getFirstAsync<{ id: number }>('SELECT id FROM diary_days WHERE date=?', sourceDate); const destination = await db.getFirstAsync<{ id: number; is_completed: number }>('SELECT id,is_completed FROM diary_days WHERE date=?', targetDate); if (!source || !destination) throw new Error('День не найден'); if (destination.is_completed) throw new Error('Целевой день уже закрыт'); const rows = await db.getAllAsync<EntryRow & { product_name_snapshot: string; product_id: number | null }>(`SELECT * FROM diary_entries WHERE diary_day_id=? ${mealType ? 'AND meal_type=?' : ''} ORDER BY id`, source.id, ...(mealType ? [mealType] : [])); if (!rows.length) throw new Error('В выбранном приёме пищи пока нет записей'); const ids: number[] = []; const now = new Date().toISOString(); await db.withExclusiveTransactionAsync(async (txn) => { for (const row of rows) { const result = await txn.runAsync(`INSERT INTO diary_entries (diary_day_id,product_id,product_name_snapshot,meal_type,servings,serving_size_g,quantity_g,calories,protein_g,fat_g,carbs_g,source_type,date,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, destination.id,row.product_id,row.product_name_snapshot,row.meal_type,row.servings,row.serving_size_g,row.quantity_g,row.calories,row.protein_g,row.fat_g,row.carbs_g,row.source_type,targetDate,now,now); ids.push(Number(result.lastInsertRowId)); } await txn.runAsync(`UPDATE diary_days SET consumed_calories=COALESCE((SELECT SUM(calories) FROM diary_entries WHERE diary_day_id=?),0), consumed_protein_g=COALESCE((SELECT SUM(protein_g) FROM diary_entries WHERE diary_day_id=?),0), consumed_fat_g=COALESCE((SELECT SUM(fat_g) FROM diary_entries WHERE diary_day_id=?),0), consumed_carbs_g=COALESCE((SELECT SUM(carbs_g) FROM diary_entries WHERE diary_day_id=?),0),updated_at=? WHERE id=?`, destination.id,destination.id,destination.id,destination.id,now,destination.id); }); return ids;
+}
+
+export async function undoDiaryCopy(entryIds: number[]) { if (!entryIds.length) return; const db = await getDatabase(); const placeholders = entryIds.map(() => '?').join(','); const days = await db.getAllAsync<{ diary_day_id: number }>(`SELECT DISTINCT diary_day_id FROM diary_entries WHERE id IN (${placeholders})`, ...entryIds); await db.runAsync(`DELETE FROM diary_entries WHERE id IN (${placeholders})`, ...entryIds); for (const day of days) await recalculateDiaryDay(day.diary_day_id); }

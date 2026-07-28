@@ -5,6 +5,7 @@ interface ProfileRow {
   id: number; name: string; age: number; calculation_sex: ProfileDraft['calculationSex'];
   height_cm: number; weight_kg: number; activity_level: ProfileDraft['activityLevel']; goal: ProfileDraft['goal'];
   diet_preference: ProfileDraft['dietPreference']; created_at: string; updated_at: string;
+  avatar_uri: string | null; water_goal_ml: number;
 }
 interface TargetRow {
   bmr: number; tdee: number; calories: number; protein_g: number; fat_g: number; carbs_g: number;
@@ -16,13 +17,14 @@ export async function saveProfileAndTarget(profile: ProfileDraft, target: Nutrit
   const now = new Date().toISOString();
   await db.withExclusiveTransactionAsync(async (txn) => {
     await txn.runAsync(`INSERT INTO user_profile
-      (id, name, age, calculation_sex, height_cm, weight_kg, activity_level, goal, diet_preference, created_at, updated_at)
-      VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (id, name, age, calculation_sex, height_cm, weight_kg, activity_level, goal, diet_preference, avatar_uri, water_goal_ml, created_at, updated_at)
+      VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(id) DO UPDATE SET name=excluded.name, age=excluded.age, calculation_sex=excluded.calculation_sex,
       height_cm=excluded.height_cm, weight_kg=excluded.weight_kg, activity_level=excluded.activity_level,
-      goal=excluded.goal, diet_preference=excluded.diet_preference, updated_at=excluded.updated_at`,
+      goal=excluded.goal, diet_preference=excluded.diet_preference, avatar_uri=COALESCE(excluded.avatar_uri,user_profile.avatar_uri),
+      water_goal_ml=excluded.water_goal_ml, updated_at=excluded.updated_at`,
       profile.name, profile.age, profile.calculationSex, profile.heightCm, profile.weightKg,
-      profile.activityLevel, profile.goal, profile.dietPreference, now, now);
+      profile.activityLevel, profile.goal, profile.dietPreference, profile.avatarUri ?? null, profile.waterGoalMl ?? 2000, now, now);
     await txn.runAsync('DELETE FROM user_restrictions WHERE profile_id = 1');
     for (const restriction of profile.restrictions) {
       await txn.runAsync('INSERT INTO user_restrictions (profile_id, restriction) VALUES (1, ?)', restriction);
@@ -46,6 +48,7 @@ export async function loadProfileAndTarget(): Promise<{ profile: SavedProfile; t
       id: row.id, name: row.name, age: row.age, calculationSex: row.calculation_sex,
       heightCm: row.height_cm, weightKg: row.weight_kg, activityLevel: row.activity_level,
       goal: row.goal, dietPreference: row.diet_preference, restrictions: restrictions.map((item) => item.restriction),
+      avatarUri: row.avatar_uri, waterGoalMl: row.water_goal_ml,
       createdAt: row.created_at, updatedAt: row.updated_at,
     },
     target: {
@@ -54,4 +57,16 @@ export async function loadProfileAndTarget(): Promise<{ profile: SavedProfile; t
       goal: targetRow.goal, activityFactor: targetRow.activity_factor,
     },
   };
+}
+
+export async function updateProfileAvatar(avatarUri: string | null) {
+  const db = await getDatabase();
+  await db.runAsync('UPDATE user_profile SET avatar_uri=?, updated_at=? WHERE id=1', avatarUri, new Date().toISOString());
+}
+
+export async function updateWaterGoal(goalMl: number) {
+  const normalized = Math.min(5000, Math.max(250, Math.round(goalMl)));
+  const db = await getDatabase();
+  await db.runAsync('UPDATE user_profile SET water_goal_ml=?, updated_at=? WHERE id=1', normalized, new Date().toISOString());
+  return normalized;
 }

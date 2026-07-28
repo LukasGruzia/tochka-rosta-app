@@ -9,6 +9,7 @@ import { AppText } from '@/components/AppText';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { useAppStore } from '@/store/appStore';
 import { spacing } from '@/theme/tokens';
+import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -17,14 +18,25 @@ export default function RootLayout() {
   useEffect(() => { void initialize().finally(() => SplashScreen.hideAsync()); }, [initialize]);
   return (
     <SafeAreaProvider>
-      <StatusBar style="light" />
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#061009' }, animation: 'fade' }}>
+      <ThemeProvider>
+        <ThemedStack />
+      </ThemeProvider>
+    </SafeAreaProvider>
+  );
+}
+
+function ThemedStack() {
+  const { colors, isDark } = useTheme();
+  return (
+    <>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.backgroundPrimary }, animation: 'fade' }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="(onboarding)" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="edit-profile" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
       </Stack>
-    </SafeAreaProvider>
+    </>
   );
 }
 

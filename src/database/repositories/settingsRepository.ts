@@ -22,6 +22,11 @@ export async function resetApplicationData() {
     DELETE FROM flow_history;
     DELETE FROM meal_plan_items;
     DELETE FROM scan_history;
+    DELETE FROM water_entries;
+    DELETE FROM weight_logs;
+    DELETE FROM meal_template_items;
+    DELETE FROM meal_templates;
+    DELETE FROM search_history;
     DELETE FROM recipe_ingredients;
     DELETE FROM recipes;
     DELETE FROM food_sources WHERE product_id IN (SELECT id FROM products WHERE is_user_created = 1 OR source_type = 'open_food_facts');

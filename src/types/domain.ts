@@ -8,6 +8,7 @@ export type DataStatus = 'verified' | 'imported' | 'community' | 'custom' | 'dem
 export type FoodSourceType = 'tochka_rosta' | 'usda' | 'open_food_facts' | 'user_product' | 'user_recipe';
 export type NutritionBasis = 'per100g' | 'serving' | 'package';
 export type BasisUnit = 'g' | 'ml' | 'piece' | 'serving';
+export type ThemeMode = 'system' | 'dark' | 'light';
 
 export interface ProfileDraft {
   name: string;
@@ -19,6 +20,8 @@ export interface ProfileDraft {
   goal: Goal;
   dietPreference: DietPreference;
   restrictions: Restriction[];
+  avatarUri?: string | null;
+  waterGoalMl?: number;
 }
 
 export interface NutritionResult {
@@ -37,6 +40,14 @@ export interface SavedProfile extends ProfileDraft {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface WeightLog { id: number; date: string; weightKg: number; note: string; createdAt: string; updatedAt: string; }
+export interface WeightProgress { entries: WeightLog[]; initialWeight: number | null; currentWeight: number | null; changeKg: number; minWeight: number | null; maxWeight: number | null; }
+export interface WaterEntry { id: number; date: string; amountMl: number; createdAt: string; }
+export interface WaterSummary { date: string; totalMl: number; goalMl: number; entries: WaterEntry[]; }
+export interface MealTemplateItem { id?: number; product: Product; mealType: MealType; servings: number; quantityG: number; }
+export interface MealTemplate { id: number; name: string; defaultMealType: MealType; items: MealTemplateItem[]; createdAt: string; updatedAt: string; }
+export interface SearchHistoryItem { id: number; query: string; useCount: number; lastUsedAt: string; }
 
 export interface Product {
   id: number;

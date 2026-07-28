@@ -1,6 +1,6 @@
 import { getDatabase } from '../database';
 
-const restoreOrder = ['app_settings', 'user_profile', 'user_restrictions', 'nutrition_targets', 'products', 'diary_days', 'diary_entries', 'favorites', 'flow_state', 'flow_history', 'meal_plan_items', 'scan_history', 'recipes', 'recipe_ingredients', 'food_sources', 'external_food_cache'] as const;
+const restoreOrder = ['app_settings', 'user_profile', 'user_restrictions', 'nutrition_targets', 'products', 'diary_days', 'diary_entries', 'favorites', 'flow_state', 'flow_history', 'meal_plan_items', 'scan_history', 'recipes', 'recipe_ingredients', 'food_sources', 'external_food_cache', 'weight_logs', 'water_entries', 'meal_templates', 'meal_template_items', 'search_history'] as const;
 const deleteOrder = [...restoreOrder].reverse();
 type TableName = typeof restoreOrder[number];
 type Row = Record<string, string | number | null>;

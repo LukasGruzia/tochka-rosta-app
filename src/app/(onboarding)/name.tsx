@@ -24,7 +24,7 @@ export default function NameScreen() {
       <View style={styles.field}>
         <AppText variant="caption" tone="secondary">Имя</AppText>
         <Controller control={control} name="name" render={({ field: { value, onChange, onBlur } }) =>
-          <TextInput autoFocus accessibilityLabel="Имя" autoCapitalize="words" autoCorrect={false} returnKeyType="done" value={value} onChangeText={onChange} onBlur={onBlur} onSubmitEditing={() => { if (isValid) void submit(); }} placeholder="Например, Лука" placeholderTextColor={colors.textMuted} style={[styles.input, errors.name && styles.inputError]} />}/>
+          <TextInput autoFocus accessibilityLabel="Имя" autoCapitalize="words" autoCorrect={false} returnKeyType="done" value={value} onChangeText={onChange} onBlur={onBlur} onSubmitEditing={() => { if (isValid) void submit(); }} placeholder="Например, Анна" placeholderTextColor={colors.textMuted} style={[styles.input, errors.name && styles.inputError]} />}/>
         {errors.name ? <AppText variant="caption" tone="warning">{errors.name.message}</AppText> : null}
       </View>
       {name.trim().length >= 2 && !errors.name ? <AppText variant="heading" tone="green">Приятно познакомиться, {name.trim()}.</AppText> : null}

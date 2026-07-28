@@ -1,0 +1,9 @@
+import type { Product, SearchHistoryItem } from '@/types/domain';
+import { getDatabase } from '../database';
+import { getProductById } from './productRepository';
+export async function recordSearch(query:string){const normalized=query.replace(/\s+/g,' ').trim();if(normalized.length<2)return;const db=await getDatabase();await db.runAsync(`INSERT INTO search_history(query,use_count,last_used_at) VALUES(?,1,?) ON CONFLICT(query) DO UPDATE SET use_count=use_count+1,last_used_at=excluded.last_used_at`,normalized,new Date().toISOString());}
+export async function loadSearchHistory(limit=8):Promise<SearchHistoryItem[]>{const db=await getDatabase();const rows=await db.getAllAsync<{id:number;query:string;use_count:number;last_used_at:string}>('SELECT * FROM search_history ORDER BY last_used_at DESC LIMIT ?',limit);return rows.map(row=>({id:row.id,query:row.query,useCount:row.use_count,lastUsedAt:row.last_used_at}));}
+export async function clearSearchHistory(){const db=await getDatabase();await db.runAsync('DELETE FROM search_history');}
+async function productsForIds(ids:number[]):Promise<Product[]>{return(await Promise.all(ids.map(getProductById))).filter((item):item is Product=>item!==null);}
+export async function loadRecentProducts(limit=10){const db=await getDatabase();const rows=await db.getAllAsync<{product_id:number}>(`SELECT product_id FROM diary_entries WHERE product_id IS NOT NULL GROUP BY product_id ORDER BY MAX(created_at) DESC LIMIT ?`,limit);return productsForIds(rows.map(row=>row.product_id));}
+export async function loadFrequentProducts(limit=10){const db=await getDatabase();const rows=await db.getAllAsync<{product_id:number}>(`SELECT product_id FROM diary_entries WHERE product_id IS NOT NULL GROUP BY product_id ORDER BY COUNT(*) DESC,MAX(created_at) DESC LIMIT ?`,limit);return productsForIds(rows.map(row=>row.product_id));}
