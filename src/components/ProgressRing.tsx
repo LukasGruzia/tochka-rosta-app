@@ -6,12 +6,12 @@ import { AppText } from './AppText';
 import { useTheme } from '@/theme/ThemeProvider';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-interface Props { progress: number; size?: number; value: string; label: string; }
-export function ProgressRing({ progress, size = 190, value, label }: Props) {
+interface Props { progress: number; size?: number; strokeWidth?: number; value: string; label: string; }
+export function ProgressRing({ progress, size = 190, strokeWidth = 10, value, label }: Props) {
   'use no memo';
   const { colors } = useTheme();
   const reducedMotion = useReducedMotion();
-  const radius = (size - 18) / 2;
+  const radius = (size - strokeWidth * 2) / 2;
   const circumference = 2 * Math.PI * radius;
   const animatedProgress = useSharedValue(0);
   useEffect(() => { animatedProgress.set(reducedMotion ? progress : withTiming(progress, { duration: 700 })); }, [animatedProgress, progress, reducedMotion]);
@@ -19,8 +19,8 @@ export function ProgressRing({ progress, size = 190, value, label }: Props) {
   return (
     <View style={[styles.wrap, { width: size, height: size }]} accessibilityLabel={`${value}, ${label}`}>
       <Svg width={size} height={size} style={StyleSheet.absoluteFill}>
-        <Circle cx={size / 2} cy={size / 2} r={radius} stroke={colors.greenDark} strokeWidth={10} fill="none" />
-        <AnimatedCircle cx={size / 2} cy={size / 2} r={radius} stroke={colors.greenBright} strokeWidth={10} fill="none"
+        <Circle cx={size / 2} cy={size / 2} r={radius} stroke={colors.track} strokeWidth={strokeWidth} fill="none" />
+        <AnimatedCircle cx={size / 2} cy={size / 2} r={radius} stroke={colors.greenBright} strokeWidth={strokeWidth} fill="none"
           strokeLinecap="round" strokeDasharray={`${circumference} ${circumference}`} animatedProps={animatedProps} transform={`rotate(-90 ${size / 2} ${size / 2})`} />
       </Svg>
       <AppText variant="display" style={styles.value}>{value}</AppText>

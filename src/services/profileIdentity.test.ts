@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeDisplayName } from './profileIdentity';
+import { getProfileInitials, normalizeDisplayName } from './profileIdentity';
 
 describe('normalizeDisplayName', () => {
   it('uses the saved user name without a hardcoded fallback', () => {
@@ -9,5 +9,10 @@ describe('normalizeDisplayName', () => {
   it('returns null for an empty name', () => {
     expect(normalizeDisplayName('   ')).toBeNull();
     expect(normalizeDisplayName(null)).toBeNull();
+  });
+
+  it('derives the avatar initials from the saved dynamic name', () => {
+    expect(getProfileInitials('Анна Смирнова')).toBe('АС');
+    expect(getProfileInitials('Лука')).toBe('Л');
   });
 });

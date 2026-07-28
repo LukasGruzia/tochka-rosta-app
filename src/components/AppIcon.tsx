@@ -1,7 +1,7 @@
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { useTheme } from '@/theme/ThemeProvider';
 
-export type IconName = 'home' | 'diary' | 'catalog' | 'flow' | 'profile' | 'qr' | 'check';
+export type IconName = 'home' | 'diary' | 'catalog' | 'flow' | 'profile' | 'qr' | 'check' | 'add' | 'target' | 'calendar' | 'cart' | 'arrow';
 export function AppIcon({ name, color, size = 24 }: { name: IconName; color?: string; size?: number }) {
   const { colors } = useTheme();
   const iconColor = color ?? colors.textMuted;
@@ -11,5 +11,10 @@ export function AppIcon({ name, color, size = 24 }: { name: IconName; color?: st
   if (name === 'flow') return <Svg width={size} height={size} viewBox="0 0 24 24"><Path d="M12 22c4.5 0 8-3.3 8-7.8 0-3.9-2.4-7.5-6.2-11.2.1 3-1.1 5.1-3.4 6.8.1-2.1-.7-3.7-2.2-4.9C5.5 8.2 4 11.2 4 14.3 4 18.7 7.5 22 12 22Z" fill="none" stroke={iconColor} strokeWidth={1.9} strokeLinejoin="round"/><Path d="M9.2 16.2c0 1.6 1.2 2.8 2.8 2.8s2.8-1.2 2.8-2.8c0-1.4-.9-2.7-2.3-4.1-.1 1.1-.6 1.9-1.5 2.5-.1-.8-.4-1.4-1-1.9-.5 1-.8 2.2-.8 3.5Z" fill={iconColor}/></Svg>;
   if (name === 'profile') return <Svg width={size} height={size} viewBox="0 0 24 24"><Circle cx="12" cy="8" r="4" fill="none" stroke={iconColor} strokeWidth={1.9}/><Path d="M4.5 21c.7-4 3.3-6 7.5-6s6.8 2 7.5 6" fill="none" stroke={iconColor} strokeWidth={1.9} strokeLinecap="round"/></Svg>;
   if (name === 'qr') return <Svg width={size} height={size} viewBox="0 0 24 24"><Path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke={iconColor} strokeWidth={2} strokeLinecap="round"/><Rect x="8" y="8" width="8" height="8" rx="1" fill="none" stroke={iconColor} strokeWidth={1.5}/></Svg>;
+  if (name === 'add') return <Svg width={size} height={size} viewBox="0 0 24 24"><Circle cx="12" cy="12" r="9" fill="none" stroke={iconColor} strokeWidth={1.8}/><Path d="M12 7.8v8.4M7.8 12h8.4" stroke={iconColor} strokeWidth={2} strokeLinecap="round"/></Svg>;
+  if (name === 'target') return <Svg width={size} height={size} viewBox="0 0 24 24"><Circle cx="12" cy="12" r="8.5" fill="none" stroke={iconColor} strokeWidth={1.8}/><Circle cx="12" cy="12" r="4.5" fill="none" stroke={iconColor} strokeWidth={1.8}/><Circle cx="12" cy="12" r="1.3" fill={iconColor}/></Svg>;
+  if (name === 'calendar') return <Svg width={size} height={size} viewBox="0 0 24 24"><Rect x="3.5" y="5" width="17" height="15" rx="3" fill="none" stroke={iconColor} strokeWidth={1.8}/><Path d="M8 3v4M16 3v4M3.5 9h17M8 13h2M14 13h2M8 16.5h2" stroke={iconColor} strokeWidth={1.8} strokeLinecap="round"/></Svg>;
+  if (name === 'cart') return <Svg width={size} height={size} viewBox="0 0 24 24"><Path d="M3 4h2l2.1 10.1a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L20 8H6" fill="none" stroke={iconColor} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"/><Circle cx="9" cy="19" r="1.4" fill={iconColor}/><Circle cx="17" cy="19" r="1.4" fill={iconColor}/></Svg>;
+  if (name === 'arrow') return <Svg width={size} height={size} viewBox="0 0 24 24"><Path d="m9 5 7 7-7 7" fill="none" stroke={iconColor} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/></Svg>;
   return <Svg width={size} height={size} viewBox="0 0 24 24"><Path d="m5 12 4.2 4.2L19 6.5" fill="none" stroke={iconColor} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round"/></Svg>;
 }
