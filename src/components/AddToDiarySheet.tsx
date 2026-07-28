@@ -5,7 +5,8 @@ import { FilterChip } from './FilterChip';
 import { PrimaryButton } from './PrimaryButton';
 import { calculateForWeight } from '@/services/foodMath';
 import { getNextMealType } from '@/services/diaryMath';
-import { colors, radii, spacing } from '@/theme/tokens';
+import { useTheme } from '@/theme/ThemeProvider';
+import { radii, spacing } from '@/theme/tokens';
 import type { MealType, Product } from '@/types/domain';
 
 const meals: { value: MealType; label: string }[] = [
@@ -13,10 +14,11 @@ const meals: { value: MealType; label: string }[] = [
   { value: 'snack', label: 'Перекус' }, { value: 'dinner', label: 'Ужин' },
 ];
 
-export function AddToDiarySheet({ product, visible, initialMeal = getNextMealType(), onClose, onAdd }: {
-  product: Product | null; visible: boolean; initialMeal?: MealType; onClose: () => void;
+export function AddToDiarySheet({ product, visible, initialMeal = getNextMealType(), date, onClose, onAdd }: {
+  product: Product | null; visible: boolean; initialMeal?: MealType; date?: string; onClose: () => void;
   onAdd: (meal: MealType, servings: number, quantityG: number) => Promise<void>;
 }) {
+  const { colors } = useTheme();
   const [meal, setMeal] = useState<MealType>(initialMeal);
   const [quantity, setQuantity] = useState('100');
   const [saving, setSaving] = useState(false);
@@ -26,16 +28,16 @@ export function AddToDiarySheet({ product, visible, initialMeal = getNextMealTyp
   if (!product) return null;
   const submit = async () => { try { setSaving(true); await onAdd(meal, grams / product.servingSizeG, grams); onClose(); } finally { setSaving(false); } };
   return <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-    <Pressable style={styles.scrim} onPress={onClose} />
-    <View style={styles.sheet}>
-      <View style={styles.handle} />
+    <Pressable style={[styles.scrim, { backgroundColor: colors.blackScrim }]} onPress={onClose} />
+    <View style={[styles.sheet, { backgroundColor: colors.surfaceSolid, borderColor: colors.glassBorderStrong }]}>
+      <View style={[styles.handle, { backgroundColor: colors.textMuted }]} />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <View><AppText variant="heading">{product.name}</AppText><AppText tone="secondary">Выбери приём пищи и количество</AppText></View>
+        <View><AppText variant="heading">{product.name}</AppText><AppText tone="secondary">Выбери приём пищи и количество{date ? ` · ${date}` : ''}</AppText></View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>{meals.map((item) => <FilterChip key={item.value} label={item.label} selected={meal === item.value} onPress={() => setMeal(item.value)} />)}</ScrollView>
         <View style={styles.quantityRow}>
-          <Pressable style={styles.roundButton} onPress={() => setQuantity(String(Math.max(1, grams - 10)))}><AppText variant="heading">−</AppText></Pressable>
-          <View style={styles.inputWrap}><TextInput accessibilityLabel="Количество в граммах" value={quantity} onChangeText={setQuantity} keyboardType="decimal-pad" selectTextOnFocus style={styles.input}/><AppText variant="caption" tone="secondary">граммов</AppText></View>
-          <Pressable style={styles.roundButton} onPress={() => setQuantity(String(grams + 10))}><AppText variant="heading">+</AppText></Pressable>
+          <Pressable style={[styles.roundButton, { backgroundColor: colors.greenDark }]} onPress={() => setQuantity(String(Math.max(1, grams - 10)))}><AppText variant="heading">−</AppText></Pressable>
+          <View style={styles.inputWrap}><TextInput accessibilityLabel="Количество в граммах" value={quantity} onChangeText={setQuantity} keyboardType="decimal-pad" selectTextOnFocus style={[styles.input, { color: colors.textPrimary }]}/><AppText variant="caption" tone="secondary">граммов</AppText></View>
+          <Pressable style={[styles.roundButton, { backgroundColor: colors.greenDark }]} onPress={() => setQuantity(String(grams + 10))}><AppText variant="heading">+</AppText></Pressable>
         </View>
         <View style={styles.summary}><AppText variant="heading" tone="green">{Math.round(values?.calories ?? 0)} ккал</AppText><AppText tone="secondary">Б {values?.proteinG == null ? '—' : values.proteinG.toFixed(1)} · Ж {values?.fatG == null ? '—' : values.fatG.toFixed(1)} · У {values?.carbsG == null ? '—' : values.carbsG.toFixed(1)}</AppText></View>
         <PrimaryButton label={saving ? 'Добавляем…' : 'Добавить в дневник'} disabled={saving || grams <= 0} onPress={submit} />
@@ -46,8 +48,8 @@ export function AddToDiarySheet({ product, visible, initialMeal = getNextMealTyp
 }
 
 const styles = StyleSheet.create({
-  scrim: { ...StyleSheet.absoluteFillObject, backgroundColor: colors.blackScrim }, sheet: { maxHeight: '82%', position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: colors.surfaceSolid, borderTopLeftRadius: radii.xl, borderTopRightRadius: radii.xl, borderWidth: 1, borderColor: colors.glassBorderStrong },
-  handle: { alignSelf: 'center', width: 42, height: 5, borderRadius: radii.pill, backgroundColor: colors.textMuted, marginTop: spacing.sm }, content: { padding: spacing.lg, paddingBottom: 40, gap: spacing.lg }, chips: { gap: spacing.sm },
-  quantityRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md }, roundButton: { width: 54, height: 54, borderRadius: radii.md, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.greenDark },
-  inputWrap: { alignItems: 'center' }, input: { minWidth: 110, padding: 0, color: colors.textPrimary, fontSize: 34, fontWeight: '800', textAlign: 'center' }, summary: { alignItems: 'center', gap: spacing.xs },
+  scrim: { ...StyleSheet.absoluteFillObject }, sheet: { maxHeight: '82%', position: 'absolute', left: 0, right: 0, bottom: 0, borderTopLeftRadius: radii.xl, borderTopRightRadius: radii.xl, borderWidth: 1 },
+  handle: { alignSelf: 'center', width: 42, height: 5, borderRadius: radii.pill, marginTop: spacing.sm }, content: { padding: spacing.lg, paddingBottom: 40, gap: spacing.lg }, chips: { gap: spacing.sm },
+  quantityRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md }, roundButton: { width: 54, height: 54, borderRadius: radii.md, alignItems: 'center', justifyContent: 'center' },
+  inputWrap: { alignItems: 'center' }, input: { minWidth: 110, padding: 0, fontSize: 34, fontWeight: '800', textAlign: 'center' }, summary: { alignItems: 'center', gap: spacing.xs },
 });
