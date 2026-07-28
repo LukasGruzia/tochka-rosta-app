@@ -1,5 +1,5 @@
 import type { CalendarDayStatus } from '@/types/domain';
-import { getLocalDateKey } from '@/utils/date';
+import { getLocalDateKey } from '../utils/date';
 
 export interface CalendarCell { date: string; day: number; inCurrentMonth: boolean; }
 

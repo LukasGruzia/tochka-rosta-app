@@ -16,3 +16,4 @@ export function getTabIndicatorMetrics(index: number, width: number, count: numb
 export function shouldActivateTabDrag(dx: number, dy: number) {
   return Math.abs(dx) >= 8 && Math.abs(dx) > Math.abs(dy) * 1.25;
 }
+export function resolveTabGesture(activeIndex:number,x:number,width:number,count:number,cancelled=false){return cancelled?clampTabIndex(activeIndex,count):getTabIndexFromPosition(x,width,count);}

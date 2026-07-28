@@ -21,4 +21,16 @@ describe('meal planner', () => {
     expect(new Set(plan.items.map((item) => item.product.id)).size).toBe(4);
   });
   it('scores a matching meal tag above an unrelated product', () => { expect(scoreProductForMeal(makeProduct(1, ['breakfast']), 'breakfast', target, profile, new Set())).toBeGreaterThan(scoreProductForMeal(makeProduct(2, ['dinner']), 'breakfast', target, profile, new Set())); });
+  it('supports three and five meal positions without changing the default', () => {
+    const products = Array.from({ length: 8 }, (_, index) => makeProduct(index + 1, ['breakfast', 'lunch', 'snack', 'dinner']));
+    expect(generateMealPlan('2026-07-28', products, target, profile, {}, { mealsPerDay: 3 }).items).toHaveLength(3);
+    expect(generateMealPlan('2026-07-28', products, target, profile, {}, { mealsPerDay: 5 }).items).toHaveLength(5);
+    expect(generateMealPlan('2026-07-28', products, target, profile).items).toHaveLength(4);
+  });
+  it('uses budget weighting only when it is enabled', () => {
+    const expensive = { ...makeProduct(1, ['lunch']), price: 900 };
+    const affordable = { ...makeProduct(2, ['lunch']), price: 120 };
+    const budget = { perMealBudget: 200, dailyBudget: 800, weeklyBudget: 5000, currency: 'RUB', includeInRecommendations: true, showOnHome: true } as const;
+    expect(scoreProductForMeal(affordable, 'lunch', target, profile, new Set(), { mode: 'budget', budget })).toBeGreaterThan(scoreProductForMeal(expensive, 'lunch', target, profile, new Set(), { mode: 'budget', budget }));
+  });
 });

@@ -14,3 +14,4 @@ export const quickAddOptions:QuickAddOption[]=[
   {key:'weight',label:'Внести вес',hint:'Динамика профиля',symbol:'↘'},
 ];
 export function prioritizeQuickActions(last:QuickAddAction|null){return last?[...quickAddOptions].sort((a,b)=>a.key===last?-1:b.key===last?1:0):quickAddOptions;}
+export function getQuickAddRoute(action:QuickAddAction){if(action==='search'||action==='recent'||action==='favorites')return'/food-search';if(action==='scan')return'/scanner';if(action==='product')return'/product/new';if(action==='recipe')return'/recipe/new';if(action==='template')return'/meal-templates';if(action==='water')return'/water-tracker';if(action==='weight')return'/weight-progress';return null;}

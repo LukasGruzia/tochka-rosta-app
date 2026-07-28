@@ -20,7 +20,7 @@ interface Section { title: string; data: Product[]; }
 const mealTypes: MealType[] = ['breakfast', 'lunch', 'snack', 'dinner'];
 
 export default function FoodSearchScreen() {
-  const params = useLocalSearchParams<{ meal?: string; date?: string }>();
+  const params = useLocalSearchParams<{ meal?: string; date?: string;mode?:'search'|'recent'|'favorites' }>();
   const products = useAppStore((state) => state.products);
   const diaryDate = useAppStore((state) => state.diaryDate);
   const addToDiary = useAppStore((state) => state.addToDiary);
@@ -41,9 +41,9 @@ export default function FoodSearchScreen() {
       const grouped = groupProductsBySource(searchProducts(categoryProducts, debounced).slice(0, 100));
       return [{ title: 'Мои продукты и рецепты', data: grouped.my }, { title: 'Точка Роста', data: grouped.tochka }, { title: 'Обычные продукты', data: grouped.common }, { title: 'По штрихкоду', data: grouped.barcode }].filter((section) => section.data.length);
     }
-    const categoryFilter = (list: Product[]) => category === 'Все' ? list : list.filter((item) => item.category === category);
+    const categoryFilter = (list: Product[]) => category === 'Все' ? list : list.filter((item) => item.category === category);if(params.mode==='recent')return[{title:'Недавние',data:categoryFilter(recent)}].filter((section)=>section.data.length);if(params.mode==='favorites')return[{title:'Избранное',data:categoryProducts.filter((item)=>item.isFavorite)}].filter((section)=>section.data.length);
     return [{ title: 'Недавние', data: categoryFilter(recent) }, { title: 'Часто добавляешь', data: categoryFilter(frequent) }, { title: 'Избранное', data: categoryProducts.filter((item) => item.isFavorite).slice(0, 16) }, { title: category === 'Все' ? 'Начать поиск' : category, data: category === 'Все' ? [] : categoryProducts.slice(0, 60) }].filter((section) => section.data.length);
-  }, [category, debounced, frequent, products, recent]);
+  }, [category, debounced, frequent, params.mode, products, recent]);
 
   const submitHistory = (value: string) => { setQuery(value); setDebounced(value); void recordSearch(value); };
   return <>

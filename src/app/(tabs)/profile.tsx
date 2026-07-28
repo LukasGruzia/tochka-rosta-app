@@ -34,7 +34,7 @@ export default function ProfileScreen() {
     ],
   );
 
-  return <TabScreen>
+  return <TabScreen title="Профиль" subtitle="Личные данные и прогресс">
     <View style={styles.header}>
       <AvatarPicker name={profile.name} uri={profile.avatarUri} onChange={setAvatar} />
       <AppText variant="title" style={styles.name}>{profile.name}</AppText>

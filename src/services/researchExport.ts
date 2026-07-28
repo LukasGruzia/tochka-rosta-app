@@ -1,0 +1,3 @@
+export interface ResearchExportRow{session_uuid:string;started_at:string;completed_at:string|null;duration_seconds:number|null;event_type:string|null;screen:string|null;metadata_json:string|null;}
+function csv(value:unknown){const text=String(value??'');return`"${text.replace(/"/g,'""')}"`;}
+export function serializeResearchCsv(rows:ResearchExportRow[]){return['session_uuid,started_at,completed_at,duration_seconds,event_type,screen,metadata_json',...rows.map((row)=>[row.session_uuid,row.started_at,row.completed_at,row.duration_seconds,row.event_type,row.screen,row.metadata_json].map(csv).join(','))].join('\n');}
