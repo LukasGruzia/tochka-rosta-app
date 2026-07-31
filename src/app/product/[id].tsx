@@ -10,7 +10,7 @@ import { FilterChip } from '@/components/FilterChip';
 import { GlassCard } from '@/components/GlassCard';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { productAssets } from '@/constants/productAssets';
-import { cloneCustomProduct, deleteCustomProduct, getProductById } from '@/database/repositories/productRepository';
+import { cloneCustomProduct, deleteCustomProduct, getProductById, restoreCustomProduct } from '@/database/repositories/productRepository';
 import { calculateForWeight } from '@/services/foodMath';
 import { formatProductUpdatedAt, getProductSourceLabel } from '@/services/productPresentation';
 import { useAppStore } from '@/store/appStore';
@@ -33,7 +33,7 @@ export default function ProductDetailScreen() {
   if (!product) return <AppBackground><SafeAreaView style={styles.loading}><AppText variant="heading">Продукт не найден или был удалён.</AppText>{loadError ? <AppText tone="secondary">{loadError}</AppText> : null}<PrimaryButton label="Вернуться назад" onPress={() => router.back()} /></SafeAreaView></AppBackground>;
   const imageSource = product.imageUri ? { uri: product.imageUri } : productAssets[product.imageKey];
   const status = getProductSourceLabel(product);
-  const remove = () => Alert.alert('Удалить продукт?', 'Записи в дневнике сохранят снимок названия и КБЖУ.', [{ text: 'Отмена', style: 'cancel' }, { text: 'Удалить', style: 'destructive', onPress: async () => { await deleteCustomProduct(product.id); await refreshProducts(); router.back(); } }]);
+  const remove = () => Alert.alert('Удалить продукт?', 'Записи в дневнике сохранят снимок названия и КБЖУ.', [{ text: 'Отмена', style: 'cancel' }, { text: 'Удалить', style: 'destructive', onPress: async () => { await deleteCustomProduct(product.id); await refreshProducts(); router.back(); Alert.alert('Продукт удалён', 'Старые записи дневника сохранены.', [{ text: 'Вернуть', onPress: () => { void restoreCustomProduct(product.id).then(refreshProducts); } }, { text: 'Готово' }]); } }]);
 
   return <>
     <AppBackground><SafeAreaView style={styles.safe} edges={['top']}><View style={styles.topBar}><Pressable accessibilityLabel="Назад" onPress={() => router.back()} style={[styles.circle, { backgroundColor: colors.surfaceStrong }]}><AppText>‹</AppText></Pressable><AppText variant="caption" tone="secondary" numberOfLines={1} style={styles.topTitle}>{product.category}</AppText><Pressable accessibilityLabel={product.isFavorite ? 'Убрать из избранного' : 'В избранное'} onPress={async () => { await toggleFavorite(product.id); setProduct({ ...product, isFavorite: !product.isFavorite }); }} style={[styles.circle, { backgroundColor: colors.surfaceStrong }]}><AppText tone={product.isFavorite ? 'green' : 'secondary'}>{product.isFavorite ? '♥' : '♡'}</AppText></Pressable></View>

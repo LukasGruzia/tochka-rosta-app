@@ -1,11 +1,11 @@
-import { calculateForWeight, calculateRecipe } from '@/services/foodMath';
+import { calculateForWeight, calculateRecipe, validateRecipeDraft } from '@/services/foodMath';
 import type { RecipeDraft } from '@/types/domain';
 import { getDatabase } from '../database';
 import { getProductById } from './productRepository';
 
 export async function saveRecipe(draft: RecipeDraft) {
-  if (draft.name.trim().length < 2) throw new Error('Укажи название рецепта');
-  if (!draft.ingredients.length) throw new Error('Добавь хотя бы один ингредиент');
+  const errors = validateRecipeDraft(draft);
+  if (errors.length) throw new Error(errors[0]);
   const calculation = calculateRecipe(draft.ingredients, draft.finalWeightG, draft.servings);
   const db = await getDatabase();
   const now = new Date().toISOString();

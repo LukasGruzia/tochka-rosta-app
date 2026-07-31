@@ -112,3 +112,13 @@ export function calculateRecipe(ingredients: RecipeIngredientDraft[], finalWeigh
     perServing: scale(perServingFactor),
   };
 }
+
+export function validateRecipeDraft(draft: Pick<import('@/types/domain').RecipeDraft, 'name' | 'ingredients' | 'finalWeightG' | 'servings'>) {
+  const errors: string[] = [];
+  if (draft.name.trim().length < 2) errors.push('Укажи название рецепта');
+  if (!Number.isFinite(draft.servings) || draft.servings <= 0 || draft.servings > 100) errors.push('Проверь количество порций');
+  if (draft.finalWeightG != null && (!Number.isFinite(draft.finalWeightG) || draft.finalWeightG <= 0 || draft.finalWeightG > 50000)) errors.push('Проверь вес готового блюда');
+  if (!draft.ingredients.length) errors.push('Добавь хотя бы один ингредиент');
+  if (draft.ingredients.some((item) => !Number.isFinite(item.amountG) || item.amountG <= 0 || item.amountG > 10000)) errors.push('Проверь вес ингредиентов');
+  return errors;
+}

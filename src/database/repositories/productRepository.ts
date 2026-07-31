@@ -311,6 +311,19 @@ export async function addFavorite(productId: number) {
   invalidateProductSearchCache();
 }
 
+export async function restoreCustomProduct(id: number) {
+  const db = await getDatabase();
+  const product = await db.getFirstAsync<{ source_type: FoodSourceType }>('SELECT source_type FROM products WHERE id=? AND is_user_created=1 AND deleted_at IS NOT NULL', id);
+  if (!product) throw new Error('Продукт уже недоступен для восстановления');
+  const now = new Date().toISOString();
+  await db.withExclusiveTransactionAsync(async (txn) => {
+    await txn.runAsync("UPDATE products SET deleted_at=NULL,is_available=1,sync_status='pending',updated_at=? WHERE id=?", now, id);
+    if (product.source_type === 'user_recipe') await txn.runAsync("UPDATE recipes SET deleted_at=NULL,sync_status='pending',updated_at=? WHERE product_id=?", now, id);
+  });
+  invalidateProductSearchCache();
+  return getProductById(id);
+}
+
 export async function saveExternalFoodProduct(preview: ExternalFoodPreview, corrections?: { name?: string; servingSizeG?: number; caloriesPer100g?: number | null; proteinPer100g?: number | null; fatPer100g?: number | null; carbsPer100g?: number | null }) {
   const db = await getDatabase();
   const existing = await findProductByCode(preview.barcode);

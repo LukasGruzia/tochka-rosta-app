@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateForWeight, calculateRecipe, hasCalorieMismatch, normalizeTo100g } from './foodMath';
+import { calculateForWeight, calculateRecipe, hasCalorieMismatch, normalizeTo100g, validateRecipeDraft } from './foodMath';
 import type { Product, ProductDraft } from '@/types/domain';
 
 const draft: ProductDraft = {
@@ -45,5 +45,11 @@ describe('food math', () => {
     expect(result.totals.calories).toBe(400);
     expect(result.per100g.calories).toBe(250);
     expect(result.perServing.calories).toBe(200);
+  });
+
+  it('rejects invalid recipe portions, weights and ingredient amounts', () => {
+    expect(validateRecipeDraft({ name: 'Рецепт', servings: Number.NaN, finalWeightG: null, ingredients: [{ product, amountG: 100 }] })).toContain('Проверь количество порций');
+    expect(validateRecipeDraft({ name: 'Рецепт', servings: 2, finalWeightG: 0, ingredients: [{ product, amountG: 100 }] })).toContain('Проверь вес готового блюда');
+    expect(validateRecipeDraft({ name: 'Рецепт', servings: 2, finalWeightG: null, ingredients: [{ product, amountG: -1 }] })).toContain('Проверь вес ингредиентов');
   });
 });
