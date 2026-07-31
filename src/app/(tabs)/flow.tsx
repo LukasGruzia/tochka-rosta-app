@@ -342,6 +342,9 @@ export default function FlowScreen() {
             {([3, 5, 7] as const).map((goal) => (
               <Pressable
                 key={goal}
+                accessibilityRole="button"
+                accessibilityLabel={`Недельная цель: ${goal} дней из 7`}
+                accessibilityState={{ selected: prefs.weeklyGoalDays === goal }}
                 onPress={async () => {
                   await setWeeklyFlowGoal(goal);
                   setPrefs({ ...prefs, weeklyGoalDays: goal });
@@ -386,6 +389,17 @@ export default function FlowScreen() {
               Белок: {Math.round(summary.averageProtein)} г
             </AppText>
           </View>
+        </GlassCard>
+        <GlassCard variant="compact">
+          <AppText variant="heading">
+            {streak === 0
+              ? "Сегодня можно вернуться в свой ритм"
+              : "Стабильность важнее идеальности"}
+          </AppText>
+          <AppText tone="secondary">
+            Завершённые дни остаются частью твоего пути. Один пропуск не удаляет
+            историю, лучшую серию или уже открытые этапы.
+          </AppText>
         </GlassCard>
         <GlassCard variant="compact">
           <AppText variant="heading">День паузы</AppText>
