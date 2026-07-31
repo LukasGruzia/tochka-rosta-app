@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import { AppText } from '@/components/AppText';
+import { createSectionErrorBoundary } from '@/components/ScreenErrorFallback';
 import { GlassCard } from '@/components/GlassCard';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { TabScreen } from '@/components/TabScreen';
@@ -16,6 +17,8 @@ import type { RhythmRecommendation } from '@/features/rhythm/types/rhythm';
 import { getSmartNextStep } from '@/services/smartNextStep';
 import { useAppStore } from '@/store/appStore';
 import { spacing } from '@/theme/tokens';
+
+export const ErrorBoundary = createSectionErrorBoundary('RhythmCenterScreen');
 
 export default function RhythmCenterScreen(){const profile=useAppStore(s=>s.profile);const target=useAppStore(s=>s.target);const diary=useAppStore(s=>s.diary);const ensureProductsLoaded=useAppStore(s=>s.ensureProductsLoaded);const addToDiary=useAppStore(s=>s.addToDiary);const diaryDate=useAppStore(s=>s.diaryDate);const[items,setItems]=useState<RhythmRecommendation[]>([]);const[loading,setLoading]=useState(true);const[loadError,setLoadError]=useState<string|null>(null);const[retryKey,setRetryKey]=useState(0);const[busy,setBusy]=useState<string|null>(null);const[dayPlans,setDayPlans]=useState<Awaited<ReturnType<typeof getRhythmDayPlans>>>([]);const meal=getSmartNextStep(diary,new Date().getHours()).meal;
   useEffect(()=>{let active=true;setLoading(true);setLoadError(null);if(!profile||!target){setLoading(false);return;}void ensureProductsLoaded().then(async()=>{const state=useAppStore.getState();const budget=await loadBudgetSettings();const remaining={calories:Math.max(0,target.calories-(diary?.consumedCalories??0)),proteinG:Math.max(0,target.proteinG-(diary?.consumedProteinG??0)),fatG:Math.max(0,target.fatG-(diary?.consumedFatG??0)),carbsG:Math.max(0,target.carbsG-(diary?.consumedCarbsG??0))};const next=await getRhythmRecommendations({products:state.products,profile,target,mealType:meal,remaining,budget,usedProductIds:diary?.entries.flatMap(entry=>entry.productId?[entry.productId]:[])??[]});if(active){setItems(next);setLoading(false);}}).catch((error)=>{if(active){setLoadError(error instanceof Error?error.message:'Не удалось подобрать варианты');setLoading(false);}});return()=>{active=false;};},[diary,ensureProductsLoaded,meal,profile,retryKey,target]);

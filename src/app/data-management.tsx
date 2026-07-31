@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import * as Sharing from "expo-sharing";
 import { Alert, Pressable, StyleSheet } from "react-native";
 import { AppText } from "@/components/AppText";
+import { createSectionErrorBoundary } from "@/components/ScreenErrorFallback";
 import { GlassCard } from "@/components/GlassCard";
 import { PrimaryButton } from "@/components/PrimaryButton";
 import { TabScreen } from "@/components/TabScreen";
@@ -22,6 +23,7 @@ import { useTheme } from "@/theme/ThemeProvider";
 import { radii } from "@/theme/tokens";
 import { safelyRunHaptic } from "@/services/haptics";
 import { useFeatureFlags } from "@/contexts/FeatureFlagsContext";
+export const ErrorBoundary = createSectionErrorBoundary("DataManagementScreen");
 export default function DataManagementScreen() {
   const initialize = useAppStore((state) => state.initialize);
   const { colors } = useTheme();
@@ -81,7 +83,7 @@ export default function DataManagementScreen() {
       setBusy(false);
       Alert.alert(
         "Проверка пройдена",
-        `Копия от ${new Date(summary.createdAt).toLocaleString("ru-RU")}\nПрофиль: ${summary.profile}\nСвои продукты: ${summary.customProducts}\nДневник: ${summary.diaryEntries}\nВода: ${summary.waterEntries}\nВес: ${summary.weightEntries}\nПланы недели: ${summary.weeklyPlans}\nФото профиля не входит в копию.`,
+        `Копия от ${new Date(summary.createdAt).toLocaleString("ru-RU")}\nПрофиль: ${summary.profile}\nСвои продукты: ${summary.customProducts}\nДневник: ${summary.diaryEntries}\nВода: ${summary.waterEntries}\nВес: ${summary.weightEntries}\nПланы недели: ${summary.weeklyPlans}\nРекомендации Ритма: ${summary.rhythmRecommendations}\nПредпочтения Ритма: ${summary.rhythmPreferences}\nФото профиля не входит в копию.`,
         [
           { text: "Отмена", style: "cancel" },
           {
@@ -142,7 +144,7 @@ export default function DataManagementScreen() {
         <AppText variant="heading">Полная локальная копия</AppText>
         <AppText tone="secondary">
           Профиль, настройки, свои продукты, рецепты, дневник, вода, вес,
-          избранное, наборы, планы, покупки, Поток, достижения и история поиска.
+          избранное, наборы, планы, покупки, Поток, достижения, история поиска и локальная история Ритма.
         </AppText>
         {lastExport ? (
           <AppText variant="caption" tone="green">
