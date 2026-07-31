@@ -49,7 +49,7 @@ describe('avatar and tab polish regressions', () => {
     expect(catalog).toContain('motion.tabDataDelay');
     expect(catalog).toContain('limit: PRODUCT_PAGE_SIZE');
     expect(catalog).toContain('<FlatList');
-    expect(catalog).toContain('<CatalogSkeleton');
+    expect(catalog).toContain('<ProductCardSkeleton');
   });
 
   it('uses a short fade and disables it together with reduced tab motion', () => {

@@ -13,6 +13,7 @@ import { ProgressRing } from '@/components/ProgressRing';
 import { TabScreen } from '@/components/TabScreen';
 import { DiaryCalendarSheet } from '@/components/DiaryCalendarSheet';
 import { QuickAddButton, QuickAddSheet } from '@/components/QuickAddSheet';
+import { DiaryMealSkeleton, ScreenState } from '@/components/ScreenStates';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { cancelAnimation, runOnJS, type SharedValue, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring } from 'react-native-reanimated';
 import { mealLabels } from '@/constants/options';
@@ -47,9 +48,11 @@ export default function DiaryScreen() {
   const targetNutrition = useAppStore((state) => state.target);
   const [selected, setSelected] = useState<DiaryEntry | null>(null);
   const [copying, setCopying] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [calendar,setCalendar]=useState(false);const[quick,setQuick]=useState(false);const reduced=useReducedMotion();const dragX=useSharedValue(0);
   useEffect(()=>{if(params.calendar==='1')setCalendar(true);},[params.calendar]);
-  useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
+  const reload = useCallback(async () => { try { setLoadError(null); await refresh(); } catch (error) { setLoadError(error instanceof Error ? error.message : 'Не удалось загрузить дневник'); } }, [refresh]);
+  useFocusEffect(useCallback(() => { void reload(); }, [reload]));
   const consumed = diary?.consumedCalories ?? 0; const target = diary?.targetCalories ?? 0;
   const remaining = Math.round(target - consumed);
   const changeDay=async(amount:number)=>{if(flags.enableHaptics)void safelyRunHaptic('selection');await setDate(shiftDiaryDate(diaryDate,amount));};
@@ -59,10 +62,11 @@ export default function DiaryScreen() {
   return <>
     <TabScreen title="Дневник" subtitle="Питание и дневной баланс">
       {flags.enableSheetGestures?<DiaryDateSwipe offset={dragX} onChangeDay={(amount)=>{void changeDay(amount);}}>{dateControl}</DiaryDateSwipe>:dateControl}
+      {!diary ? loadError ? <ScreenState tone="error" icon="diary" title="Не удалось загрузить дневник" message="Записи на устройстве не изменены." actionLabel="Попробовать снова" onAction={reload} /> : <DiaryMealSkeleton /> : <>
       <View style={styles.tools}><Pressable accessibilityRole="button" accessibilityLabel="Копировать дневник" style={[styles.tool, { backgroundColor: colors.surface, borderColor: colors.glassBorder }]} onPress={() => setCopying(true)}><AppIcon name="copy" size={20} color={colors.greenBright}/><AppText variant="caption">Копировать</AppText></Pressable><Pressable accessibilityRole="button" accessibilityLabel="Открыть наборы еды" style={[styles.tool, { backgroundColor: colors.surface, borderColor: colors.glassBorder }]} onPress={() => router.push('/meal-templates' as never)}><AppIcon name="collection" size={20} color={colors.greenBright}/><AppText variant="caption">Наборы еды</AppText></Pressable></View>
       <GlassCard variant="accent" style={styles.hero}><ProgressRing size={144} progress={target ? consumed / target : 0} value={String(Math.round(consumed))} label={`из ${Math.round(target)} ккал`}/><AppText tone={remaining >= 0 ? 'secondary' : 'warning'}>{remaining >= 0 ? `Осталось ${remaining} ккал` : `Сверх цели ${Math.abs(remaining)} ккал`}</AppText><View style={styles.macroGrid}><MacroProgress label="Б" value={diary?.consumedProteinG ?? 0} target={diary?.targetProteinG ?? 0}/><MacroProgress label="Ж" value={diary?.consumedFatG ?? 0} target={diary?.targetFatG ?? 0} color={colors.gold}/><MacroProgress label="У" value={diary?.consumedCarbsG ?? 0} target={diary?.targetCarbsG ?? 0} color="#60A5FA"/></View></GlassCard>
       {diary?.isCompleted ? <GlassCard variant="compact" selected><View style={styles.closedTitle}><AppIcon name="check" size={20} color={colors.greenBright}/><AppText variant="heading" tone="green">День закрыт</AppText></View><AppText tone="secondary">Записи сохранены в истории Потока.</AppText></GlassCard> : null}
-      {!diary?.entries.length?<GlassCard variant="compact" style={styles.empty}><View style={[styles.emptyMark,{backgroundColor:colors.greenGlow}]}><AppIcon name="diary" size={26} color={colors.greenBright}/></View><View style={styles.emptyCopy}><AppText variant="heading">Сегодня пока ничего не добавлено</AppText><AppText tone="secondary">Начни с продукта, воды или сохранённого набора.</AppText></View></GlassCard>:null}
+      {!diary.entries.length?<ScreenState icon="diary" title="Сегодня пока ничего не добавлено" message="Начни с продукта, воды или сохранённого набора." actionLabel="Добавить первый продукт" onAction={()=>setQuick(true)}/>:null}
       {mealOrder.map((meal) => { const entries = diary?.entries.filter((entry) => entry.mealType === meal) ?? []; const mealCalories = entries.reduce((sum, entry) => sum + entry.calories, 0); return <GlassCard key={meal} variant="compact" style={styles.meal}>
         <View style={styles.mealHeader}><View><AppText variant="heading">{mealLabels[meal]}</AppText><AppText variant="caption" tone="muted">{Math.round(mealCalories)} ккал</AppText></View>{!diary?.isCompleted ? <Pressable accessibilityRole="button" accessibilityLabel={`Добавить в ${mealLabels[meal]}`} style={[styles.addButton, { backgroundColor: colors.greenGlow }]} onPress={() => router.push({ pathname: '/food-search' as never, params: { meal, date: diaryDate } } as never)}><AppIcon name="add" color={colors.greenBright}/></Pressable> : null}</View>
         {!entries.length ? <AppText tone="muted">Пока ничего не добавлено</AppText> : entries.map((entry) => <Pressable key={entry.id} disabled={diary?.isCompleted} style={[styles.entry, { borderTopColor: colors.glassBorder }]} onPress={() => setSelected(entry)}><View style={styles.entryCopy}><AppText style={styles.entryName}>{entry.productName}</AppText><AppText variant="caption" tone="secondary">{Math.round(entry.quantityG)} г · Б {entry.proteinG == null ? '—' : entry.proteinG.toFixed(1)} · Ж {entry.fatG == null ? '—' : entry.fatG.toFixed(1)} · У {entry.carbsG == null ? '—' : entry.carbsG.toFixed(1)}</AppText></View><AppText tone="green">{Math.round(entry.calories)}</AppText></Pressable>)}
@@ -71,6 +75,7 @@ export default function DiaryScreen() {
       <PrimaryButton label="Открыть баланс дня" secondary onPress={()=>router.push('/day-balance' as never)}/>
       {!diary?.isCompleted?<QuickAddButton onPress={()=>setQuick(true)}/>:null}
       <AppText variant="caption" tone="muted">Цель рассчитывается по данным профиля. История хранится локально на устройстве.</AppText>
+      </>}
     </TabScreen>
     {selected ? <EntryEditor entry={selected} onClose={() => setSelected(null)} onSave={async (entry, meal, grams) => { await editEntry(entry.id, meal, grams / entry.servingSizeG, grams); setSelected(null); }} onDelete={(entry) => Alert.alert('Удалить запись?', entry.productName, [{ text: 'Отмена', style: 'cancel' }, { text: 'Удалить', style: 'destructive', onPress: async () => { await removeEntry(entry.id); setSelected(null); } }])}/> : null}
     {targetNutrition && copying ? <CopyDiarySheet visible sourceDate={diaryDate} diary={diary} target={targetNutrition} onClose={() => setCopying(false)} onCopied={() => refresh(diaryDate)} /> : null}

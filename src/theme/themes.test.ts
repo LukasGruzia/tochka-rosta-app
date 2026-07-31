@@ -13,4 +13,12 @@ describe('premium theme system', () => {
   it('provides every semantic glass level', () => {
     expect(Object.keys(glass)).toEqual(expect.arrayContaining(['base', 'raised', 'interactive', 'accent', 'overlay', 'navigation']));
   });
+
+  it('provides matching semantic surface colors in both themes', () => {
+    for (const key of ['surfaceBase', 'surfaceRaised', 'surfaceInteractive', 'surfaceAccent', 'surfaceOverlay', 'surfaceNavigation'] as const) {
+      expect(darkColors[key]).toBeTruthy();
+      expect(lightColors[key]).toBeTruthy();
+      expect(darkColors[key]).not.toBe(lightColors[key]);
+    }
+  });
 });

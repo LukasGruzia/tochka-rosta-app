@@ -7,6 +7,7 @@ import { GlassCard } from '@/components/GlassCard';
 import { ProfileMenuRow, ProfileMenuSection } from '@/components/ProfileMenuSection';
 import { ProfileStatCard } from '@/components/ProfileStatCard';
 import { TabScreen } from '@/components/TabScreen';
+import { ProfileSkeleton, ScreenState } from '@/components/ScreenStates';
 import { goalLabels } from '@/constants/options';
 import { loadProfileOverview } from '@/database/repositories/analyticsRepository';
 import { useAppStore } from '@/store/appStore';
@@ -24,6 +25,9 @@ export default function ProfileScreen() {
   useRenderTracker('ProfileScreen');
   const { profile, avatarUri, avatarCacheKey, userName, updateAvatar } = useUserProfile();
   const flow = useAppStore((state) => state.flow);
+  const status = useAppStore((state) => state.status);
+  const appError = useAppStore((state) => state.error);
+  const initialize = useAppStore((state) => state.initialize);
   const themeMode = useAppStore((state) => state.themeMode);
   const reset = useAppStore((state) => state.reset);
   const { performanceMode } = useFeatureFlags();
@@ -39,7 +43,7 @@ export default function ProfileScreen() {
     return () => { active = false; };
   }, []);
 
-  if (!profile) return <TabScreen title="Профиль"><AppText tone="secondary">Профиль ещё не создан.</AppText></TabScreen>;
+  if (!profile) return <TabScreen title="Профиль">{status === 'booting' ? <ProfileSkeleton /> : status === 'error' ? <ScreenState tone="error" icon="profile" title="Не удалось загрузить профиль" message={appError ?? 'Локальные данные не изменены.'} actionLabel="Попробовать снова" onAction={initialize} /> : <ScreenState icon="profile" title="Профиль ещё не создан" message="Заверши короткое знакомство, чтобы рассчитать дневную норму." actionLabel="Создать профиль" onAction={() => router.replace('/(onboarding)/welcome')} />}</TabScreen>;
   const weight = overview.currentWeight ?? profile.weightKg;
   const themeLabel = themeMode === 'system' ? 'Как в системе' : themeMode === 'dark' ? 'Тёмная' : 'Светлая';
   const confirmReset = () => Alert.alert(

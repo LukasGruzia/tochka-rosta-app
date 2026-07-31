@@ -9,6 +9,7 @@ import { AppText } from '@/components/AppText';
 import { FilterChip } from '@/components/FilterChip';
 import { ProductListRow } from '@/components/ProductListRow';
 import { QuickAddButton, QuickAddSheet } from '@/components/QuickAddSheet';
+import { ProductCardSkeleton, ScreenState } from '@/components/ScreenStates';
 import { countProducts, loadProductCategories, loadProductsPage, PRODUCT_PAGE_SIZE, type ProductPageOptions } from '@/database/repositories/productRepository';
 import { useRenderTracker } from '@/performance/renderTracker';
 import { useScreenProfiler } from '@/performance/screenProfiler';
@@ -50,6 +51,8 @@ export default function CatalogScreen() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
   const [selected, setSelected] = useState<Product | null>(null);
   const [quick, setQuick] = useState(false);
   const [catalogReady, setCatalogReady] = useState(false);
@@ -87,16 +90,23 @@ export default function CatalogScreen() {
     const id = ++requestId.current;
     generation.current += 1;
     setLoading(true);
+    setLoadError(null);
     const options = pageOptions(filter, category, debouncedQuery);
     void Promise.all([loadProductsPage({ ...options, limit: PRODUCT_PAGE_SIZE, offset: 0 }), countProducts(options)])
       .then(([items, count]) => {
         if (!active || id !== requestId.current) return;
         setProducts(items); setTotal(count); setPerformanceMetric('currentListSize', items.length);
       })
-      .catch(() => { if (active && id === requestId.current) { setProducts([]); setTotal(0); } })
+      .catch((error) => {
+        if (active && id === requestId.current) {
+          setProducts([]);
+          setTotal(0);
+          setLoadError(error instanceof Error ? error.message : 'Не удалось загрузить продукты');
+        }
+      })
       .finally(() => { if (active && id === requestId.current) setLoading(false); });
     return () => { active = false; };
-  }, [catalogReady, category, debouncedQuery, filter]);
+  }, [catalogReady, category, debouncedQuery, filter, retryKey]);
 
   const loadMore = useCallback(async () => {
     if (loading || loadingMore || products.length >= total) return;
@@ -125,13 +135,13 @@ export default function CatalogScreen() {
 
   return <>
     <AppBackground><SafeAreaView style={styles.safe} edges={['top']}>
-      <View style={[styles.title, { backgroundColor: colors.backgroundPrimary }]}><View><AppText variant="title">Каталог</AppText><AppText tone="secondary">{total ? `${total} продуктов доступны локально` : loading ? 'Загружаем первую страницу…' : 'Продукты не найдены'}</AppText></View><Pressable accessibilityLabel="Сканировать код" style={[styles.iconButton, { backgroundColor: colors.greenGlow, borderColor: colors.glassBorder }]} onPress={() => router.push('/scanner')}><AppIcon name="qr" color={colors.greenBright} /></Pressable></View>
+      <View style={[styles.title, { backgroundColor: colors.backgroundPrimary }]}><View><AppText variant="title">Каталог</AppText><AppText tone="secondary">{loadError ? 'Каталог временно недоступен' : total ? `${total} продуктов доступны локально` : loading ? 'Загружаем первую страницу…' : 'Продукты не найдены'}</AppText></View><Pressable accessibilityLabel="Сканировать код" style={[styles.iconButton, { backgroundColor: colors.greenGlow, borderColor: colors.glassBorder }]} onPress={() => router.push('/scanner')}><AppIcon name="qr" color={colors.greenBright} /></Pressable></View>
       <FlatList data={products} keyExtractor={(item) => String(item.id)} renderItem={renderProduct} showsVerticalScrollIndicator={false} keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled" initialNumToRender={8} maxToRenderPerBatch={8} updateCellsBatchingPeriod={48} windowSize={5} removeClippedSubviews onEndReached={() => { void loadMore(); }} onEndReachedThreshold={0.55}
         contentContainerStyle={[styles.content, { paddingBottom: getTabContentPadding(insets.bottom) }]}
         ListHeaderComponent={<View style={styles.header}><View style={[styles.search, { borderColor: colors.glassBorder, backgroundColor: colors.surfaceStrong }]}><AppText tone="muted">⌕</AppText><TextInput value={query} onChangeText={setQuery} placeholder="Найти продукт или блюдо" placeholderTextColor={colors.textMuted} style={[styles.searchInput, { color: colors.textPrimary }]} returnKeyType="search" /><Pressable accessibilityLabel="Открыть полный поиск" onPress={() => router.push('/food-search' as never)}><AppText tone="green">›</AppText></Pressable></View><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontal}>{filters.map((item) => <FilterChip key={item.value} label={item.label} selected={filter === item.value} onPress={() => setFilter(item.value)} />)}</ScrollView><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontal}>{['Все', ...categories].map((item) => <FilterChip key={item} label={item} selected={category === item} onPress={() => setCategory(item)} />)}</ScrollView><View style={styles.actions}><Pressable style={[styles.action, { borderColor: colors.glassBorder }]} onPress={() => router.push('/product/new')}><AppText tone="green">+</AppText><AppText variant="caption">Создать продукт</AppText></Pressable><Pressable style={[styles.action, { borderColor: colors.glassBorder }]} onPress={() => router.push('/recipe/new')}><AppText tone="green">+</AppText><AppText variant="caption">Собрать рецепт</AppText></Pressable></View><QuickAddButton onPress={() => setQuick(true)} /><View style={styles.count}><AppText variant="heading">{category === 'Все' ? 'Продукты' : category}</AppText><AppText variant="caption" tone="muted">{products.length} из {total}</AppText></View></View>}
         ItemSeparatorComponent={Separator}
         ListFooterComponent={loadingMore ? <AppText tone="muted" style={styles.loading}>Загружаем ещё…</AppText> : null}
-        ListEmptyComponent={loading ? <CatalogSkeleton color={colors.surfaceStrong} /> : <View style={styles.empty}><AppText variant="heading">Ничего не найдено</AppText><AppText tone="secondary">Сбрось фильтр или создай собственный продукт.</AppText></View>}
+        ListEmptyComponent={loading ? <ProductCardSkeleton /> : loadError ? <ScreenState tone="error" icon="catalog" title="Не удалось загрузить продукты" message="Локальные данные не изменены. Попробуй открыть каталог ещё раз." actionLabel="Попробовать снова" onAction={() => setRetryKey((value) => value + 1)} /> : <ScreenState icon="catalog" title="По этому запросу ничего не найдено" message="Измени запрос или создай собственный продукт." actionLabel="Сбросить фильтры" onAction={() => { setQuery(''); setFilter('all'); setCategory('Все'); }} secondaryActionLabel="Создать свой продукт" onSecondaryAction={() => router.push('/product/new')} />}
       />
     </SafeAreaView></AppBackground>
     {selected ? <AddToDiarySheet product={selected} visible initialMeal={meal} date={diaryDate} onClose={() => setSelected(null)} onAdd={async (mealType, servings, quantityG) => { await addToDiary({ product: selected, mealType, servings, quantityG }); Alert.alert('Добавлено', selected.name); }} /> : null}
@@ -140,10 +150,7 @@ export default function CatalogScreen() {
 }
 
 function Separator() { return <View style={styles.separator} />; }
-function CatalogSkeleton({ color }: { color: string }) {
-  return <View accessibilityLabel="Загружаем каталог" style={styles.skeleton}>{[0, 1, 2, 3].map((item) => <View key={item} style={[styles.skeletonRow, { backgroundColor: color }]} />)}</View>;
-}
 const styles = StyleSheet.create({
   safe: { flex: 1 }, title: { minHeight: 76, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.lg, paddingVertical: spacing.sm }, iconButton: { width: 46, height: 46, alignItems: 'center', justifyContent: 'center', borderRadius: radii.md, borderWidth: 1 },
-  content: { paddingHorizontal: spacing.md }, header: { gap: spacing.md, paddingBottom: spacing.md }, search: { minHeight: 52, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.md, borderRadius: radii.md, borderWidth: 1 }, searchInput: { flex: 1, fontSize: 16 }, horizontal: { gap: spacing.sm }, actions: { flexDirection: 'row', gap: spacing.sm }, action: { flex: 1, minHeight: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.xs, borderRadius: radii.md, borderWidth: 1 }, count: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, separator: { height: spacing.sm }, empty: { alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.xxl }, loading: { textAlign: 'center', paddingVertical: spacing.md }, skeleton: { gap: spacing.sm }, skeletonRow: { height: 74, borderRadius: radii.md, opacity: 0.72 },
+  content: { paddingHorizontal: spacing.md }, header: { gap: spacing.md, paddingBottom: spacing.md }, search: { minHeight: 52, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.md, borderRadius: radii.md, borderWidth: 1 }, searchInput: { flex: 1, fontSize: 16 }, horizontal: { gap: spacing.sm }, actions: { flexDirection: 'row', gap: spacing.sm }, action: { flex: 1, minHeight: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.xs, borderRadius: radii.md, borderWidth: 1 }, count: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, separator: { height: spacing.sm }, loading: { textAlign: 'center', paddingVertical: spacing.md },
 });

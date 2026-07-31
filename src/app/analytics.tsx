@@ -5,6 +5,7 @@ import { AppText } from "@/components/AppText";
 import { FilterChip } from "@/components/FilterChip";
 import { GlassCard } from "@/components/GlassCard";
 import { QuickAddButton, QuickAddSheet } from "@/components/QuickAddSheet";
+import { ScreenState, StatsSkeleton } from "@/components/ScreenStates";
 import { useAppStore } from "@/store/appStore";
 import { TabScreen } from "@/components/TabScreen";
 import { mealLabels } from "@/constants/options";
@@ -30,6 +31,7 @@ export default function AnalyticsScreen() {
   const [period, setPeriod] = useState<Period>(30);
   const [data, setData] = useState<HistoryAnalytics | null>(null);
   const [loadError, setLoadError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
   const { colors } = useTheme();
   const diaryDate = useAppStore((state) => state.diaryDate);
   const [quick, setQuick] = useState(false);
@@ -46,7 +48,7 @@ export default function AnalyticsScreen() {
     return () => {
       active = false;
     };
-  }, [period]);
+  }, [period, retryKey]);
   const visibleDays = useMemo(
     () => data?.caloriesByDay.slice(-30) ?? [],
     [data?.caloriesByDay],
@@ -83,22 +85,11 @@ export default function AnalyticsScreen() {
         ))}
       </ScrollView>
       {loadError ? (
-        <GlassCard>
-          <AppText variant="heading">Не удалось загрузить статистику</AppText>
-          <AppText tone="secondary">Данные не изменены. Выбери период ещё раз, чтобы повторить.</AppText>
-        </GlassCard>
+        <ScreenState tone="error" icon="flow" title="Не удалось загрузить статистику" message="Данные на устройстве не изменены." actionLabel="Попробовать снова" onAction={() => setRetryKey((value) => value + 1)} />
       ) : !data ? (
-        <GlassCard>
-          <AppText tone="secondary">Собираем статистику…</AppText>
-        </GlassCard>
+        <StatsSkeleton />
       ) : !data.entryCount ? (
-        <GlassCard style={styles.empty}>
-          <AppText variant="heading">История ещё формируется</AppText>
-          <AppText tone="secondary">
-            Добавляй блюда и закрывай дни — здесь появятся средние значения,
-            точность и динамика.
-          </AppText>
-        </GlassCard>
+        <ScreenState icon="flow" title="История ещё формируется" message="Добавляй блюда и закрывай дни — здесь появятся средние значения, точность и динамика." actionLabel="Добавить продукт" onAction={() => setQuick(true)} />
       ) : (
         <>
           <View style={styles.stats}>
