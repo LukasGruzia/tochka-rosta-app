@@ -129,7 +129,7 @@ export default function RemainderMatchScreen() {
     >
       <GlassCard variant="accent">
         <View style={styles.rhythmHead}>
-          <RhythmCharacter size="compact" emotion="thinking" action="presentAdvice" preferIllustration={false} />
+          <RhythmCharacter size="compact" emotion="thinking" action="presentAdvice" />
           <AppText tone="secondary" style={styles.copy}>Ритм сравнил доступные варианты. Выбор и добавление остаются за тобой.</AppText>
         </View>
         <AppText variant="caption" tone="green">

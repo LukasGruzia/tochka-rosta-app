@@ -13,6 +13,7 @@ import { motion, radii, spacing } from '@/theme/tokens';
 import type { CalendarDayStatus } from '@/types/domain';
 import { getLocalDateKey } from '@/utils/date';
 import { AppText } from './AppText';
+import { AppIcon } from './AppIcon';
 import { PrimaryButton } from './PrimaryButton';
 
 const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -90,9 +91,9 @@ export function DiaryCalendarSheet({ visible, selectedDate, onClose, onOpen }: {
   const sheet = <Animated.View style={[styles.sheet, { backgroundColor: colors.surfaceSolid, borderColor: colors.glassBorderStrong, paddingBottom: Math.max(24, insets.bottom + 16) }, animated]}>
     <View style={[styles.handle, { backgroundColor: colors.textMuted }]} />
     <View style={styles.header}>
-      <Pressable accessibilityLabel="Предыдущий месяц" style={[styles.arrow, { backgroundColor: colors.surface }]} onPress={() => setMonth(shiftMonth(month, -1))}><AppText>‹</AppText></Pressable>
+      <Pressable accessibilityRole="button" accessibilityLabel="Предыдущий месяц" style={[styles.arrow, { backgroundColor: colors.surface }]} onPress={() => setMonth(shiftMonth(month, -1))}><View style={styles.previous}><AppIcon name="arrow" color={colors.textPrimary}/></View></Pressable>
       <View style={styles.title}><AppText variant="heading">{formatMonthTitle(month)}</AppText><Pressable onPress={() => { const today = getLocalDateKey(); setSelected(today); setMonth(today.slice(0, 7)); }}><AppText variant="caption" tone="green">Сегодня</AppText></Pressable></View>
-      <Pressable accessibilityLabel="Следующий месяц" style={[styles.arrow, { backgroundColor: colors.surface }]} onPress={() => setMonth(shiftMonth(month, 1))}><AppText>›</AppText></Pressable>
+      <Pressable accessibilityRole="button" accessibilityLabel="Следующий месяц" style={[styles.arrow, { backgroundColor: colors.surface }]} onPress={() => setMonth(shiftMonth(month, 1))}><AppIcon name="arrow" color={colors.textPrimary}/></Pressable>
     </View>
     {flags.enableSheetGestures ? <CalendarMonthSwipe month={month} onMonthChange={setMonth}>{calendar}</CalendarMonthSwipe> : calendar}
     <View style={styles.legend}><AppText variant="caption" tone="muted">● запись</AppText><AppText variant="caption" tone="muted">◆ закрыт</AppText><AppText variant="caption" style={{ color: colors.gold }}>◇ этап / пауза</AppText></View>
@@ -106,7 +107,7 @@ export function DiaryCalendarSheet({ visible, selectedDate, onClose, onOpen }: {
 
 const styles = StyleSheet.create({
   scrim: { ...StyleSheet.absoluteFillObject }, sheet: { position: 'absolute', left: 0, right: 0, bottom: 0, minHeight: '70%', maxHeight: '86%', borderTopLeftRadius: radii.xl, borderTopRightRadius: radii.xl, borderWidth: 1, paddingHorizontal: spacing.lg, paddingTop: spacing.sm, gap: spacing.md },
-  handle: { width: 42, height: 5, borderRadius: 3, alignSelf: 'center', opacity: 0.45 }, header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, arrow: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' }, title: { alignItems: 'center', gap: 3 },
+  handle: { width: 42, height: 5, borderRadius: 3, alignSelf: 'center', opacity: 0.45 }, header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, arrow: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' }, previous:{transform:[{rotate:'180deg'}]}, title: { alignItems: 'center', gap: 3 },
   week: { flexDirection: 'row' }, weekday: { width: `${100 / 7}%`, textAlign: 'center' }, grid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: spacing.xs }, cell: { width: `${100 / 7}%`, aspectRatio: 1, alignItems: 'center', justifyContent: 'center', borderRadius: radii.pill }, compactCell: { aspectRatio: 1.08 }, selectedText: { color: '#031108', fontWeight: '800' },
   markers: { height: 9, flexDirection: 'row', alignItems: 'center', gap: 2 }, dot: { width: 4, height: 4, borderRadius: 2 }, flame: { fontSize: 7 }, pause: { width: 6, height: 6, borderRadius: 3, borderWidth: 1 }, legend: { flexDirection: 'row', justifyContent: 'center', gap: spacing.md },
 });
