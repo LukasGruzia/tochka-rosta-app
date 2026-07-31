@@ -34,6 +34,8 @@ import {
 import { loadRhythmDiagnostics } from "@/features/rhythm/repositories/rhythmRepository";
 import { publishRhythmEvent } from "@/features/rhythm/services/eventService";
 import { RhythmCharacter } from "@/features/rhythm/components/RhythmCharacter";
+import { rhythmEmotionValues, resolveRhythmAsset } from "@/features/rhythm/config/rhythmAssets";
+import { getRhythmAssetDiagnostics, subscribeRhythmAssetDiagnostics } from "@/features/rhythm/services/assetDiagnostics";
 
 export default function DeveloperScreen() {
   const initialize = useAppStore((state) => state.initialize);
@@ -45,6 +47,7 @@ export default function DeveloperScreen() {
   > | null>(null);
   const [busy, setBusy] = useState(false);
   const [rhythmDiagnostics, setRhythmDiagnostics] = useState<Record<string, number> | null>(null);
+  const [showRhythmStates, setShowRhythmStates] = useState(false);
   const insets = useSafeAreaInsets();
   const { tabBarHeight } = useTabBarLayout();
   const {
@@ -61,6 +64,7 @@ export default function DeveloperScreen() {
     getUiDiagnosticsSnapshot,
     getUiDiagnosticsSnapshot,
   );
+  const rhythmAssetDiagnostics = useSyncExternalStore(subscribeRhythmAssetDiagnostics, getRhythmAssetDiagnostics, getRhythmAssetDiagnostics);
   const refresh = useCallback(
     async () => setInspection(await inspectDevelopmentDatabase()),
     [],
@@ -264,6 +268,13 @@ export default function DeveloperScreen() {
       <GlassCard variant="accent">
         <View style={styles.future}><RhythmCharacter size="compact" emotion="thinking" action="presentAdvice"/><View style={styles.flex}><AppText variant="heading">Диагностика Ритма</AppText><AppText tone="secondary">Симуляции создают только служебное событие и не изменяют реальный дневник, профиль или Поток.</AppText></View></View>
         <AppText variant="caption" tone="muted">{rhythmDiagnostics ? Object.entries(rhythmDiagnostics).map(([key,value]) => `${key}: ${value}`).join(' · ') : 'Загрузка локальных счётчиков…'}</AppText>
+        <AppText variant="heading">Rhythm Assets</AppText>
+        <AppText variant="caption" tone="secondary">emotion: {rhythmAssetDiagnostics.emotion} · size: {rhythmAssetDiagnostics.displaySize}</AppText>
+        <AppText variant="caption" tone="secondary">asset: {rhythmAssetDiagnostics.assetKey} · requested: {rhythmAssetDiagnostics.requestedKey}</AppText>
+        <AppText variant="caption" tone="secondary">source: {rhythmAssetDiagnostics.fileName} · {rhythmAssetDiagnostics.pixelSize} · {(rhythmAssetDiagnostics.fileBytes/1024).toFixed(1)} KB</AppText>
+        <AppText variant="caption" tone={rhythmAssetDiagnostics.fallbackUsed?'warning':'green'}>fallback: {rhythmAssetDiagnostics.fallbackUsed?'да':'нет'} · error: {rhythmAssetDiagnostics.loadError??'нет'} · performance: {rhythmAssetDiagnostics.performanceMode}</AppText>
+        <PrimaryButton label={showRhythmStates?'Скрыть состояния Ритма':'Показать все состояния Ритма'} secondary onPress={()=>setShowRhythmStates(value=>!value)}/>
+        {showRhythmStates?<View style={styles.rhythmStates}>{rhythmEmotionValues.map(emotion=>{const asset=resolveRhythmAsset(emotion,'compact');return <View key={emotion} style={[styles.rhythmState,{borderColor:colors.glassBorder}]}><RhythmCharacter size="compact" emotion={emotion} animated={false}/><AppText variant="caption">{emotion}</AppText><AppText variant="caption" tone={asset.fallbackUsed?'warning':'muted'}>{asset.key}{asset.fallbackUsed?' · fallback':''}</AppText></View>;})}</View>:null}
         <PrimaryButton label="Симулировать добавление блюда" secondary onPress={() => publishRhythmEvent({type:'MEAL_ADDED',route:'/developer',payload:{simulation:true}})} />
         <PrimaryButton label="Симулировать milestone" secondary onPress={() => publishRhythmEvent({type:'FLOW_MILESTONE',route:'/developer',payload:{streak:7,simulation:true}})} />
         <PrimaryButton label="Симулировать приближение к бюджету" secondary onPress={() => publishRhythmEvent({type:'BUDGET_APPROACHING',route:'/developer',payload:{simulation:true}})} />
@@ -430,6 +441,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.md,
   },
+  rhythmStates:{flexDirection:'row',flexWrap:'wrap',gap:spacing.sm},
+  rhythmState:{width:'47%',alignItems:'center',padding:spacing.sm,borderWidth:1,borderRadius:radii.md},
   flag: {
     minHeight: 58,
     flexDirection: "row",
