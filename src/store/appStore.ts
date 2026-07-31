@@ -17,6 +17,8 @@ import { getLocalDateKey } from '@/utils/date';
 import { isPerformanceMode, type PerformanceMode } from '@/config/performance';
 import { setPerformanceMetric } from '@/performance/performanceLogger';
 import { invalidateCalendarMonth } from '@/database/repositories/calendarRepository';
+import { publishRhythmEvent } from '@/features/rhythm/services/eventService';
+import { recordRhythmFeedback } from '@/features/rhythm/repositories/rhythmRepository';
 
 export const defaultDraft: ProfileDraft = {
   name: '', age: 30, calculationSex: 'male', heightCm: 175, weightKg: 70,
@@ -205,6 +207,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     await addDiaryEntry({ ...input, date }, get().target ?? undefined);
     invalidateCalendarMonth(date);
     if (date === get().diaryDate) set({ diary: await loadDiary(date) });
+    void publishRhythmEvent({ type: 'MEAL_ADDED', route: '/diary', payload: { mealType: input.mealType, productName: input.product.name } });
   },
 
   addProduct: async (product, mealType = 'snack') => get().addToDiary({ product, mealType, servings: 1 }),
@@ -213,12 +216,16 @@ export const useAppStore = create<AppState>((set, get) => ({
     await updateDiaryEntry(id, { mealType, servings, quantityG });
     invalidateCalendarMonth(get().diaryDate);
     set({ diary: await loadDiary(get().diaryDate) });
+    void publishRhythmEvent({ type: 'MEAL_UPDATED', route: '/diary', payload: { mealType } });
   },
 
   removeDiaryEntry: async (id) => {
+    const removed = get().diary?.entries.find((entry) => entry.id === id);
     await deleteDiaryEntry(id);
     invalidateCalendarMonth(get().diaryDate);
     set({ diary: await loadDiary(get().diaryDate) });
+    if (removed?.productId && Date.now() - new Date(removed.createdAt).getTime() < 15 * 60 * 1000) void recordRhythmFeedback('removedSoon', { productIds: [removed.productId] });
+    void publishRhythmEvent({ type: 'MEAL_REMOVED', route: '/diary', payload: { mealType: removed?.mealType } });
   },
 
   refreshDiary: async (date) => {
@@ -232,6 +239,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   toggleFavorite: async (productId) => {
     const isFavorite = await toggleFavoriteRepository(productId);
     set({ products: get().products.map((product) => product.id === productId ? { ...product, isFavorite } : product) });
+    if (isFavorite) void recordRhythmFeedback('favorite', { productIds: [productId] });
     return isFavorite;
   },
 
@@ -239,6 +247,8 @@ export const useAppStore = create<AppState>((set, get) => ({
     const flow = await completeDiaryDay(get().diaryDate);
     invalidateCalendarMonth(get().diaryDate);
     set({ flow, diary: await loadDiary(get().diaryDate) });
+    void publishRhythmEvent({ type: 'DAY_COMPLETED', route: '/flow', payload: { streak: flow.currentStreak } });
+    if ([3, 7, 14, 30, 50, 100].includes(flow.currentStreak)) void publishRhythmEvent({ type: 'FLOW_MILESTONE', route: '/flow', payload: { streak: flow.currentStreak } });
   },
 
   refreshFlow: async () => set({ flow: await loadFlowState() }),
@@ -252,6 +262,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     const plan = generateMealPlan(selectedDate, products, target, profile, replacements,{...options,budget});
     await saveMealPlan(plan);
     set({ mealPlan: plan });
+    void publishRhythmEvent({ type: 'MEAL_PLAN_CREATED', route: '/meal-plan', payload: { itemCount: plan.items.length } });
   },
 
   loadPlan: async (date) => set({ mealPlan: await loadMealPlan(date ?? get().diaryDate) }),
@@ -292,7 +303,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   refreshWater: async (date) => set({ water: await loadWaterSummary(date ?? get().diaryDate) }),
-  addWater: async (amountMl,date) => { const selected=date??get().diaryDate; await addWaterRepository(amountMl,selected); if(selected===get().diaryDate)set({water:await loadWaterSummary(selected)}); },
+  addWater: async (amountMl,date) => { const selected=date??get().diaryDate; await addWaterRepository(amountMl,selected); if(selected===get().diaryDate)set({water:await loadWaterSummary(selected)}); void publishRhythmEvent({type:'WATER_ADDED',route:'/water-tracker',payload:{amountMl}}); },
   removeWater: async (id) => { await removeWaterEntry(id); set({water:await loadWaterSummary(get().diaryDate)}); },
   setWaterGoal: async (goalMl) => { const value=await updateWaterGoal(goalMl); const profile=get().profile;if(profile)set({profile:{...profile,waterGoalMl:value},water:get().water?{...get().water!,goalMl:value}:null}); },
 

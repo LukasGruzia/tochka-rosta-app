@@ -20,6 +20,9 @@ import { radii, spacing } from "@/theme/tokens";
 import type { BudgetSettings, MealType } from "@/types/domain";
 import { safelyRunHaptic } from "@/services/haptics";
 import { useFeatureFlags } from "@/contexts/FeatureFlagsContext";
+import { RhythmCharacter } from "@/features/rhythm/components/RhythmCharacter";
+import { publishRhythmEvent } from "@/features/rhythm/services/eventService";
+import { recordRhythmFeedback } from "@/features/rhythm/repositories/rhythmRepository";
 
 export default function RemainderMatchScreen() {
   const params = useLocalSearchParams<{ meal?: MealType }>();
@@ -47,6 +50,7 @@ export default function RemainderMatchScreen() {
       active = false;
     };
   }, [ensureProductsLoaded]);
+  useEffect(() => { void publishRhythmEvent({ type: "REMAINDER_MATCH_OPENED", route: "/remainder-match" }); }, []);
   const meal =
     params.meal ?? getSmartNextStep(diary, new Date().getHours()).meal;
   const remaining = useMemo(
@@ -94,6 +98,7 @@ export default function RemainderMatchScreen() {
           servings: item.servings,
           quantityG: item.quantityG,
         });
+      void recordRhythmFeedback("accepted", { recommendationKey: match.id, productIds: items.map((item) => item.product.id) });
       if (flags.enableHaptics) await safelyRunHaptic("success");
       Alert.alert(
         "Добавлено",
@@ -123,6 +128,10 @@ export default function RemainderMatchScreen() {
       }
     >
       <GlassCard variant="accent">
+        <View style={styles.rhythmHead}>
+          <RhythmCharacter size="compact" emotion="thinking" action="presentAdvice" preferIllustration={false} />
+          <AppText tone="secondary" style={styles.copy}>Ритм сравнил доступные варианты. Выбор и добавление остаются за тобой.</AppText>
+        </View>
         <AppText variant="caption" tone="green">
           ОСТАЛОСЬ НА СЕГОДНЯ
         </AppText>
@@ -240,6 +249,7 @@ const styles = StyleSheet.create({
   },
   heading: { flexDirection: "row", gap: spacing.md, alignItems: "flex-start" },
   copy: { flex: 1, gap: 3 },
+  rhythmHead: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.sm },
   items: { gap: spacing.xs },
   item: {
     minHeight: 44,
