@@ -1,3 +1,94 @@
-import { useState } from 'react';import{router}from'expo-router';import{Pressable,StyleSheet,View}from'react-native';import{AppText}from'@/components/AppText';import{FlowFlame}from'@/components/FlowFlame';import{GlassCard}from'@/components/GlassCard';import{PrimaryButton}from'@/components/PrimaryButton';import{TabScreen}from'@/components/TabScreen';import{juryDemoSteps as steps}from'@/services/juryDemo';import{useTheme}from'@/theme/ThemeProvider';import{spacing}from'@/theme/tokens';
-export default function JuryDemoScreen(){const{colors}=useTheme();const[index,setIndex]=useState(0);const[finished,setFinished]=useState(false);const step=steps[index];const close=()=>router.back();return <TabScreen title="Демонстрация проекта" subtitle="Безопасный офлайн-сценарий · 60–90 секунд" headerRight={<Pressable style={[styles.close,{backgroundColor:colors.surface}]} onPress={close}><AppText>×</AppText></Pressable>}><View style={[styles.track,{backgroundColor:colors.greenDark}]}><View style={[styles.fill,{width:`${(index+1)/steps.length*100}%`,backgroundColor:colors.greenBright}]}/></View><AppText variant="caption" tone="muted">Шаг {index+1} из {steps.length}</AppText>{finished?<GlassCard variant="accent" style={styles.centerCard}><FlowFlame streak={7} size={160}/><AppText variant="title">Демонстрация завершена</AppText><AppText tone="secondary" style={styles.centerText}>Реальные данные пользователя не изменялись: сценарий использовал только изолированное состояние экрана.</AppText><PrimaryButton label="Закрыть" onPress={close}/></GlassCard>:<GlassCard variant="accent" style={styles.demo}><View style={[styles.symbol,{backgroundColor:colors.greenGlow}]}><AppText variant="display" tone="green">{index<5?'＋':index<9?'◎':'◆'}</AppText></View><AppText variant="title">{step[0]}</AppText><AppText tone="secondary" style={styles.centerText}>{step[1]}</AppText>{index===4?<AppText variant="heading" tone="green">1 670 / 2 140 ккал</AppText>:null}{index===6?<AppText variant="heading" tone="green">455 ккал · Б 39 · Ж 13 · У 47</AppText>:null}{index===9?<FlowFlame streak={7} size={130}/>:null}</GlassCard>}<View style={styles.buttons}><View style={styles.grow}><PrimaryButton label="Назад" secondary disabled={index===0||finished} onPress={()=>setIndex((value)=>Math.max(0,value-1))}/></View><View style={styles.grow}><PrimaryButton label={index===steps.length-1?'Завершить':'Далее'} disabled={finished} onPress={()=>{if(index===steps.length-1)setFinished(true);else setIndex((value)=>value+1);}}/></View></View><Pressable onPress={close}><AppText variant="caption" tone="muted" style={styles.centerText}>Пропустить демонстрацию</AppText></Pressable><AppText variant="caption" tone="muted">Сценарий не использует SQLite пользователя, камеру, API или интернет.</AppText></TabScreen>;}
-const styles=StyleSheet.create({close:{width:42,height:42,borderRadius:21,alignItems:'center',justifyContent:'center'},track:{height:6,borderRadius:3,overflow:'hidden'},fill:{height:'100%'},demo:{minHeight:360,alignItems:'center',justifyContent:'center',gap:spacing.md},centerCard:{alignItems:'center',gap:spacing.md},symbol:{width:86,height:86,borderRadius:43,alignItems:'center',justifyContent:'center'},centerText:{textAlign:'center'},buttons:{flexDirection:'row',gap:spacing.sm},grow:{flex:1}});
+import { useState } from 'react';
+import { router } from 'expo-router';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { AppText } from '@/components/AppText';
+import { FlowFlame } from '@/components/FlowFlame';
+import { GlassCard } from '@/components/GlassCard';
+import { PrimaryButton } from '@/components/PrimaryButton';
+import { TabScreen } from '@/components/TabScreen';
+import { juryDemoSteps as steps } from '@/services/juryDemo';
+import { useTheme } from '@/theme/ThemeProvider';
+import { spacing } from '@/theme/tokens';
+
+export default function JuryDemoScreen() {
+  const { colors } = useTheme();
+  const [index, setIndex] = useState(0);
+  const [finished, setFinished] = useState(false);
+  const step = steps[index];
+  const close = () => router.back();
+  return (
+    <TabScreen
+      title="Демонстрация проекта"
+      subtitle="Безопасный офлайн-сценарий · 60–90 секунд"
+      headerRight={(
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Закрыть демонстрацию"
+          style={[styles.close, { backgroundColor: colors.surface }]}
+          onPress={close}
+        >
+          <AppText>×</AppText>
+        </Pressable>
+      )}
+    >
+      <View style={[styles.track, { backgroundColor: colors.greenDark }]}>
+        <View style={[styles.fill, { width: `${((index + 1) / steps.length) * 100}%`, backgroundColor: colors.greenBright }]} />
+      </View>
+      <AppText variant="caption" tone="muted">Шаг {index + 1} из {steps.length}</AppText>
+      {finished ? (
+        <GlassCard variant="accent" style={styles.centerCard}>
+          <FlowFlame streak={7} size={160} />
+          <AppText variant="title">Демонстрация завершена</AppText>
+          <AppText tone="secondary" style={styles.centerText}>
+            Реальные данные пользователя не изменялись: сценарий использовал только изолированное состояние экрана.
+          </AppText>
+          <PrimaryButton label="Закрыть" onPress={close} />
+        </GlassCard>
+      ) : (
+        <GlassCard variant="accent" style={styles.demo}>
+          <View style={[styles.symbol, { backgroundColor: colors.greenGlow }]}>
+            <AppText variant="display" tone="green">{index < 5 ? '+' : index < 10 ? '◎' : '◆'}</AppText>
+          </View>
+          <AppText variant="title">{step[0]}</AppText>
+          <AppText tone="secondary" style={styles.centerText}>{step[1]}</AppText>
+          {index === 4 ? <AppText variant="heading" tone="green">1 670 / 2 140 ккал</AppText> : null}
+          {index === 7 ? <AppText variant="heading" tone="green">455 ккал · Белки 39 · Жиры 13 · Углеводы 47</AppText> : null}
+          {index === 10 ? <FlowFlame streak={7} size={130} /> : null}
+        </GlassCard>
+      )}
+      <View style={styles.buttons}>
+        <View style={styles.grow}>
+          <PrimaryButton label="Назад" secondary disabled={index === 0 || finished} onPress={() => setIndex((value) => Math.max(0, value - 1))} />
+        </View>
+        <View style={styles.grow}>
+          <PrimaryButton
+            label={index === steps.length - 1 ? 'Завершить' : 'Далее'}
+            disabled={finished}
+            onPress={() => {
+              if (index === steps.length - 1) setFinished(true);
+              else setIndex((value) => value + 1);
+            }}
+          />
+        </View>
+      </View>
+      <Pressable accessibilityRole="button" onPress={close}>
+        <AppText variant="caption" tone="muted" style={styles.centerText}>Пропустить демонстрацию</AppText>
+      </Pressable>
+      <AppText variant="caption" tone="muted">
+        Сценарий не использует SQLite пользователя, камеру, API или интернет.
+      </AppText>
+    </TabScreen>
+  );
+}
+
+const styles = StyleSheet.create({
+  close: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  track: { height: 6, borderRadius: 3, overflow: 'hidden' },
+  fill: { height: '100%' },
+  demo: { minHeight: 360, alignItems: 'center', justifyContent: 'center', gap: spacing.md },
+  centerCard: { alignItems: 'center', gap: spacing.md },
+  symbol: { width: 86, height: 86, borderRadius: 43, alignItems: 'center', justifyContent: 'center' },
+  centerText: { textAlign: 'center' },
+  buttons: { flexDirection: 'row', gap: spacing.sm },
+  grow: { flex: 1 },
+});
