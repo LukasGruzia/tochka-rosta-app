@@ -18,6 +18,8 @@ import { spacing } from '@/theme/tokens';
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
 import { setPerformanceMetric } from '@/performance/performanceLogger';
 import { useRenderTracker } from '@/performance/renderTracker';
+import { RhythmErrorBoundary } from '@/features/rhythm/components/RhythmErrorBoundary';
+import { RhythmOverlayProvider } from '@/features/rhythm/components/RhythmOverlayProvider';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -36,7 +38,11 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <FeatureFlagsProvider>
           <ThemeProvider>
-            <ThemedStack />
+            <RhythmErrorBoundary>
+              <RhythmOverlayProvider>
+                <ThemedStack />
+              </RhythmOverlayProvider>
+            </RhythmErrorBoundary>
           </ThemeProvider>
         </FeatureFlagsProvider>
       </SafeAreaProvider>
