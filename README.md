@@ -17,6 +17,8 @@ npx expo start --go --clear --tunnel
 - на iPhone — системной камерой;
 - если телефон и компьютер не видят друг друга в локальной сети, запустите `npx expo start --tunnel`.
 
+Инструкции Beta 1, разрешения, обновление SQLite и device-checklist: [docs/beta-testing.md](docs/beta-testing.md) и [docs/development/beta-checklist.md](docs/development/beta-checklist.md).
+
 Другие команды:
 
 ```bash
