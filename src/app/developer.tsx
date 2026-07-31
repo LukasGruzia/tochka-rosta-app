@@ -36,6 +36,7 @@ import { publishRhythmEvent } from "@/features/rhythm/services/eventService";
 import { RhythmCharacter } from "@/features/rhythm/components/RhythmCharacter";
 import { rhythmEmotionValues, resolveRhythmAsset } from "@/features/rhythm/config/rhythmAssets";
 import { getRhythmAssetDiagnostics, subscribeRhythmAssetDiagnostics } from "@/features/rhythm/services/assetDiagnostics";
+import { betaChecklist } from "@/config/betaChecklist";
 
 export default function DeveloperScreen() {
   const initialize = useAppStore((state) => state.initialize);
@@ -48,6 +49,7 @@ export default function DeveloperScreen() {
   const [busy, setBusy] = useState(false);
   const [rhythmDiagnostics, setRhythmDiagnostics] = useState<Record<string, number> | null>(null);
   const [showRhythmStates, setShowRhythmStates] = useState(false);
+  const [completedBetaItems, setCompletedBetaItems] = useState<string[]>([]);
   const insets = useSafeAreaInsets();
   const { tabBarHeight } = useTabBarLayout();
   const {
@@ -400,6 +402,31 @@ export default function DeveloperScreen() {
         </AppText>
       </GlassCard>
       <GlassCard>
+        <AppText variant="heading">Beta Checklist</AppText>
+        <AppText tone="secondary">
+          {completedBetaItems.length} из {betaChecklist.length} сценариев отмечено в этой сессии.
+        </AppText>
+        {betaChecklist.map((item, index) => {
+          const checked = completedBetaItems.includes(item.id);
+          return (
+            <Pressable
+              key={item.id}
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked }}
+              accessibilityLabel={item.label}
+              style={[styles.checklistItem, { borderColor: colors.glassBorder }]}
+              onPress={() => setCompletedBetaItems((current) =>
+                checked ? current.filter((id) => id !== item.id) : [...current, item.id],
+              )}
+            >
+              <AppText tone={checked ? "green" : "muted"}>{checked ? "✓" : String(index + 1)}</AppText>
+              <AppText style={styles.flex}>{item.label}</AppText>
+            </Pressable>
+          );
+        })}
+        <PrimaryButton label="Сбросить отметки" secondary disabled={!completedBetaItems.length} onPress={() => setCompletedBetaItems([])} />
+      </GlassCard>
+      <GlassCard>
         <AppText variant="heading">Будущие способы добавления</AppText>
         {futureFoodInputProviders.map((provider) => (
           <View key={provider.id} style={styles.future}>
@@ -448,5 +475,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
+  },
+  checklistItem: {
+    minHeight: 44,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
 });

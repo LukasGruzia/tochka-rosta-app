@@ -1,0 +1,17 @@
+export const betaChecklist = [
+  { id: 'create-profile', label: 'Создать профиль' },
+  { id: 'edit-profile', label: 'Изменить профиль' },
+  { id: 'add-avatar', label: 'Добавить аватар' },
+  { id: 'add-breakfast', label: 'Добавить завтрак' },
+  { id: 'find-product', label: 'Найти продукт' },
+  { id: 'edit-portion', label: 'Изменить порцию' },
+  { id: 'repeat-meal', label: 'Повторить приём' },
+  { id: 'scan-qr', label: 'Сканировать QR' },
+  { id: 'rhythm-recommendation', label: 'Получить рекомендацию Ритма' },
+  { id: 'reject-recommendation', label: 'Отклонить рекомендацию' },
+  { id: 'complete-day', label: 'Закрыть день' },
+  { id: 'open-flow', label: 'Открыть Поток' },
+  { id: 'open-statistics', label: 'Открыть статистику' },
+  { id: 'create-backup', label: 'Создать backup' },
+  { id: 'restore-backup', label: 'Восстановить backup' },
+] as const;
