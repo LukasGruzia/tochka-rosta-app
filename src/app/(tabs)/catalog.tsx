@@ -95,7 +95,7 @@ export default function CatalogScreen() {
     void Promise.all([loadProductsPage({ ...options, limit: PRODUCT_PAGE_SIZE, offset: 0 }), countProducts(options)])
       .then(([items, count]) => {
         if (!active || id !== requestId.current) return;
-        setProducts(items); setTotal(count); setPerformanceMetric('currentListSize', items.length);
+        setProducts(items); setTotal(Math.max(count, items.length)); setPerformanceMetric('currentListSize', items.length);
       })
       .catch((error) => {
         if (active && id === requestId.current) {

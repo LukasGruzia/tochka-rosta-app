@@ -2,7 +2,7 @@ import { calculateForWeight, normalizeTo100g, validateProductDraft } from '@/ser
 import type { DataStatus, ExternalFoodPreview, FoodSourceType, Goal, MealType, Product, ProductDraft } from '@/types/domain';
 import { getDatabase } from '../database';
 import { profileQuery } from '@/performance/queryProfiler';
-import { normalizeSearchText } from '@/services/productSearch';
+import { normalizeSearchText, searchProducts } from '@/services/productSearch';
 import { clearRecommendationCache } from '@/services/recommendationCache';
 
 interface ProductRow {
@@ -164,7 +164,12 @@ export async function loadProductsPage(options: ProductPageOptions = {}) {
   if (cached) return cached;
   return profileQuery('products:page', async () => {
     const rows = await db.getAllAsync<ProductRow>(`${productSelect} WHERE ${where} ORDER BY ${order} LIMIT ? OFFSET ?`, ...params, ...orderParams, limit, offset);
-    const products = rows.map(mapProductRow);
+    let products = rows.map(mapProductRow);
+    if (normalized && offset === 0 && products.length === 0) {
+      const fallback = buildProductWhere({ ...options, query: undefined });
+      const candidates = await db.getAllAsync<ProductRow>(`${productSelect} WHERE ${fallback.where} ORDER BY p.is_user_created DESC, p.name COLLATE NOCASE LIMIT 160`, ...fallback.params);
+      products = searchProducts(candidates.map(mapProductRow), normalized).slice(0, limit);
+    }
     if (cacheKey) {
       searchPageCache.set(cacheKey, products);
       while (searchPageCache.size > MAX_SEARCH_CACHE_ENTRIES) {

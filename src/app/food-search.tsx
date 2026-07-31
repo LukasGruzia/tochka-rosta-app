@@ -72,7 +72,7 @@ export default function FoodSearchScreen() {
     setSearchLoading(true);
     setLoadError(null);
     void Promise.all([loadProductsPage({ ...options, limit: PRODUCT_PAGE_SIZE, offset: 0 }), countProducts(options)])
-      .then(([items, count]) => { if (requestGuard.isCurrent(request)) { setResults(items); setTotal(count); setPerformanceMetric('currentListSize', items.length); } })
+      .then(([items, count]) => { if (requestGuard.isCurrent(request)) { setResults(items); setTotal(Math.max(count, items.length)); setPerformanceMetric('currentListSize', items.length); } })
       .catch((error) => { if (requestGuard.isCurrent(request)) setLoadError(error instanceof Error ? error.message : 'Не удалось выполнить поиск'); })
       .finally(() => { if (requestGuard.isCurrent(request)) setSearchLoading(false); });
     return () => requestGuard.invalidate();
