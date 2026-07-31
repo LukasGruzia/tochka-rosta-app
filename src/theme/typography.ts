@@ -1,10 +1,14 @@
 export const typography = {
   display: { fontSize: 40, lineHeight: 44, fontWeight: '800' as const, letterSpacing: -1.1 },
+  screenTitle: { fontSize: 30, lineHeight: 35, fontWeight: '700' as const, letterSpacing: -0.65 },
+  sectionTitle: { fontSize: 21, lineHeight: 26, fontWeight: '700' as const, letterSpacing: -0.2 },
+  cardTitle: { fontSize: 17, lineHeight: 22, fontWeight: '700' as const, letterSpacing: -0.1 },
   title: { fontSize: 30, lineHeight: 35, fontWeight: '700' as const, letterSpacing: -0.65 },
   heading: { fontSize: 21, lineHeight: 26, fontWeight: '700' as const, letterSpacing: -0.2 },
   body: { fontSize: 16, lineHeight: 23, fontWeight: '400' as const },
   caption: { fontSize: 13, lineHeight: 17, fontWeight: '500' as const },
   tab: { fontSize: 11, lineHeight: 14, fontWeight: '600' as const },
+  tabLabel: { fontSize: 11, lineHeight: 14, fontWeight: '600' as const },
   metric: { fontSize: 48, lineHeight: 52, fontWeight: '800' as const, letterSpacing: -1.4, fontVariant: ['tabular-nums'] as const },
   numeric: { fontVariant: ['tabular-nums'] as const },
 } as const;

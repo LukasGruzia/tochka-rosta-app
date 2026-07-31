@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import { typography } from '@/theme/tokens';
 import { useTheme } from '@/theme/ThemeProvider';
 
-type Variant = 'display' | 'title' | 'heading' | 'body' | 'caption';
+type Variant = 'display' | 'screenTitle' | 'sectionTitle' | 'cardTitle' | 'title' | 'heading' | 'body' | 'caption' | 'tabLabel';
 interface Props extends ComponentProps<typeof Text> { variant?: Variant; tone?: 'primary' | 'secondary' | 'muted' | 'green' | 'warning'; }
 
 export function AppText({ variant = 'body', tone = 'primary', style, ...props }: Props) {

@@ -26,7 +26,17 @@ export function OptimizedGlassSurface({ children, variant = 'base', selected = f
   const { flags, resolvedPerformanceMode } = useFeatureFlags();
   const level = glass[variant];
   const isAccent = selected || variant === 'accent';
-  const surface = variant === 'base' ? colors.surfaceBase : variant === 'accent' ? colors.surfaceAccent : colors.surfaceRaised;
+  const surface = variant === 'base'
+    ? colors.surfaceBase
+    : variant === 'interactive'
+      ? colors.surfaceInteractive
+      : variant === 'accent'
+        ? colors.surfaceAccent
+        : variant === 'overlay'
+          ? colors.surfaceOverlay
+          : variant === 'navigation'
+            ? colors.surfaceNavigation
+            : colors.surfaceRaised;
   const gradient = isAccent ? [colors.surfaceAccent, colors.surfaceRaised] as const : [colors.specular, surface] as const;
   const allowNativeBlur = Platform.OS === 'ios'
     && flags.enableAdvancedGlassBlur
