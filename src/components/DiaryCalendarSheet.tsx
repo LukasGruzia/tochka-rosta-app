@@ -15,6 +15,7 @@ import { getLocalDateKey } from '@/utils/date';
 import { AppText } from './AppText';
 import { AppIcon } from './AppIcon';
 import { PrimaryButton } from './PrimaryButton';
+import { ScreenState } from './ScreenStates';
 
 const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
@@ -65,6 +66,9 @@ export function DiaryCalendarSheet({ visible, selectedDate, onClose, onOpen }: {
   const [month, setMonth] = useState(selectedDate.slice(0, 7));
   const [selected, setSelected] = useState(selectedDate);
   const [statuses, setStatuses] = useState<CalendarDayStatus[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
   const offset = useSharedValue(0);
   const reduced = useReducedMotion();
   useEffect(() => () => cancelAnimation(offset), [offset]);
@@ -78,16 +82,19 @@ export function DiaryCalendarSheet({ visible, selectedDate, onClose, onOpen }: {
   useEffect(() => {
     if (!visible) return;
     let active = true;
+    setLoading(true);
+    setLoadError(null);
     void loadCalendarMonth(month).then((items) => { if (active) setStatuses(items); }).catch((error) => {
       if (!active) return;
       setStatuses([]);
+      setLoadError(error instanceof Error ? error.message : 'Не удалось загрузить календарь');
       recordUiAction('error_occurred', 'calendar_load', error instanceof Error ? error.message : 'Calendar load failed');
-    });
+    }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
-  }, [month, visible]);
+  }, [month, retryKey, visible]);
   const dismiss = () => { offset.set(0); onClose(); };
   const animated = useAnimatedStyle(() => ({ transform: [{ translateY: reduced ? 0 : offset.get() }] }));
-  const calendar = <MonthCalendar monthKey={month} selectedDate={selected} statuses={statuses} onSelect={(date) => { if (flags.enableHaptics) void safelyRunHaptic('selection'); setSelected(date); }} onMonthChange={setMonth} />;
+  const calendar = loading ? <View style={styles.calendarLoading}><AppText tone="secondary">Загружаем месяц…</AppText></View> : loadError ? <ScreenState tone="error" icon="calendar" title="Не удалось загрузить календарь" message="Дневник и выбранная дата не изменены." actionLabel="Попробовать снова" onAction={()=>setRetryKey((value)=>value+1)}/> : <MonthCalendar monthKey={month} selectedDate={selected} statuses={statuses} onSelect={(date) => { if (flags.enableHaptics) void safelyRunHaptic('selection'); setSelected(date); }} onMonthChange={setMonth} />;
   const sheet = <Animated.View style={[styles.sheet, { backgroundColor: colors.surfaceSolid, borderColor: colors.glassBorderStrong, paddingBottom: Math.max(24, insets.bottom + 16) }, animated]}>
     <View style={[styles.handle, { backgroundColor: colors.textMuted }]} />
     <View style={styles.header}>
@@ -97,7 +104,7 @@ export function DiaryCalendarSheet({ visible, selectedDate, onClose, onOpen }: {
     </View>
     {flags.enableSheetGestures ? <CalendarMonthSwipe month={month} onMonthChange={setMonth}>{calendar}</CalendarMonthSwipe> : calendar}
     <View style={styles.legend}><AppText variant="caption" tone="muted">● запись</AppText><AppText variant="caption" tone="muted">◆ закрыт</AppText><AppText variant="caption" style={{ color: colors.gold }}>◇ этап / пауза</AppText></View>
-    <PrimaryButton label="Открыть выбранный день" onPress={() => { onOpen(selected); dismiss(); }} />
+    <PrimaryButton label="Открыть выбранный день" disabled={loading || Boolean(loadError)} onPress={() => { onOpen(selected); dismiss(); }} />
   </Animated.View>;
   return <Modal visible={visible} transparent animationType={reduced ? 'none' : 'fade'} onRequestClose={dismiss}>
     <Pressable style={[styles.scrim, { backgroundColor: colors.blackScrim }]} onPress={dismiss} />
@@ -109,5 +116,5 @@ const styles = StyleSheet.create({
   scrim: { ...StyleSheet.absoluteFillObject }, sheet: { position: 'absolute', left: 0, right: 0, bottom: 0, minHeight: '70%', maxHeight: '86%', borderTopLeftRadius: radii.xl, borderTopRightRadius: radii.xl, borderWidth: 1, paddingHorizontal: spacing.lg, paddingTop: spacing.sm, gap: spacing.md },
   handle: { width: 42, height: 5, borderRadius: 3, alignSelf: 'center', opacity: 0.45 }, header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, arrow: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' }, previous:{transform:[{rotate:'180deg'}]}, title: { alignItems: 'center', gap: 3 },
   week: { flexDirection: 'row' }, weekday: { width: `${100 / 7}%`, textAlign: 'center' }, grid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: spacing.xs }, cell: { width: `${100 / 7}%`, aspectRatio: 1, alignItems: 'center', justifyContent: 'center', borderRadius: radii.pill }, compactCell: { aspectRatio: 1.08 }, selectedText: { color: '#031108', fontWeight: '800' },
-  markers: { height: 9, flexDirection: 'row', alignItems: 'center', gap: 2 }, dot: { width: 4, height: 4, borderRadius: 2 }, flame: { fontSize: 7 }, pause: { width: 6, height: 6, borderRadius: 3, borderWidth: 1 }, legend: { flexDirection: 'row', justifyContent: 'center', gap: spacing.md },
+  markers: { height: 9, flexDirection: 'row', alignItems: 'center', gap: 2 }, dot: { width: 4, height: 4, borderRadius: 2 }, flame: { fontSize: 7 }, pause: { width: 6, height: 6, borderRadius: 3, borderWidth: 1 }, calendarLoading:{minHeight:300,alignItems:'center',justifyContent:'center'},legend: { flexDirection: 'row', justifyContent: 'center', gap: spacing.md },
 });
