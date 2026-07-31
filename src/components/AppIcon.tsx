@@ -1,7 +1,7 @@
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { useTheme } from '@/theme/ThemeProvider';
 
-export type IconName = 'home' | 'diary' | 'catalog' | 'flow' | 'profile' | 'qr' | 'check' | 'add' | 'target' | 'calendar' | 'cart' | 'arrow';
+export type IconName = 'home' | 'diary' | 'catalog' | 'flow' | 'profile' | 'qr' | 'check' | 'add' | 'target' | 'calendar' | 'cart' | 'arrow' | 'copy' | 'collection';
 export function AppIcon({ name, color, size = 24 }: { name: IconName; color?: string; size?: number }) {
   const { colors } = useTheme();
   const iconColor = color ?? colors.textMuted;
@@ -15,6 +15,8 @@ export function AppIcon({ name, color, size = 24 }: { name: IconName; color?: st
   if (name === 'target') return <Svg width={size} height={size} viewBox="0 0 24 24"><Circle cx="12" cy="12" r="8.5" fill="none" stroke={iconColor} strokeWidth={1.8}/><Circle cx="12" cy="12" r="4.5" fill="none" stroke={iconColor} strokeWidth={1.8}/><Circle cx="12" cy="12" r="1.3" fill={iconColor}/></Svg>;
   if (name === 'calendar') return <Svg width={size} height={size} viewBox="0 0 24 24"><Rect x="3.5" y="5" width="17" height="15" rx="3" fill="none" stroke={iconColor} strokeWidth={1.8}/><Path d="M8 3v4M16 3v4M3.5 9h17M8 13h2M14 13h2M8 16.5h2" stroke={iconColor} strokeWidth={1.8} strokeLinecap="round"/></Svg>;
   if (name === 'cart') return <Svg width={size} height={size} viewBox="0 0 24 24"><Path d="M3 4h2l2.1 10.1a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L20 8H6" fill="none" stroke={iconColor} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"/><Circle cx="9" cy="19" r="1.4" fill={iconColor}/><Circle cx="17" cy="19" r="1.4" fill={iconColor}/></Svg>;
+  if (name === 'copy') return <Svg width={size} height={size} viewBox="0 0 24 24"><Rect x="8" y="7" width="11" height="13" rx="2.5" fill="none" stroke={iconColor} strokeWidth={1.8}/><Path d="M16 7V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h1" fill="none" stroke={iconColor} strokeWidth={1.8} strokeLinecap="round"/></Svg>;
+  if (name === 'collection') return <Svg width={size} height={size} viewBox="0 0 24 24"><Rect x="4" y="5" width="16" height="15" rx="3" fill="none" stroke={iconColor} strokeWidth={1.8}/><Path d="M8 3v4M16 3v4M8 11h8M8 15h5" fill="none" stroke={iconColor} strokeWidth={1.8} strokeLinecap="round"/></Svg>;
   if (name === 'arrow') return <Svg width={size} height={size} viewBox="0 0 24 24"><Path d="m9 5 7 7-7 7" fill="none" stroke={iconColor} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/></Svg>;
   return <Svg width={size} height={size} viewBox="0 0 24 24"><Path d="m5 12 4.2 4.2L19 6.5" fill="none" stroke={iconColor} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round"/></Svg>;
 }
