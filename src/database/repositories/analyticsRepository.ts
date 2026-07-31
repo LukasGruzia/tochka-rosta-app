@@ -56,3 +56,28 @@ export async function loadProfileOverview() {
   ]));
   return { trackedDays: diary?.tracked_days ?? 0, entryCount: diary?.entry_count ?? 0, currentWeight: weight?.current_weight ?? null };
 }
+
+export interface MonthlySummary {
+  monthKey: string;
+  filledDays: number;
+  completedDays: number;
+  averageProteinG: number;
+  favoriteBreakfast: string | null;
+  bestStreak: number;
+  acceptedRhythmRecommendations: number;
+}
+
+export async function loadMonthlySummary(monthKey = getLocalDateKey().slice(0, 7)): Promise<MonthlySummary | null> {
+  const db = await getDatabase();
+  const start = `${monthKey}-01`;
+  const [year, month] = monthKey.split('-').map(Number);
+  const end = getLocalDateKey(new Date(year, month, 0, 12));
+  const [days, breakfast, flow, rhythm] = await profileQuery('analytics:monthly_summary', () => Promise.all([
+    db.getFirstAsync<{ filled_days:number; completed_days:number; average_protein:number }>(`SELECT SUM(CASE WHEN consumed_calories>0 THEN 1 ELSE 0 END) AS filled_days,SUM(is_completed) AS completed_days,AVG(CASE WHEN consumed_calories>0 THEN consumed_protein_g END) AS average_protein FROM diary_days WHERE date BETWEEN ? AND ?`,start,end),
+    db.getFirstAsync<{ name:string|null }>(`SELECT e.product_name_snapshot AS name FROM diary_entries e JOIN diary_days d ON d.id=e.diary_day_id WHERE d.date BETWEEN ? AND ? AND e.meal_type='breakfast' AND e.deleted_at IS NULL GROUP BY e.product_name_snapshot ORDER BY COUNT(*) DESC,e.product_name_snapshot LIMIT 1`,start,end),
+    db.getFirstAsync<{ best_streak:number }>(`SELECT MAX(streak_after_completion) AS best_streak FROM flow_history WHERE date BETWEEN ? AND ? AND deleted_at IS NULL`,start,end),
+    db.getFirstAsync<{ count:number }>(`SELECT COUNT(*) AS count FROM rhythm_feedback WHERE feedback_type='accepted' AND substr(created_at,1,10) BETWEEN ? AND ?`,start,end),
+  ]));
+  if (!(days?.filled_days ?? 0)) return null;
+  return {monthKey,filledDays:days?.filled_days??0,completedDays:days?.completed_days??0,averageProteinG:days?.average_protein??0,favoriteBreakfast:breakfast?.name??null,bestStreak:flow?.best_streak??0,acceptedRhythmRecommendations:rhythm?.count??0};
+}

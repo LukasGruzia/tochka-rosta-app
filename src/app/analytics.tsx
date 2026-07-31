@@ -9,7 +9,7 @@ import { ScreenState, StatsSkeleton } from "@/components/ScreenStates";
 import { useAppStore } from "@/store/appStore";
 import { TabScreen } from "@/components/TabScreen";
 import { mealLabels } from "@/constants/options";
-import { loadHistoryAnalytics } from "@/database/repositories/analyticsRepository";
+import { loadHistoryAnalytics, loadMonthlySummary, type MonthlySummary } from "@/database/repositories/analyticsRepository";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radii, spacing } from "@/theme/tokens";
 import type { HistoryAnalytics, MealType } from "@/types/domain";
@@ -31,6 +31,7 @@ export default function AnalyticsScreen() {
   const [period, setPeriod] = useState<Period>(30);
   const [data, setData] = useState<HistoryAnalytics | null>(null);
   const [loadError, setLoadError] = useState(false);
+  const [monthly, setMonthly] = useState<MonthlySummary | null>(null);
   const [retryKey, setRetryKey] = useState(0);
   const { colors } = useTheme();
   const diaryDate = useAppStore((state) => state.diaryDate);
@@ -39,8 +40,8 @@ export default function AnalyticsScreen() {
     let active = true;
     setLoadError(false);
     setData(null);
-    void loadHistoryAnalytics(period).then((next) => {
-      if (active) setData(next);
+    void Promise.all([loadHistoryAnalytics(period), period === 30 ? loadMonthlySummary() : Promise.resolve(null)]).then(([next, summary]) => {
+      if (active) { setData(next); setMonthly(summary); }
     }).catch((error) => {
       if (active) setLoadError(true);
       if (__DEV__) console.warn('[AnalyticsScreen] period', error);
@@ -102,6 +103,7 @@ export default function AnalyticsScreen() {
               label="попадание в норму"
             />
           </View>
+          {period===30&&monthly?<GlassCard variant="accent"><AppText variant="caption" tone="green">ИТОГ МЕСЯЦА</AppText><AppText variant="heading">Твой устойчивый ритм</AppText><AppText tone="secondary">Заполнено {monthly.filledDays} дней · закрыто {monthly.completedDays}</AppText><AppText tone="secondary">Средний белок — {Math.round(monthly.averageProteinG)} г · лучшая серия — {monthly.bestStreak}</AppText>{monthly.favoriteBreakfast?<AppText tone="secondary">Частый завтрак — {monthly.favoriteBreakfast}</AppText>:null}<AppText tone="secondary">Добавлено рекомендаций Ритма — {monthly.acceptedRhythmRecommendations}</AppText></GlassCard>:null}
           <View style={styles.stats}>
             <Stat value={data.completedDays} label="дней закрыто" />
             <Stat value={data.longestStreak} label="лучшая серия" />
