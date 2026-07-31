@@ -12,7 +12,7 @@ vi.mock('expo-haptics', () => ({
   impactAsync,
   notificationAsync,
   ImpactFeedbackStyle: { Light: 'light' },
-  NotificationFeedbackType: { Success: 'success' },
+  NotificationFeedbackType: { Success: 'success', Warning: 'warning' },
 }));
 
 describe('safe haptic feedback', () => {

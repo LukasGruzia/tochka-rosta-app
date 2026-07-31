@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { initializeDatabase } from '@/database/database';
-import { addDiaryEntry, deleteDiaryEntry, ensureDiaryDay, ensureTodayDiary, loadDiary, updateDiaryEntry } from '@/database/repositories/diaryRepository';
+import { addDiaryEntry, deleteDiaryEntry, ensureDiaryDay, ensureTodayDiary, loadDiary, repeatDiaryEntry as repeatDiaryEntryRepository, restoreDiaryEntry as restoreDiaryEntryRepository, updateDiaryEntry } from '@/database/repositories/diaryRepository';
 import { completeDiaryDay, loadFlowState } from '@/database/repositories/flowRepository';
 import { clearMealPlan, loadMealPlan, saveMealPlan } from '@/database/repositories/mealPlanRepository';
-import { loadProducts, loadProductsPage, PRODUCT_PAGE_SIZE, toggleFavorite as toggleFavoriteRepository } from '@/database/repositories/productRepository';
+import { addFavorite as addFavoriteRepository, loadProducts, loadProductsPage, PRODUCT_PAGE_SIZE, toggleFavorite as toggleFavoriteRepository } from '@/database/repositories/productRepository';
 import { loadProfileAndTarget, saveProfileAndTarget, updateProfileAvatar, updateWaterGoal } from '@/database/repositories/profileRepository';
 import { addWater as addWaterRepository, loadWaterSummary, removeWaterEntry } from '@/database/repositories/waterRepository';
 import { getSetting, resetApplicationData, setSetting } from '@/database/repositories/settingsRepository';
@@ -58,6 +58,9 @@ interface AppState {
   addProduct: (product: Product, mealType?: MealType) => Promise<void>;
   editDiaryEntry: (id: number, mealType: MealType, servings: number, quantityG?: number) => Promise<void>;
   removeDiaryEntry: (id: number) => Promise<void>;
+  restoreDiaryEntry: (id: number) => Promise<void>;
+  repeatDiaryEntry: (id: number) => Promise<void>;
+  addFavorite: (productId: number) => Promise<void>;
   refreshDiary: (date?: string) => Promise<void>;
   toggleFavorite: (productId: number) => Promise<boolean>;
   closeDay: () => Promise<void>;
@@ -226,6 +229,24 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ diary: await loadDiary(get().diaryDate) });
     if (removed?.productId && Date.now() - new Date(removed.createdAt).getTime() < 15 * 60 * 1000) void recordRhythmFeedback('removedSoon', { productIds: [removed.productId] });
     void publishRhythmEvent({ type: 'MEAL_REMOVED', route: '/diary', payload: { mealType: removed?.mealType } });
+  },
+
+  restoreDiaryEntry: async (id) => {
+    await restoreDiaryEntryRepository(id);
+    invalidateCalendarMonth(get().diaryDate);
+    set({ diary: await loadDiary(get().diaryDate) });
+  },
+
+  repeatDiaryEntry: async (id) => {
+    await repeatDiaryEntryRepository(id);
+    invalidateCalendarMonth(get().diaryDate);
+    set({ diary: await loadDiary(get().diaryDate) });
+  },
+
+  addFavorite: async (productId) => {
+    await addFavoriteRepository(productId);
+    set({ products: get().products.map((product) => product.id === productId ? { ...product, isFavorite: true } : product) });
+    void recordRhythmFeedback('favorite', { productIds: [productId] });
   },
 
   refreshDiary: async (date) => {

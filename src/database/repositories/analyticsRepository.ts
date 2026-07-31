@@ -17,11 +17,11 @@ export async function loadHistoryAnalytics(periodDays: 7 | 30 | 90 | 365): Promi
     db.getAllAsync<AnalyticsDay & { date: string }>(
       'SELECT date, consumed_calories, consumed_protein_g, consumed_fat_g, consumed_carbs_g, target_calories, is_completed FROM diary_days WHERE date>=? ORDER BY date', from),
     db.getFirstAsync<{ entry_count: number; favorite_name: string | null }>(`SELECT COUNT(*) AS entry_count,
-      (SELECT product_name_snapshot FROM diary_entries e2 JOIN diary_days d2 ON d2.id=e2.diary_day_id WHERE d2.date>=?
+      (SELECT product_name_snapshot FROM diary_entries e2 JOIN diary_days d2 ON d2.id=e2.diary_day_id WHERE d2.date>=? AND e2.deleted_at IS NULL
         GROUP BY product_name_snapshot ORDER BY COUNT(*) DESC, product_name_snapshot LIMIT 1) AS favorite_name
-      FROM diary_entries e JOIN diary_days d ON d.id=e.diary_day_id WHERE d.date>=?`, from, from),
+      FROM diary_entries e JOIN diary_days d ON d.id=e.diary_day_id WHERE d.date>=? AND e.deleted_at IS NULL`, from, from),
     db.getAllAsync<{ meal_type: MealType; count: number }>(`SELECT e.meal_type, COUNT(*) AS count
-      FROM diary_entries e JOIN diary_days d ON d.id=e.diary_day_id WHERE d.date>=? GROUP BY e.meal_type`, from),
+      FROM diary_entries e JOIN diary_days d ON d.id=e.diary_day_id WHERE d.date>=? AND e.deleted_at IS NULL GROUP BY e.meal_type`, from),
     db.getFirstAsync<{ longest_streak: number }>('SELECT longest_streak FROM flow_state WHERE id=1'),
   ]));
   const chartRows = periodDays <= 30
@@ -51,7 +51,7 @@ export async function loadHistoryAnalytics(periodDays: 7 | 30 | 90 | 365): Promi
 export async function loadProfileOverview() {
   const db = await getDatabase();
   const [diary, weight] = await profileQuery('profile:overview', () => Promise.all([
-    db.getFirstAsync<{ tracked_days: number; entry_count: number }>('SELECT COUNT(DISTINCT diary_day_id) AS tracked_days, COUNT(*) AS entry_count FROM diary_entries'),
+    db.getFirstAsync<{ tracked_days: number; entry_count: number }>('SELECT COUNT(DISTINCT diary_day_id) AS tracked_days, COUNT(*) AS entry_count FROM diary_entries WHERE deleted_at IS NULL'),
     db.getFirstAsync<{ current_weight: number | null }>('SELECT weight_kg AS current_weight FROM weight_logs ORDER BY date DESC LIMIT 1'),
   ]));
   return { trackedDays: diary?.tracked_days ?? 0, entryCount: diary?.entry_count ?? 0, currentWeight: weight?.current_weight ?? null };

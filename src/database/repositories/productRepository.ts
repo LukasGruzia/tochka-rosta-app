@@ -300,6 +300,12 @@ export async function toggleFavorite(productId: number) {
   return !favorite;
 }
 
+export async function addFavorite(productId: number) {
+  const db = await getDatabase();
+  await db.runAsync('INSERT OR IGNORE INTO favorites (product_id, created_at) VALUES (?, ?)', productId, new Date().toISOString());
+  invalidateProductSearchCache();
+}
+
 export async function saveExternalFoodProduct(preview: ExternalFoodPreview, corrections?: { name?: string; servingSizeG?: number; caloriesPer100g?: number | null; proteinPer100g?: number | null; fatPer100g?: number | null; carbsPer100g?: number | null }) {
   const db = await getDatabase();
   const existing = await findProductByCode(preview.barcode);

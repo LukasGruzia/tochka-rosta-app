@@ -27,7 +27,7 @@ export async function completeDiaryDay(date: string) {
   await db.withExclusiveTransactionAsync(async (txn) => {
     const day = await txn.getFirstAsync<{ id: number; is_completed: number }>('SELECT id, is_completed FROM diary_days WHERE date=?', date);
     if (!day) throw new Error('День не найден');
-    const count = await txn.getFirstAsync<{ count: number }>('SELECT COUNT(*) AS count FROM diary_entries WHERE diary_day_id=?', day.id);
+    const count = await txn.getFirstAsync<{ count: number }>('SELECT COUNT(*) AS count FROM diary_entries WHERE diary_day_id=? AND deleted_at IS NULL', day.id);
     assertDayCompletable({ date, isCompleted: day.is_completed === 1, entryCount: count?.count ?? 0 }, getLocalDateKey());
     const completedDates = await txn.getAllAsync<{ date: string }>('SELECT date FROM diary_days WHERE is_completed=1 UNION SELECT ? AS date ORDER BY date', date);const pauses=await txn.getAllAsync<{date:string}>('SELECT date FROM flow_pauses ORDER BY date');
     const streaks = calculateStreaks(completedDates.map((item) => item.date), getLocalDateKey(),pauses.map((item)=>item.date));

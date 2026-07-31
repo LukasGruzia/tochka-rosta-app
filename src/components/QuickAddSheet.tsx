@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { cancelAnimation, runOnJS, type SharedValue, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
-import { copyYesterdayMeal, repeatMostRecentMeal } from '@/database/repositories/diaryRepository';
+import { copyYesterdayMeal, previewMostRecentMeal, previewYesterdayMeal, repeatMostRecentMeal } from '@/database/repositories/diaryRepository';
 import { getSetting, setSetting } from '@/database/repositories/settingsRepository';
 import { safelyRunHaptic } from '@/services/haptics';
 import { prioritizeQuickActions, type QuickAddAction } from '@/services/quickAdd';
@@ -77,6 +77,29 @@ export function QuickAddSheet({ visible, onClose, date, mealType }: { visible: b
       await setSetting('last_quick_action', action);
       setLast(action);
       const meal = mealType ?? getSmartNextStep(diary, new Date().getHours()).meal;
+      if (action === 'repeat' || action === 'yesterday') {
+        const preview = action === 'repeat' ? await previewMostRecentMeal() : await previewYesterdayMeal(date, meal);
+        close();
+        Alert.alert(
+          action === 'repeat' ? 'Повторить недавний приём?' : `Повторить вчерашний ${meal === 'breakfast' ? 'завтрак' : 'приём'}?`,
+          `${preview.count} позиций · ${preview.calories} ккал\n${preview.names.join(', ')}${preview.count > preview.names.length ? '…' : ''}`,
+          [
+            { text: 'Отмена', style: 'cancel' },
+            { text: 'Добавить', onPress: () => { void (async () => {
+              try {
+                if (!target) throw new Error('Сначала заверши профиль');
+                if (action === 'repeat') await repeatMostRecentMeal(date, target);
+                else await copyYesterdayMeal(date, meal, target);
+                await refresh(date);
+                if (flags.enableHaptics) void safelyRunHaptic('success');
+              } catch (error) {
+                Alert.alert('Не удалось добавить', error instanceof Error ? error.message : 'Попробуй ещё раз.');
+              }
+            })(); } },
+          ],
+        );
+        return;
+      }
       close();
       if (action === 'search' || action === 'recent' || action === 'favorites') router.push({ pathname: '/food-search' as never, params: { meal, date, mode: action } } as never);
       else if (action === 'scan') router.push('/scanner' as never);
@@ -85,12 +108,6 @@ export function QuickAddSheet({ visible, onClose, date, mealType }: { visible: b
       else if (action === 'template') router.push('/meal-templates' as never);
       else if (action === 'water') router.push('/water-tracker' as never);
       else if (action === 'weight') router.push('/weight-progress' as never);
-      else if (target) {
-        if (action === 'repeat') await repeatMostRecentMeal(date, target);
-        else await copyYesterdayMeal(date, meal, target);
-        await refresh(date);
-        if (flags.enableHaptics) void safelyRunHaptic('success');
-      }
     } catch (error) {
       recordUiAction('error_occurred', 'quick_add', error instanceof Error ? error.message : 'Unknown quick add error');
       alertTimer.current = setTimeout(() => Alert.alert('Не удалось добавить', error instanceof Error ? error.message : 'Попробуй ещё раз.'), 250);
