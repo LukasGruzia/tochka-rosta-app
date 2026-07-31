@@ -5,6 +5,9 @@ import type { RhythmContext, RhythmDecision, RhythmEvent, RhythmSettings } from 
 
 export function decideRhythmResponse(event:RhythmEvent,context:RhythmContext,settings:RhythmSettings):RhythmDecision|null{
   if(!settings.enabled||settings.mode==='off')return null;
+  if(!settings.reactionsEnabled&&['MEAL_ADDED','MEAL_REMOVED','MEAL_UPDATED'].includes(event.type))return null;
+  if(!settings.recommendationsEnabled&&['MEAL_PLAN_CREATED','REMAINDER_MATCH_OPENED'].includes(event.type))return null;
+  if(!settings.budgetEnabled&&['BUDGET_APPROACHING','BUDGET_EXCEEDED'].includes(event.type))return null;
   const scenario=rhythmScenarios[event.type];
   if(!settings.showOnOtherScreens&&!context.route.includes('flow')&&!scenario.requested)return null;
   const initiative=!scenario.requested;

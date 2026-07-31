@@ -10,6 +10,11 @@ ALTER TABLE rhythm_decisions ADD COLUMN uuid TEXT;
 ALTER TABLE rhythm_recommendations ADD COLUMN uuid TEXT;
 ALTER TABLE rhythm_feedback ADD COLUMN uuid TEXT;
 ALTER TABLE meal_plan_runs ADD COLUMN uuid TEXT;
+ALTER TABLE rhythm_settings ADD COLUMN reactions_enabled INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE rhythm_settings ADD COLUMN recommendations_enabled INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE rhythm_settings ADD COLUMN budget_enabled INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE rhythm_settings ADD COLUMN history_enabled INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE rhythm_settings ADD COLUMN interface_sounds_enabled INTEGER NOT NULL DEFAULT 0;
 
 UPDATE diary_days SET uuid=${uuidExpression} WHERE uuid IS NULL;
 UPDATE rhythm_events SET uuid=${uuidExpression} WHERE uuid IS NULL;

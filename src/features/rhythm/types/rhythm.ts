@@ -30,6 +30,11 @@ export interface RhythmSettings {
   showOnOtherScreens: boolean;
   animationsEnabled: boolean;
   hapticsEnabled: boolean;
+  reactionsEnabled: boolean;
+  recommendationsEnabled: boolean;
+  budgetEnabled: boolean;
+  historyEnabled: boolean;
+  interfaceSoundsEnabled: boolean;
   onboardingCompleted: boolean;
 }
 

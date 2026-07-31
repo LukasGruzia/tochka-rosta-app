@@ -20,6 +20,8 @@ export const rhythmModeRank: Record<RhythmMode, number> = { off: 0, quiet: 1, ba
 
 export const defaultRhythmSettings = {
   mode: 'balanced', enabled: true, showOnOtherScreens: true,
-  animationsEnabled: true, hapticsEnabled: true, onboardingCompleted: false,
+  animationsEnabled: true, hapticsEnabled: true, reactionsEnabled: true,
+  recommendationsEnabled: true, budgetEnabled: true, historyEnabled: true,
+  interfaceSoundsEnabled: false, onboardingCompleted: false,
 } as const;
 
