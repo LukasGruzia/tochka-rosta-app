@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { getBackupFingerprint, summarizeBackup } from './dataRepository';
+import { getDatabase } from '../database';
+import { backupTables, getBackupFingerprint, restoreLocalBackup, summarizeBackup } from './dataRepository';
 
 vi.mock('../database',()=>({getDatabase:vi.fn()}));
 
@@ -12,5 +13,14 @@ describe('safe local backup format',()=>{
     expect(()=>summarizeBackup({...backup,schemaVersion:99})).toThrow('не поддерживается');
     expect(()=>summarizeBackup({...backup,tables:{unexpected:[]}})).toThrow('Неизвестная таблица');
     expect(()=>summarizeBackup({...backup,tables:{products:{id:1}}})).toThrow('Некорректная таблица');
+  });
+  it('restores all tables inside one exclusive transaction and records the current schema',async()=>{
+    const runAsync=vi.fn().mockResolvedValue({});
+    const withExclusiveTransactionAsync=vi.fn(async(callback:(transaction:{runAsync:typeof runAsync})=>Promise<void>)=>callback({runAsync}));
+    vi.mocked(getDatabase).mockResolvedValue({getFirstAsync:vi.fn().mockResolvedValue(null),withExclusiveTransactionAsync} as never);
+    await restoreLocalBackup(backup);
+    expect(withExclusiveTransactionAsync).toHaveBeenCalledTimes(1);
+    expect(runAsync.mock.calls.filter(([sql])=>String(sql).startsWith('DELETE FROM'))).toHaveLength(backupTables.length);
+    expect(runAsync.mock.calls.some(([sql])=>String(sql).includes("'database_schema_version'"))).toBe(true);
   });
 });
