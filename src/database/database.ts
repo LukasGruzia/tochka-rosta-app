@@ -6,7 +6,7 @@ import { setPerformanceMetric } from '@/performance/performanceLogger';
 import { normalizeSearchText } from '@/services/productSearch';
 
 let databasePromise: Promise<SQLite.SQLiteDatabase> | null = null;
-export const seedDataVersion = 'usda-common-2026-07-v1';
+export const seedDataVersion = 'usda-common-2026-07-v2';
 
 export function getDatabase() {
   databasePromise ??= SQLite.openDatabaseAsync(databaseName);

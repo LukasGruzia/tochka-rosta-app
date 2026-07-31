@@ -7,6 +7,12 @@
   "rawRecords": 5795,
   "normalizedRecords": 5268,
   "exportedRecords": 950,
+  "qualityAudit": {
+    "normalizedNameDuplicateGroups": 3,
+    "normalizedNameDuplicateGroupsCorrected": 3,
+    "negativeCoreValuesCorrected": 9,
+    "emptyCategories": 0
+  },
   "categories": {
     "Бобовые": 44,
     "Готовые блюда": 20,

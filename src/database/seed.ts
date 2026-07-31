@@ -51,6 +51,25 @@ export async function seedDatabase(db: SQLiteDatabase) {
         food.fiberPer100g, food.sugarPer100g, food.sodiumPer100g, now, now, normalizeSearchText(food.name));
     }
   } finally { await usdaStatement.finalizeAsync(); }
+  const refreshUsdaStatement = await db.prepareAsync(`UPDATE products SET name=?, original_name=?, category=?, serving_size_g=?,
+    calories=?, protein_g=?, fat_g=?, carbs_g=?, calories_per_100g=?, protein_per_100g=?, fat_per_100g=?, carbs_per_100g=?,
+    fiber_per_100g=?, sugar_per_100g=?, sodium_per_100g=?, aliases=?, source_version=?, updated_at=?, normalized_name=?
+    WHERE source_type='usda' AND source_id=?`);
+  try {
+    for (const food of usdaFoods as UsdaSeedFood[]) {
+      const serving = food.servingSizeG || 100;
+      const carbs = Math.max(0, food.carbsPer100g);
+      await refreshUsdaStatement.executeAsync(food.name,food.originalName,food.category,serving,food.caloriesPer100g*serving/100,
+        food.proteinPer100g*serving/100,food.fatPer100g*serving/100,carbs*serving/100,food.caloriesPer100g,
+        food.proteinPer100g,food.fatPer100g,carbs,food.fiberPer100g,food.sugarPer100g,food.sodiumPer100g,
+        JSON.stringify(food.aliases),food.sourceVersion,now,normalizeSearchText(food.name),String(food.fdcId));
+    }
+  } finally { await refreshUsdaStatement.finalizeAsync(); }
+  await db.runAsync(`UPDATE products SET
+    carbs_per_100g=MAX(0,carbs_per_100g),
+    carbs_g=MAX(0,carbs_g),
+    updated_at=?
+    WHERE source_type='usda' AND (carbs_per_100g<0 OR carbs_g<0)`, now);
   await db.runAsync(`INSERT OR IGNORE INTO food_sources (product_id, source_type, source_id, source_name, original_name,
     source_version, source_locale, imported_at)
     SELECT id, 'usda', source_id, 'USDA FoodData Central', original_name, source_version, 'en-US', ?
