@@ -22,6 +22,7 @@ import {
   moveWeeklyItem,
 } from "@/services/weeklyPlanner";
 import { useAppStore } from "@/store/appStore";
+import { publishRhythmEvent } from "@/features/rhythm/services/eventService";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radii, spacing } from "@/theme/tokens";
 import type {
@@ -95,6 +96,7 @@ export default function MyWeekScreen() {
       );
       await saveWeeklyPlan(next);
       setPlan(await loadWeeklyPlan(weekStart));
+      void publishRhythmEvent({ type: "MEAL_PLAN_CREATED", route: "/my-week", payload: { scope: "week", itemCount: next.items.length } });
     } catch (error) {
       Alert.alert(
         "Не удалось собрать неделю",

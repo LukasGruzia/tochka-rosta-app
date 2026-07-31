@@ -14,6 +14,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { radii, spacing } from '@/theme/tokens';
 import type { WeightLog, WeightProgress } from '@/types/domain';
 import { getLocalDateKey } from '@/utils/date';
+import { publishRhythmEvent } from '@/features/rhythm/services/eventService';
 
 type Period = 30 | 90 | 365 | 0;
 const empty: WeightProgress = { entries: [], initialWeight: null, currentWeight: null, changeKg: 0, minWeight: null, maxWeight: null };
@@ -44,7 +45,7 @@ export default function WeightProgressScreen() {
   const save = async () => {
     const parsed = Number(weight.replace(',', '.'));
     try {
-      setSaving(true); await saveWeightLog({ id: editing?.id, date, weightKg: parsed, note }); await refresh(); setEditing(undefined);
+      setSaving(true); await saveWeightLog({ id: editing?.id, date, weightKg: parsed, note }); await refresh(); setEditing(undefined); void publishRhythmEvent({ type: 'WEIGHT_ADDED', route: '/weight-progress' });
     } catch (error) { Alert.alert('Проверь запись', error instanceof Error ? error.message : 'Не удалось сохранить вес.'); }
     finally { setSaving(false); }
   };
