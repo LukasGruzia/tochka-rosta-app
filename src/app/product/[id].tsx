@@ -12,6 +12,7 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { productAssets } from '@/constants/productAssets';
 import { cloneCustomProduct, deleteCustomProduct, getProductById } from '@/database/repositories/productRepository';
 import { calculateForWeight } from '@/services/foodMath';
+import { formatProductUpdatedAt, getProductSourceLabel } from '@/services/productPresentation';
 import { useAppStore } from '@/store/appStore';
 import { useTheme } from '@/theme/ThemeProvider';
 import { radii, spacing } from '@/theme/tokens';
@@ -31,7 +32,7 @@ export default function ProductDetailScreen() {
   if (!loaded) return <AppBackground><SafeAreaView style={styles.loading}><AppText tone="secondary">Загружаем продукт…</AppText></SafeAreaView></AppBackground>;
   if (!product) return <AppBackground><SafeAreaView style={styles.loading}><AppText variant="heading">Продукт не найден или был удалён.</AppText>{loadError ? <AppText tone="secondary">{loadError}</AppText> : null}<PrimaryButton label="Вернуться назад" onPress={() => router.back()} /></SafeAreaView></AppBackground>;
   const imageSource = product.imageUri ? { uri: product.imageUri } : productAssets[product.imageKey];
-  const status = product.dataStatus === 'verified' ? 'Проверено' : product.dataStatus === 'custom' ? 'Мои данные' : product.dataStatus === 'community' ? 'Сообщество' : 'Импортировано';
+  const status = getProductSourceLabel(product);
   const remove = () => Alert.alert('Удалить продукт?', 'Записи в дневнике сохранят снимок названия и КБЖУ.', [{ text: 'Отмена', style: 'cancel' }, { text: 'Удалить', style: 'destructive', onPress: async () => { await deleteCustomProduct(product.id); await refreshProducts(); router.back(); } }]);
 
   return <>
@@ -43,7 +44,7 @@ export default function ProductDetailScreen() {
         <GlassCard variant="accent"><View style={styles.calories}><AppText variant="display" tone="green">{Math.round(values?.calories ?? 0)}</AppText><AppText tone="secondary">ккал · {Math.round(weight)} г</AppText></View><View style={styles.macros}><Macro label="Белки" value={values?.proteinG} /><Macro label="Жиры" value={values?.fatG} /><Macro label="Углеводы" value={values?.carbsG} /></View></GlassCard>
         <GlassCard variant="compact"><AppText variant="heading">О продукте</AppText><AppText tone="secondary">{product.description || 'Описание пока не добавлено.'}</AppText>{product.ingredients ? <><AppText style={styles.sectionTitle}>Состав</AppText><AppText tone="secondary">{product.ingredients}</AppText></> : null}{product.note ? <><AppText style={styles.sectionTitle}>Заметка</AppText><AppText tone="secondary">{product.note}</AppText></> : null}</GlassCard>
         <GlassCard variant="compact"><AppText variant="heading">Дополнительно · на 100 г</AppText><Info label="Клетчатка" value={product.fiberPer100g} unit="г" /><Info label="Сахара" value={product.sugarPer100g} unit="г" /><Info label="Натрий" value={product.sodiumPer100g} unit="мг" /><Info label="Аллергены" text={product.allergens.length ? product.allergens.join(', ') : 'Не указаны'} /></GlassCard>
-        <GlassCard variant="compact"><AppText variant="heading">Источник</AppText><AppText tone="secondary">{product.sourceName}{product.sourceVersion ? ` · ${product.sourceVersion}` : ''}</AppText><AppText variant="caption" tone="muted">Пищевая ценность справочная и может отличаться у конкретной партии. Для упакованного продукта сверяйся с этикеткой.</AppText></GlassCard>
+        <GlassCard variant="compact"><AppText variant="heading">Источник данных</AppText><AppText tone="green">{status}</AppText><AppText tone="secondary">{product.sourceName}{product.sourceVersion ? ` · ${product.sourceVersion}` : ''}</AppText><AppText variant="caption" tone="muted">{formatProductUpdatedAt(product.updatedAt)}</AppText><AppText variant="caption" tone="muted">Пищевая ценность справочная и может отличаться у конкретной партии. Для упакованного продукта сверяйся с этикеткой.</AppText></GlassCard>
         {product.isUserCreated ? <GlassCard variant="compact"><AppText variant="heading">Мой продукт</AppText><PrimaryButton label="Редактировать" secondary onPress={() => router.push((product.sourceType === 'user_recipe' ? `/recipe/edit/${product.id}` : `/product/edit/${product.id}`) as never)} />{product.sourceType === 'user_product' ? <PrimaryButton label="Создать копию" secondary onPress={async () => { const clone = await cloneCustomProduct(product.id); await refreshProducts(); if (clone) router.replace(`/product/${clone.id}` as never); }} /> : null}<PrimaryButton label="Удалить" secondary onPress={remove} /></GlassCard> : null}
       </ScrollView>
       <View style={[styles.sticky, { paddingBottom: Math.max(insets.bottom, 8), backgroundColor: colors.surfaceStrong, borderColor: colors.glassBorder }]}><View style={styles.stickyCopy}><AppText style={styles.bold}>{Math.round(product.calories * 100 / product.servingSizeG)} ккал</AppText><AppText variant="caption" tone="muted">на 100 г</AppText></View><View style={styles.stickyButton}><PrimaryButton label="Добавить" onPress={() => setSheet(true)} /></View></View>
