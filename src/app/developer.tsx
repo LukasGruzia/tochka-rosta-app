@@ -262,7 +262,7 @@ export default function DeveloperScreen() {
         />
       </GlassCard>
       <GlassCard variant="accent">
-        <View style={styles.future}><RhythmCharacter size="compact" emotion="thinking" action="presentAdvice" preferIllustration={false} /><View style={styles.flex}><AppText variant="heading">Диагностика Ритма</AppText><AppText tone="secondary">Симуляции создают только служебное событие и не изменяют реальный дневник, профиль или Поток.</AppText></View></View>
+        <View style={styles.future}><RhythmCharacter size="compact" emotion="thinking" action="presentAdvice"/><View style={styles.flex}><AppText variant="heading">Диагностика Ритма</AppText><AppText tone="secondary">Симуляции создают только служебное событие и не изменяют реальный дневник, профиль или Поток.</AppText></View></View>
         <AppText variant="caption" tone="muted">{rhythmDiagnostics ? Object.entries(rhythmDiagnostics).map(([key,value]) => `${key}: ${value}`).join(' · ') : 'Загрузка локальных счётчиков…'}</AppText>
         <PrimaryButton label="Симулировать добавление блюда" secondary onPress={() => publishRhythmEvent({type:'MEAL_ADDED',route:'/developer',payload:{simulation:true}})} />
         <PrimaryButton label="Симулировать milestone" secondary onPress={() => publishRhythmEvent({type:'FLOW_MILESTONE',route:'/developer',payload:{streak:7,simulation:true}})} />
