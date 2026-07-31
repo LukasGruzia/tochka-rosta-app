@@ -82,6 +82,7 @@ export default function ProfileScreen() {
     </ProfileMenuSection>
 
     <ProfileMenuSection title="Приложение">
+      <ProfileMenuRow icon="♨" label="Ритм" value="Помощник в Потоке" onPress={() => router.push('/rhythm-settings' as never)} />
       <ProfileMenuRow icon="◐" label="Оформление" value={themeLabel} onPress={() => router.push('/appearance' as never)} />
       <ProfileMenuRow icon="◇" label="Качество эффектов" value={performanceModeLabels[performanceMode]} onPress={() => router.push('/performance-effects' as never)} />
       <ProfileMenuRow icon="▦" label="Источники данных" onPress={() => router.push('/data-sources' as never)} />

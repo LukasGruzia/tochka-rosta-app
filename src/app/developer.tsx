@@ -31,6 +31,9 @@ import {
   getUiDiagnosticsSnapshot,
   subscribeUiDiagnostics,
 } from "@/services/uiDiagnostics";
+import { loadRhythmDiagnostics } from "@/features/rhythm/repositories/rhythmRepository";
+import { publishRhythmEvent } from "@/features/rhythm/services/eventService";
+import { RhythmCharacter } from "@/features/rhythm/components/RhythmCharacter";
 
 export default function DeveloperScreen() {
   const initialize = useAppStore((state) => state.initialize);
@@ -41,6 +44,7 @@ export default function DeveloperScreen() {
     ReturnType<typeof inspectDevelopmentDatabase>
   > | null>(null);
   const [busy, setBusy] = useState(false);
+  const [rhythmDiagnostics, setRhythmDiagnostics] = useState<Record<string, number> | null>(null);
   const insets = useSafeAreaInsets();
   const { tabBarHeight } = useTabBarLayout();
   const {
@@ -64,6 +68,7 @@ export default function DeveloperScreen() {
   useEffect(() => {
     if (__DEV__) void refresh().catch((error) => console.warn("[DeveloperScreen] inspect", error));
   }, [refresh]);
+  useEffect(() => { if (__DEV__) void loadRhythmDiagnostics().then(setRhythmDiagnostics).catch(() => undefined); }, []);
   if (!__DEV__) return <Redirect href="/(tabs)/profile" />;
   const run = async (label: string, action: () => Promise<void>) => {
     try {
@@ -255,6 +260,13 @@ export default function DeveloperScreen() {
           disabled={busy}
           onPress={() => confirm("Очистить демо v0.3?", clearV3DemoData)}
         />
+      </GlassCard>
+      <GlassCard variant="accent">
+        <View style={styles.future}><RhythmCharacter size="compact" emotion="thinking" action="presentAdvice" preferIllustration={false} /><View style={styles.flex}><AppText variant="heading">Диагностика Ритма</AppText><AppText tone="secondary">Симуляции создают только служебное событие и не изменяют реальный дневник, профиль или Поток.</AppText></View></View>
+        <AppText variant="caption" tone="muted">{rhythmDiagnostics ? Object.entries(rhythmDiagnostics).map(([key,value]) => `${key}: ${value}`).join(' · ') : 'Загрузка локальных счётчиков…'}</AppText>
+        <PrimaryButton label="Симулировать добавление блюда" secondary onPress={() => publishRhythmEvent({type:'MEAL_ADDED',route:'/developer',payload:{simulation:true}})} />
+        <PrimaryButton label="Симулировать milestone" secondary onPress={() => publishRhythmEvent({type:'FLOW_MILESTONE',route:'/developer',payload:{streak:7,simulation:true}})} />
+        <PrimaryButton label="Симулировать приближение к бюджету" secondary onPress={() => publishRhythmEvent({type:'BUDGET_APPROACHING',route:'/developer',payload:{simulation:true}})} />
       </GlassCard>
       <GlassCard>
         <AppText variant="heading">Тема</AppText>

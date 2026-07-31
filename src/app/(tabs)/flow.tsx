@@ -10,7 +10,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { AppText } from "@/components/AppText";
 import { createSectionErrorBoundary } from "@/components/ScreenErrorFallback";
-import { FlowFlame } from "@/components/FlowFlame";
 import { GlassCard } from "@/components/GlassCard";
 import { MonthCalendar } from "@/components/DiaryCalendarSheet";
 import { PrimaryButton } from "@/components/PrimaryButton";
@@ -50,6 +49,9 @@ import type {
   FlowPreferences,
 } from "@/types/domain";
 import { getLocalDateKey } from "@/utils/date";
+import { RhythmCharacter } from "@/features/rhythm/components/RhythmCharacter";
+import { RhythmSuggestionCard } from "@/features/rhythm/components/RhythmSuggestionCard";
+import { RhythmOnboardingSheet } from "@/features/rhythm/components/RhythmOnboardingSheet";
 
 export const ErrorBoundary = createSectionErrorBoundary("FlowScreen");
 
@@ -175,7 +177,12 @@ export default function FlowScreen() {
         }
       >
         <View style={styles.hero}>
-          <FlowFlame streak={streak} size={205} isActive={active} />
+          <RhythmCharacter
+            size="hero"
+            emotion={streak >= 7 ? "celebrating" : streak > 0 ? "happy" : "idle"}
+            action={streak >= 7 ? "celebrate" : streak > 0 ? "wave" : "none"}
+            animated={active}
+          />
           <AppText variant="display">
             {streak} {streak === 1 ? "день" : "дней"}
           </AppText>
@@ -185,6 +192,15 @@ export default function FlowScreen() {
               : "Закрой первый день, чтобы огонёк ожил."}
           </AppText>
         </View>
+        <RhythmSuggestionCard
+          title={streak ? `Я рядом уже ${streak} дн.` : "Давай найдём твой ритм"}
+          message={streak ? "Посмотрим, что мягко дополнит сегодняшний день?" : "Начни с одной записи — идеальный день не нужен."}
+          emotion={streak ? "motivated" : "supportive"}
+          action={streak ? "point" : "presentAdvice"}
+          onPrimary={() => router.push("/rhythm-center")}
+          secondaryLabel="Настройки Ритма"
+          onSecondary={() => router.push("/rhythm-settings")}
+        />
         <GlassCard variant="accent">
           <AppText variant="heading">Этапы пути</AppText>
           <View style={styles.milestones}>
@@ -419,6 +435,7 @@ export default function FlowScreen() {
           onPress={() => router.push("/analytics" as never)}
         />
       </TabScreen>
+      <RhythmOnboardingSheet />
       <Modal
         visible={info}
         transparent
