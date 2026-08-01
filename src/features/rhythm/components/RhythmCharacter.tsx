@@ -7,9 +7,10 @@ import { AppText } from '@/components/AppText';
 import { useScreenActivity } from '@/hooks/useScreenActivity';
 import { useTheme } from '@/theme/ThemeProvider';
 import { resolveRhythmAsset, rhythmAssets } from '../config/rhythmAssets';
+import { blinkIntervals, getRhythmModeConfig, resolveRhythmAction } from '../config/rhythmModes';
 import { recordRhythmAssetDiagnostics, recordRhythmRuntimeDiagnostics } from '../services/assetDiagnostics';
 import { useRenderTracker } from '@/performance/renderTracker';
-import type { RhythmAction, RhythmEmotion, RhythmSize } from '../types/rhythm';
+import type { RhythmAction, RhythmEmotion, RhythmMode, RhythmSize } from '../types/rhythm';
 
 const dimensions: Record<RhythmSize, number> = { small: 48, compact: 76, medium: 104, large: 156, hero: 228 };
 let blinkTimer: ReturnType<typeof setTimeout> | null = null;
@@ -17,7 +18,7 @@ let blinkOwner = 0;
 let fpsOwner = 0;
 let fpsFrame: number | null = null;
 
-function startGlobalBlinkLoop(onBlink: () => void) {
+function startGlobalBlinkLoop(onBlink: () => void, minimumMs: number, maximumMs: number) {
   const owner = ++blinkOwner;
   if (blinkTimer) clearTimeout(blinkTimer);
   recordRhythmRuntimeDiagnostics({ activeBlinkTimers: 1 });
@@ -26,7 +27,7 @@ function startGlobalBlinkLoop(onBlink: () => void) {
       if (owner !== blinkOwner) return;
       onBlink();
       schedule();
-    }, 2400 + Math.round(Math.random() * 2800));
+    }, minimumMs + Math.round(Math.random() * (maximumMs - minimumMs)));
   };
   schedule();
   return () => {
@@ -56,7 +57,7 @@ function startGlobalFpsSampler() {
   return () => { if (owner !== fpsOwner) return; fpsOwner += 1; if (fpsFrame != null) cancelAnimationFrame(fpsFrame); fpsFrame = null; };
 }
 
-function RhythmCharacterComponent({ emotion = 'idle', action = 'none', size = 'medium', animated = true, label = 'Ритм — помощник в Потоке' }: { emotion?: RhythmEmotion; action?: RhythmAction; size?: RhythmSize; animated?: boolean; label?: string }) {
+function RhythmCharacterComponent({ emotion = 'idle', action = 'none', mode = 'balanced', size = 'medium', animated = true, label = 'Ритм — помощник в Потоке' }: { emotion?: RhythmEmotion; action?: RhythmAction; mode?: RhythmMode; size?: RhythmSize; animated?: boolean; label?: string }) {
   'use no memo';
   useRenderTracker('RhythmCharacter');
   const activity = useScreenActivity();
@@ -67,6 +68,10 @@ function RhythmCharacterComponent({ emotion = 'idle', action = 'none', size = 'm
   const blink = useSharedValue(0);
   const faceCrossfade = useSharedValue(1);
   const canAnimate = animated && activity.canAnimate;
+  const modeConfig = getRhythmModeConfig(mode);
+  const modeAction = resolveRhythmAction(mode,action);
+  const motionScale = modeConfig.bodyMotion === 'expressive' ? 1 : modeConfig.bodyMotion === 'soft' ? 0.52 : 0.12;
+  const [blinkMinimum, blinkMaximum] = blinkIntervals[modeConfig.blinkFrequency];
   const resolved = useMemo(() => resolveRhythmAsset(emotion, size), [emotion, size]);
   const [errorStage, setErrorStage] = useState<0 | 1 | 2>(0);
   const emergency = rhythmAssets.idle.compact!;
@@ -75,27 +80,27 @@ function RhythmCharacterComponent({ emotion = 'idle', action = 'none', size = 'm
   useEffect(() => { setErrorStage(0); }, [resolved.key, resolved.requestedKey]);
   useEffect(() => {
     cancelAnimation(breathe);
-    breathe.set(canAnimate ? withRepeat(withSequence(withTiming(1, { duration: 1800, easing: Easing.inOut(Easing.sin) }), withTiming(0, { duration: 1800, easing: Easing.inOut(Easing.sin) })), -1, false) : 0);
+    breathe.set(canAnimate ? withRepeat(withSequence(withTiming(1, { duration: 1800 + (3-modeConfig.animationIntensity)*360, easing: Easing.inOut(Easing.sin) }), withTiming(0, { duration: 1800 + (3-modeConfig.animationIntensity)*360, easing: Easing.inOut(Easing.sin) })), -1, false) : 0);
     return () => cancelAnimation(breathe);
-  }, [breathe, canAnimate]);
+  }, [breathe, canAnimate, modeConfig.animationIntensity]);
   useEffect(() => {
     cancelAnimation(reaction);
-    reaction.set(canAnimate && action !== 'none' ? withSequence(withTiming(1, { duration: 220, easing: Easing.out(Easing.cubic) }), withTiming(0, { duration: 620, easing: Easing.inOut(Easing.sin) })) : 0);
+    reaction.set(canAnimate && modeAction !== 'none' ? withSequence(withTiming(1, { duration: Math.min(260,modeConfig.reactionDurationMs*.28), easing: Easing.out(Easing.cubic) }), withTiming(0, { duration: modeConfig.reactionDurationMs*.72, easing: Easing.inOut(Easing.sin) })) : 0);
     return () => cancelAnimation(reaction);
-  }, [action, canAnimate, reaction]);
+  }, [canAnimate, modeAction, modeConfig.reactionDurationMs, reaction]);
   useEffect(() => {
     cancelAnimation(faceCrossfade);
     faceCrossfade.set(canAnimate ? 0.45 : 1);
     faceCrossfade.set(canAnimate ? withTiming(1, { duration: 180 }) : 1);
     return () => cancelAnimation(faceCrossfade);
-  }, [action, canAnimate, emotion, faceCrossfade]);
+  }, [canAnimate, emotion, faceCrossfade, modeAction]);
   useEffect(() => {
     cancelAnimation(blink);
     blink.set(emotion === 'sleeping' ? 1 : 0);
     if (!canAnimate || emotion === 'sleeping') return () => cancelAnimation(blink);
-    const stop = startGlobalBlinkLoop(() => blink.set(withSequence(withTiming(1, { duration: 70 }), withTiming(0, { duration: 110 }))));
+    const stop = startGlobalBlinkLoop(() => blink.set(withSequence(withTiming(1, { duration: 70 }), withTiming(0, { duration: 110 }))),blinkMinimum,blinkMaximum);
     return () => { stop(); cancelAnimation(blink); blink.set(0); };
-  }, [blink, canAnimate, emotion]);
+  }, [blink, blinkMaximum, blinkMinimum, canAnimate, emotion]);
   useEffect(() => {
     const pausedReason = canAnimate ? null : !animated ? 'animation disabled by caller' : !activity.isAppActive ? 'app background' : !activity.isFocused ? 'screen blur' : activity.reducedMotion ? 'reduced motion' : `performance mode: ${activity.performanceMode}`;
     recordRhythmRuntimeDiagnostics({ animationPausedReason: pausedReason, ...(canAnimate ? {} : { approximateFps: null }) });
@@ -110,12 +115,15 @@ function RhythmCharacterComponent({ emotion = 'idle', action = 'none', size = 'm
   const bodyStyle = useAnimatedStyle(() => {
     const breathing = breathe.get();
     const reacting = reaction.get();
-    return { transform: [{ translateY: -2 * breathing - 3 * reacting }, { rotateZ: `${(breathing - 0.5) * 0.35 + reacting * (action === 'run' ? 1.2 : 0.55)}deg` }, { scaleX: 1 - breathing * 0.005 + reacting * 0.012 }, { scaleY: 1 + breathing * 0.012 + reacting * 0.015 }] };
+    const jump=modeAction==='smallJump'?7:3;
+    const turn=modeAction==='wave'?1.1:(modeAction==='lookAtCard'||modeAction==='point')?0.7:modeAction==='run'?1.2:0.45;
+    return { transform: [{ translateY: motionScale*(-2 * breathing - jump * reacting) }, { rotateZ: `${motionScale*((breathing - 0.5) * 0.35 + reacting * turn)}deg` }, { scaleX: 1 + motionScale*(-breathing * 0.005 + reacting * 0.012) }, { scaleY: 1 + motionScale*(breathing * 0.012 + reacting * 0.022) }] };
   });
   const eyelidStyle = useAnimatedStyle(() => ({ opacity: Math.max(emotion === 'sleeping' ? 1 : 0, blink.get()), transform: [{ scaleY: 0.18 + blink.get() * 0.82 }] }));
   const faceStyle = useAnimatedStyle(() => ({ opacity: faceCrossfade.get() }));
 
-  return <View accessible accessibilityRole="image" accessibilityLabel={`${label}. Состояние: ${emotion}, действие: ${action}.`} style={{ width: value, height: value * 1.12, alignItems: 'center', justifyContent: 'center' }}>
+  return <View accessible accessibilityRole="image" accessibilityLabel={`${label}. Состояние: ${emotion}, действие: ${modeAction}.`} style={{ width: value, height: value * 1.12, alignItems: 'center', justifyContent: 'center' }}>
+    <View pointerEvents="none" style={[styles.glow,{width:value*.76,height:value*.76,borderRadius:value,backgroundColor:colors.greenPrimary,opacity:.04+modeConfig.glowIntensity*.12,shadowColor:colors.greenPrimary,shadowOpacity:modeConfig.glowIntensity*.55,shadowRadius:8+modeConfig.glowIntensity*18}]} />
     <Animated.View style={[styles.full, bodyStyle]}>
       {visibleAsset ? <Image source={visibleAsset.source} contentFit="contain" transition={80} cachePolicy="memory-disk" recyclingKey={visibleAsset.key} onError={() => { if (__DEV__) console.warn(`[RhythmCharacter] Failed to load ${visibleAsset.fileName}`); setErrorStage((stage) => stage === 0 ? 1 : 2); }} style={styles.full} /> : <View style={[styles.icon, { backgroundColor: colors.greenGlow }]}><AppIcon name="flow" size={Math.max(28, value * 0.48)} color={colors.greenBright} /></View>}
       {visibleAsset ? <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, faceStyle]}>
@@ -124,8 +132,9 @@ function RhythmCharacterComponent({ emotion = 'idle', action = 'none', size = 'm
         {emotion === 'surprised' ? <View style={styles.surprisedMouth} /> : null}
         {emotion === 'caring' || emotion === 'supportive' ? <View style={[styles.faceBadge, { backgroundColor: colors.greenGlow }]}><AppText tone="green" style={styles.badgeText}>♥</AppText></View> : null}
         {emotion === 'thinking' ? <View style={[styles.thoughtDot, { backgroundColor: colors.textPrimary }]} /> : null}
-        {emotion === 'celebrating' || action === 'celebrate' ? <AppText style={styles.sparkle}>✦</AppText> : null}
-        {emotion === 'sleeping' || action === 'rest' ? <AppText tone="secondary" style={styles.sleep}>z</AppText> : null}
+        {emotion === 'food' || modeAction === 'holdFood' ? <AppText style={styles.food}>◡</AppText> : null}
+        {emotion === 'celebrating' || modeAction === 'celebrate' ? <AppText style={styles.sparkle}>✦</AppText> : null}
+        {emotion === 'sleeping' || modeAction === 'rest' ? <AppText tone="secondary" style={styles.sleep}>z</AppText> : null}
       </Animated.View> : null}
     </Animated.View>
   </View>;
@@ -133,6 +142,7 @@ function RhythmCharacterComponent({ emotion = 'idle', action = 'none', size = 'm
 
 export const RhythmCharacter = memo(RhythmCharacterComponent);
 const styles = StyleSheet.create({
+  glow: { position: 'absolute', elevation: 0 },
   full: { width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' },
   icon: { width: '82%', height: '82%', borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
   eyelid: { position: 'absolute', top: '47.5%', width: '14%', height: '9%', borderRadius: 999, backgroundColor: '#18C96D', borderBottomWidth: 1.5, borderBottomColor: '#08723C' },
@@ -142,4 +152,5 @@ const styles = StyleSheet.create({
   badgeText: { fontSize: 12, lineHeight: 14 }, thoughtDot: { position: 'absolute', right: '18%', top: '29%', width: '5%', aspectRatio: 1, borderRadius: 999, opacity: 0.72 },
   sparkle: { position: 'absolute', right: '14%', top: '26%', color: '#FFE27A', fontSize: 22, textShadowColor: '#36E695', textShadowRadius: 8 },
   sleep: { position: 'absolute', right: '15%', top: '30%', fontSize: 18, fontWeight: '800' },
+  food: { position: 'absolute', right: '10%', bottom: '12%', color: '#FFE9A6', fontSize: 24, fontWeight: '900' },
 });

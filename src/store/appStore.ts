@@ -54,7 +54,7 @@ interface AppState {
   refreshProducts: () => Promise<void>;
   ensureProductsLoaded: () => Promise<void>;
   setDiaryDate: (date: string) => Promise<void>;
-  addToDiary: (input: Omit<DiaryEntryInput, 'date'> & { date?: string }) => Promise<void>;
+  addToDiary: (input: Omit<DiaryEntryInput, 'date'> & { date?: string }) => Promise<number>;
   addProduct: (product: Product, mealType?: MealType) => Promise<void>;
   editDiaryEntry: (id: number, mealType: MealType, servings: number, quantityG?: number) => Promise<void>;
   removeDiaryEntry: (id: number) => Promise<void>;
@@ -207,13 +207,14 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   addToDiary: async (input) => {
     const date = input.date ?? get().diaryDate;
-    await addDiaryEntry({ ...input, date }, get().target ?? undefined);
+    const entryId=await addDiaryEntry({ ...input, date }, get().target ?? undefined);
     invalidateCalendarMonth(date);
     if (date === get().diaryDate) set({ diary: await loadDiary(date) });
     void publishRhythmEvent({ type: 'MEAL_ADDED', route: '/diary', payload: { mealType: input.mealType, productName: input.product.name } });
+    return entryId;
   },
 
-  addProduct: async (product, mealType = 'snack') => get().addToDiary({ product, mealType, servings: 1 }),
+  addProduct: async (product, mealType = 'snack') => { await get().addToDiary({ product, mealType, servings: 1 }); },
 
   editDiaryEntry: async (id, mealType, servings, quantityG) => {
     await updateDiaryEntry(id, { mealType, servings, quantityG });

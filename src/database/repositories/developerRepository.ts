@@ -1,6 +1,7 @@
 import { calculateStreaks } from '@/services/flowCalculator';
 import { getLocalDateKey } from '@/utils/date';
 import { getDatabase } from '../database';
+import { ensureCatalogCanonicalization } from './catalogCanonicalizationRepository';
 import { seedDatabase } from '../seed';
 
 export async function createTestStreak(days: 3 | 7 | 14 | 30) {
@@ -9,7 +10,7 @@ export async function createTestStreak(days: 3 | 7 | 14 | 30) {
 }
 export async function clearDiaryForDevelopment() { const db = await getDatabase(); await db.execAsync('DELETE FROM diary_entries; DELETE FROM diary_days;'); }
 export async function clearFlowForDevelopment() { const db = await getDatabase(); await db.execAsync(`DELETE FROM flow_history; UPDATE diary_days SET is_completed=0, completed_at=NULL; UPDATE flow_state SET current_streak=0, longest_streak=0, last_completed_date=NULL, updated_at=CURRENT_TIMESTAMP WHERE id=1;`); }
-export async function reseedForDevelopment() { await seedDatabase(await getDatabase()); }
+export async function reseedForDevelopment() { const db=await getDatabase();await db.withExclusiveTransactionAsync(async txn=>seedDatabase(txn));await ensureCatalogCanonicalization(db,true); }
 export async function recalculateAllDiaryAggregates() { const db = await getDatabase(); await db.runAsync(`UPDATE diary_days SET consumed_calories=COALESCE((SELECT SUM(calories) FROM diary_entries WHERE diary_day_id=diary_days.id AND deleted_at IS NULL),0), consumed_protein_g=COALESCE((SELECT SUM(protein_g) FROM diary_entries WHERE diary_day_id=diary_days.id AND deleted_at IS NULL),0), consumed_fat_g=COALESCE((SELECT SUM(fat_g) FROM diary_entries WHERE diary_day_id=diary_days.id AND deleted_at IS NULL),0), consumed_carbs_g=COALESCE((SELECT SUM(carbs_g) FROM diary_entries WHERE diary_day_id=diary_days.id AND deleted_at IS NULL),0), updated_at=?`, new Date().toISOString()); }
 export async function createDemoV3Data() {
   const db = await getDatabase(); const now = new Date().toISOString(); const today = new Date();

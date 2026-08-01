@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Alert, StyleSheet, Switch, View } from 'react-native';
 import { router } from 'expo-router';
 import { AppText } from '@/components/AppText';
@@ -7,6 +8,7 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { TabScreen } from '@/components/TabScreen';
 import { RhythmCharacter } from '@/features/rhythm/components/RhythmCharacter';
 import { useRhythmOverlay } from '@/features/rhythm/components/RhythmOverlayProvider';
+import { rhythmModes, rhythmModeValues } from '@/features/rhythm/config/rhythmModes';
 import {
   clearRhythmHintHistory,
   resetRhythmPreferences,
@@ -15,16 +17,11 @@ import type { RhythmMode } from '@/features/rhythm/types/rhythm';
 import { useTheme } from '@/theme/ThemeProvider';
 import { spacing } from '@/theme/tokens';
 
-const modes: { value: RhythmMode; label: string; description: string }[] = [
-  { value: 'active', label: 'Активный', description: 'Больше уместных инициативных подсказок.' },
-  { value: 'balanced', label: 'Баланс', description: 'Редкие подсказки после важных действий.' },
-  { value: 'quiet', label: 'Тихий', description: 'Только важные ответы и подсказки по запросу.' },
-  { value: 'off', label: 'Выкл.', description: 'Ритм остаётся в Потоке без сообщений.' },
-];
-
 export default function RhythmSettingsScreen() {
   const { settings, updateSettings } = useRhythmOverlay();
   const { colors } = useTheme();
+  const [previewSequence, setPreviewSequence] = useState(0);
+  const [confirmation, setConfirmation] = useState<string | null>(null);
   if (!settings) {
     return (
       <TabScreen title="Настройки Ритма">
@@ -32,13 +29,19 @@ export default function RhythmSettingsScreen() {
       </TabScreen>
     );
   }
+  const modeConfig = rhythmModes[settings.mode];
   const patch = <K extends keyof typeof settings>(key: K, value: (typeof settings)[K]) =>
     updateSettings({ ...settings, [key]: value });
+  const chooseMode = async (mode: RhythmMode) => {
+    await updateSettings({ ...settings, mode, enabled: true });
+    setPreviewSequence((value) => value + 1);
+    setConfirmation(rhythmModes[mode].confirmation);
+  };
   return (
     <TabScreen title="Настройки Ритма" subtitle="Помощник работает только на устройстве">
       <GlassCard variant="accent">
         <View style={styles.hero}>
-          <RhythmCharacter size="medium" emotion="happy" action="wave" />
+          <RhythmCharacter key={`${settings.mode}-${previewSequence}`} size="medium" mode={settings.mode} emotion={modeConfig.previewEmotion} action={modeConfig.previewAction} />
           <View style={styles.grow}>
             <AppText variant="heading">Ритм</AppText>
             <AppText tone="secondary">
@@ -54,28 +57,24 @@ export default function RhythmSettingsScreen() {
           onChange={(value) => void updateSettings({
             ...settings,
             enabled: value,
-            mode: value && settings.mode === 'off' ? 'balanced' : settings.mode,
           })}
           color={colors.greenPrimary}
         />
         <AppText variant="heading">Режим общения</AppText>
         <View style={styles.chips}>
-          {modes.map((mode) => (
+          {rhythmModeValues.map((mode) => (
             <FilterChip
-              key={mode.value}
-              label={mode.label}
-              selected={settings.mode === mode.value}
-              onPress={() => void updateSettings({
-                ...settings,
-                mode: mode.value,
-                enabled: mode.value !== 'off',
-              })}
+              key={mode}
+              label={rhythmModes[mode].label}
+              selected={settings.mode === mode}
+              onPress={() => void chooseMode(mode)}
             />
           ))}
         </View>
         <AppText tone="secondary">
-          {modes.find((mode) => mode.value === settings.mode)?.description}
+          {modeConfig.description}
         </AppText>
+        {confirmation ? <AppText tone="green" style={styles.confirmation}>{confirmation}</AppText> : null}
       </GlassCard>
       <GlassCard>
         <AppText variant="heading">Содержание подсказок</AppText>
@@ -163,5 +162,6 @@ const styles = StyleSheet.create({
   hero: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   grow: { flex: 1 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginVertical: spacing.md },
+  confirmation: { marginTop: spacing.sm },
   row: { minHeight: 54, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
 });

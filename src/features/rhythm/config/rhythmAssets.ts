@@ -10,12 +10,12 @@ const idleAssets = {
   hero: { key:'idle.hero',fileName:'rhythm-idle-hero.png',width:683,height:1024,bytes:454000,source:require('../../../../assets/rhythm/rhythm-idle-hero.png') },
 } as const satisfies Record<RhythmRasterSize, RhythmAssetMetadata>;
 
-export const rhythmEmotionValues:RhythmEmotion[]=['idle','thinking','happy','motivated','caring','surprised','supportive','celebrating','sleeping','neutralAttention'];
+export const rhythmEmotionValues:RhythmEmotion[]=['idle','thinking','happy','motivated','caring','surprised','supportive','celebrating','sleeping','neutralAttention','food'];
 
 // Only production-quality 3D renders belong here. Missing emotions deliberately
 // resolve to the volumetric idle character instead of a flat drawn substitute.
 export const rhythmAssets:Record<RhythmEmotion,EmotionAssets>={
-  idle:idleAssets,thinking:{},happy:{},motivated:{},caring:{},surprised:{},supportive:{},celebrating:{},sleeping:{},neutralAttention:{},
+  idle:idleAssets,thinking:{},happy:{},motivated:{},caring:{},surprised:{},supportive:{},celebrating:{},sleeping:{},neutralAttention:{},food:{},
 };
 
 const rasterSizeByDisplaySize:Record<RhythmSize,RhythmRasterSize>={small:'compact',compact:'compact',medium:'medium',large:'hero',hero:'hero'};

@@ -129,13 +129,15 @@ export async function addDiaryEntry(input: DiaryEntryInput, target?: NutritionRe
   if (quantityG <= 0 || quantityG > 10000) throw new Error('Проверь количество продукта');
   const values = calculateForWeight(input.product, quantityG);
   const now = new Date().toISOString();
+  let insertedId=0;
   await db.withExclusiveTransactionAsync(async (txn) => {
-    await txn.runAsync(`INSERT INTO diary_entries (
+    const inserted=await txn.runAsync(`INSERT INTO diary_entries (
       diary_day_id, product_id, product_name_snapshot, meal_type, servings, serving_size_g, quantity_g,
       calories, protein_g, fat_g, carbs_g, source_type, date, created_at, updated_at
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, day.id, input.product.id, input.product.name,
     input.mealType, servings, input.product.servingSizeG, quantityG, values.calories, values.proteinG, values.fatG,
     values.carbsG, input.product.sourceType, input.date, now, now);
+    insertedId=Number(inserted.lastInsertRowId);
     await txn.runAsync(`UPDATE diary_days SET
       consumed_calories=COALESCE((SELECT SUM(calories) FROM diary_entries WHERE diary_day_id=? AND deleted_at IS NULL), 0),
       consumed_protein_g=COALESCE((SELECT SUM(protein_g) FROM diary_entries WHERE diary_day_id=? AND deleted_at IS NULL), 0),
@@ -143,6 +145,7 @@ export async function addDiaryEntry(input: DiaryEntryInput, target?: NutritionRe
       consumed_carbs_g=COALESCE((SELECT SUM(carbs_g) FROM diary_entries WHERE diary_day_id=? AND deleted_at IS NULL), 0),
       updated_at=? WHERE id=?`, day.id, day.id, day.id, day.id, now, day.id);
   });
+  return insertedId;
 }
 
 export async function addProductToToday(product: DiaryEntryInput['product'], mealType: MealType = 'snack') {

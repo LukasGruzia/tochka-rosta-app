@@ -8,7 +8,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { AppPressable } from './AppPressable';
 import { AppText } from './AppText';
 
-export function UndoToast({ message, onUndo, onExpire, timeoutMs = 7000 }: { message: string; onUndo: () => void | Promise<void>; onExpire: () => void; timeoutMs?: number }) {
+export function UndoToast({ message, onUndo, onExpire, timeoutMs = 7000, actionText = 'Вернуть' }: { message: string; onUndo: () => void | Promise<void>; onExpire: () => void; timeoutMs?: number; actionText?: string }) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const [busy, setBusy] = useState(false);
@@ -34,7 +34,7 @@ export function UndoToast({ message, onUndo, onExpire, timeoutMs = 7000 }: { mes
     <View accessibilityRole="alert" accessibilityLiveRegion="polite" style={[styles.toast, shadows.floating, { backgroundColor: colors.surfaceOverlay, borderColor: colors.glassBorderStrong, shadowColor: colors.backgroundPrimary }]}>
       <AppText style={styles.message} numberOfLines={2}>{message}</AppText>
       <AppPressable accessibilityRole="button" accessibilityLabel="Вернуть удалённый продукт" actionLabel="undo_diary_entry" disabled={busy} onPress={undo} style={[styles.undo, { backgroundColor: colors.greenGlow }]}>
-        <AppText variant="caption" tone="green">{busy ? 'Возвращаем…' : 'Вернуть'}</AppText>
+        <AppText variant="caption" tone="green">{busy ? 'Подождите…' : actionText}</AppText>
       </AppPressable>
     </View>
   </View>;

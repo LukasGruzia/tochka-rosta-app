@@ -1,0 +1,16 @@
+import { describe,expect,it } from 'vitest';
+import { buildCatalogCanonicalizationPlan, inspectCatalogCandidate } from './catalogCanonicalization';
+import { migrationV9 } from '../database/migrations/v9';
+import { readFileSync } from 'node:fs';
+
+const candidate=(id:number,name:string,grams:number,extra:Partial<Parameters<typeof inspectCatalogCandidate>[0]>={})=>({id,name,originalName:name,servingSizeG:grams,caloriesPer100g:89,proteinPer100g:1.1,fatPer100g:.3,carbsPer100g:23,canonicalKey:null,preparationState:'сырой',sourcePriority:60,sourceType:'usda',isUserCreated:false,barcode:null,brand:null,aliases:[],...extra});
+
+describe('catalog size canonicalization',()=>{
+  it('converts Banana S/M/L into one canonical product with serving options',()=>{const plan=buildCatalogCanonicalizationPlan([candidate(1,'Банан S',90),candidate(2,'Банан M',120,{sourcePriority:80}),candidate(3,'Банан L',150)]);expect(plan).toHaveLength(1);expect(plan[0].displayName).toBe('Банан');expect(plan[0].primary.id).toBe(2);expect(plan[0].members).toHaveLength(3);expect(plan[0].servingOptions.map(item=>item.gramsEquivalent)).toEqual(expect.arrayContaining([90,100,120,150]));expect(plan[0].aliases).toContain('Банан S');});
+  it('shows raw orange as a human canonical name while preserving raw state',()=>{const plan=buildCatalogCanonicalizationPlan([candidate(1,'Апельсин сырой S',130),candidate(2,'Апельсин сырой M',180)]);expect(plan[0].displayName).toBe('Апельсин');expect(plan[0].preparationState).toBe('сырой');});
+  it('does not merge meaningful preparation states',()=>{expect(buildCatalogCanonicalizationPlan([candidate(1,'Рис сухой',50,{preparationState:'сухой'}),candidate(2,'Рис варёный',180,{preparationState:'приготовленный'})])).toHaveLength(0);});
+  it('does not merge user products or branded barcodes',()=>{expect(inspectCatalogCandidate(candidate(1,'Банан M',120,{isUserCreated:true,sourceType:'user_product'}))).toBeNull();expect(inspectCatalogCandidate(candidate(2,'Drink Large',330,{barcode:'460123',brand:'Brand'}))).toBeNull();});
+  it('marks strong nutrition conflicts instead of averaging or zeroing them',()=>{const plan=buildCatalogCanonicalizationPlan([candidate(1,'Банан S',90),candidate(2,'Банан M',120,{caloriesPer100g:140,proteinPer100g:null})]);expect(plan[0].unresolved).toBe(true);expect(plan[0].primary.proteinPer100g).not.toBe(0);});
+  it('ships an idempotent non-destructive v9 schema',()=>{for(const table of ['product_serving_options','user_product_serving_preferences','product_aliases','catalog_size_migration_reports'])expect(migrationV9).toContain(`CREATE TABLE IF NOT EXISTS ${table}`);expect(migrationV9).toContain('idx_product_aliases_normalized_v9');expect(migrationV9).not.toMatch(/DROP TABLE|DELETE FROM diary_entries|UPDATE diary_entries/);});
+  it('writes a dry-run before the exclusive merge and preserves diary snapshots',()=>{const source=readFileSync('src/database/repositories/catalogCanonicalizationRepository.ts','utf8');expect(source.indexOf("'dry_run'")).toBeLessThan(source.indexOf('withExclusiveTransactionAsync'));expect(source).toContain("['meal_plan_items','meal_template_items','weekly_plan_items','recipe_ingredients','scan_history','rhythm_feedback']");expect(source).toContain('INSERT OR IGNORE INTO favorites');expect(source).not.toMatch(/UPDATE diary_entries SET|DELETE FROM diary_entries/);});
+});

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, FlatList, InteractionManager, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { FlatList, InteractionManager, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AddToDiarySheet } from '@/components/AddToDiarySheet';
@@ -10,6 +10,7 @@ import { FilterChip } from '@/components/FilterChip';
 import { ProductListRow } from '@/components/ProductListRow';
 import { QuickAddButton, QuickAddSheet } from '@/components/QuickAddSheet';
 import { ProductCardSkeleton, ScreenState } from '@/components/ScreenStates';
+import { UndoToast } from '@/components/UndoToast';
 import { countProducts, loadProductCategories, loadProductsPage, PRODUCT_PAGE_SIZE, type ProductPageOptions } from '@/database/repositories/productRepository';
 import { useRenderTracker } from '@/performance/renderTracker';
 import { useScreenProfiler } from '@/performance/screenProfiler';
@@ -27,6 +28,7 @@ export const ErrorBoundary = createSectionErrorBoundary('CatalogScreen');
 type Filter = 'all' | 'favorites' | 'my' | 'tochka' | 'common' | 'barcode';
 const filters: { value: Filter; label: string }[] = [{ value: 'all', label: 'Все' }, { value: 'favorites', label: 'Избранное' }, { value: 'my', label: 'Мои' }, { value: 'tochka', label: 'Точка Роста' }, { value: 'common', label: 'Обычные' }, { value: 'barcode', label: 'По коду' }];
 const meals: MealType[] = ['breakfast', 'lunch', 'snack', 'dinner'];
+const mealNames:Record<MealType,string>={breakfast:'завтрак',lunch:'обед',snack:'перекус',dinner:'ужин'};
 
 function pageOptions(filter: Filter, category: string, query: string): ProductPageOptions {
   const sourceMap: Partial<Record<Filter, FoodSourceType>> = { tochka: 'tochka_rosta', common: 'usda', barcode: 'open_food_facts' };
@@ -42,6 +44,7 @@ export default function CatalogScreen() {
   const diaryDate = useAppStore((state) => state.diaryDate);
   const addToDiary = useAppStore((state) => state.addToDiary);
   const toggleFavorite = useAppStore((state) => state.toggleFavorite);
+  const removeDiaryEntry = useAppStore((state) => state.removeDiaryEntry);
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [filter, setFilter] = useState<Filter>('all');
@@ -56,6 +59,7 @@ export default function CatalogScreen() {
   const [selected, setSelected] = useState<Product | null>(null);
   const [quick, setQuick] = useState(false);
   const [catalogReady, setCatalogReady] = useState(false);
+  const [added,setAdded]=useState<{entryId:number;message:string}|null>(null);
   const requestId = useRef(0);
   const generation = useRef(0);
   const meal = meals.includes(params.meal as MealType) ? params.meal as MealType : getNextMealType();
@@ -141,11 +145,12 @@ export default function CatalogScreen() {
         ListHeaderComponent={<View style={styles.header}><View style={[styles.search, { borderColor: colors.glassBorder, backgroundColor: colors.surfaceStrong }]}><AppText tone="muted">⌕</AppText><TextInput value={query} onChangeText={setQuery} placeholder="Найти продукт или блюдо" placeholderTextColor={colors.textMuted} style={[styles.searchInput, { color: colors.textPrimary }]} returnKeyType="search" /><Pressable accessibilityLabel="Открыть полный поиск" onPress={() => router.push('/food-search' as never)}><AppText tone="green">›</AppText></Pressable></View><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontal}>{filters.map((item) => <FilterChip key={item.value} label={item.label} selected={filter === item.value} onPress={() => setFilter(item.value)} />)}</ScrollView><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontal}>{['Все', ...categories].map((item) => <FilterChip key={item} label={item} selected={category === item} onPress={() => setCategory(item)} />)}</ScrollView><View style={styles.actions}><Pressable style={[styles.action, { borderColor: colors.glassBorder }]} onPress={() => router.push('/product/new')}><AppText tone="green">+</AppText><AppText variant="caption">Создать продукт</AppText></Pressable><Pressable style={[styles.action, { borderColor: colors.glassBorder }]} onPress={() => router.push('/recipe/new')}><AppText tone="green">+</AppText><AppText variant="caption">Собрать рецепт</AppText></Pressable></View><QuickAddButton onPress={() => setQuick(true)} /><View style={styles.count}><AppText variant="heading">{category === 'Все' ? 'Продукты' : category}</AppText><AppText variant="caption" tone="muted">{products.length} из {total}</AppText></View></View>}
         ItemSeparatorComponent={Separator}
         ListFooterComponent={loadingMore ? <AppText tone="muted" style={styles.loading}>Загружаем ещё…</AppText> : null}
-        ListEmptyComponent={loading ? <ProductCardSkeleton /> : loadError ? <ScreenState tone="error" icon="catalog" title="Не удалось загрузить продукты" message="Локальные данные не изменены. Попробуй открыть каталог ещё раз." actionLabel="Попробовать снова" onAction={() => setRetryKey((value) => value + 1)} /> : <ScreenState icon="catalog" title="По этому запросу ничего не найдено" message="Измени запрос или создай собственный продукт." actionLabel="Сбросить фильтры" onAction={() => { setQuery(''); setFilter('all'); setCategory('Все'); }} secondaryActionLabel="Создать свой продукт" onSecondaryAction={() => router.push('/product/new')} />}
+        ListEmptyComponent={loading ? <ProductCardSkeleton /> : loadError ? <ScreenState tone="error" icon="catalog" title="Не удалось загрузить продукты" message="Локальные данные не изменены. Попробуй открыть каталог ещё раз." actionLabel="Попробовать снова" onAction={() => setRetryKey((value) => value + 1)} /> : <ScreenState icon="catalog" title="Ничего не нашли." message="Попробуй изменить запрос или создать свой продукт." actionLabel="Изменить запрос" onAction={() => { setQuery(''); setFilter('all'); setCategory('Все'); }} secondaryActionLabel="Создать продукт" onSecondaryAction={() => router.push('/product/new')} />}
       />
     </SafeAreaView></AppBackground>
-    {selected ? <AddToDiarySheet product={selected} visible initialMeal={meal} date={diaryDate} onClose={() => setSelected(null)} onAdd={async (mealType, servings, quantityG) => { await addToDiary({ product: selected, mealType, servings, quantityG }); Alert.alert('Добавлено', selected.name); }} /> : null}
+    {selected ? <AddToDiarySheet product={selected} visible initialMeal={meal} date={diaryDate} onClose={() => setSelected(null)} onAdd={async (mealType, servings, quantityG) => { const entryId=await addToDiary({ product: selected, mealType, servings, quantityG });setAdded({entryId,message:`${selected.name}, ${Math.round(quantityG)} г добавлен в ${mealNames[mealType]}.`}); }} /> : null}
     {quick ? <QuickAddSheet visible onClose={() => setQuick(false)} date={diaryDate} mealType={meal} /> : null}
+    {added?<UndoToast message={added.message} actionText="Отменить" onExpire={()=>setAdded(null)} onUndo={()=>removeDiaryEntry(added.entryId)}/>:null}
   </>;
 }
 

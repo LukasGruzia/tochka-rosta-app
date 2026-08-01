@@ -2,14 +2,14 @@ import type { BudgetSettings, DiarySummary, FlowState, MealType, NutritionResult
 
 export type RhythmEmotion =
   | 'idle' | 'thinking' | 'happy' | 'motivated' | 'caring' | 'surprised'
-  | 'supportive' | 'celebrating' | 'sleeping' | 'neutralAttention';
+  | 'supportive' | 'celebrating' | 'sleeping' | 'neutralAttention' | 'food';
 
 export type RhythmAction =
   | 'none' | 'wave' | 'point' | 'presentAdvice' | 'holdFood'
-  | 'run' | 'stretch' | 'blink' | 'celebrate' | 'rest';
+  | 'run' | 'stretch' | 'blink' | 'celebrate' | 'rest' | 'smallJump' | 'lookAtCard';
 
 export type RhythmSize = 'small' | 'compact' | 'medium' | 'large' | 'hero';
-export type RhythmMode = 'active' | 'balanced' | 'quiet' | 'off';
+export type RhythmMode = 'active' | 'balanced' | 'quiet';
 export type RhythmEventType =
   | 'APP_OPENED' | 'SCREEN_OPENED' | 'MEAL_ADDED' | 'MEAL_REMOVED' | 'MEAL_UPDATED'
   | 'WATER_ADDED' | 'WEIGHT_ADDED' | 'MEAL_PLAN_CREATED' | 'REMAINDER_MATCH_OPENED'
@@ -55,7 +55,7 @@ export interface RhythmMessageTemplate {
   title?: string;
   emotion: RhythmEmotion;
   action: RhythmAction;
-  minMode?: Exclude<RhythmMode, 'off'>;
+  minMode?: RhythmMode;
 }
 
 export interface RhythmContext {

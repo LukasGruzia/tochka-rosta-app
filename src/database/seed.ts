@@ -1,8 +1,15 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 import usdaFoods from './data/usda-common-foods.json';
 import { normalizeSearchText } from '@/services/productSearch';
+import { getSeedCanonicalOverride, seedPresentationOverrides } from '@/services/catalogCanonicalization';
 
-interface UsdaSeedFood { fdcId: number; name: string; originalName: string; category: string; caloriesPer100g: number; proteinPer100g: number; fatPer100g: number; carbsPer100g: number; fiberPer100g: number | null; sugarPer100g: number | null; sodiumPer100g: number | null; servingSizeG: number; aliases: string[]; sourceVersion: string; canonicalKey: string; brand: string | null; preparationState: string | null; sourcePriority: number; isActive: boolean; reviewStatus: 'verified' | 'needs_review'; }
+interface UsdaSeedFood { fdcId: number; name: string; originalName: string; category: string; caloriesPer100g: number; proteinPer100g: number; fatPer100g: number; carbsPer100g: number; fiberPer100g: number | null; sugarPer100g: number | null; sodiumPer100g: number | null; servingSizeG: number; aliases: string[]; servingOptions?:{label:string;amount:number;unit:'g'|'ml'|'piece'|'serving';gramsEquivalent:number;isDefault?:boolean;source?:string}[]; sourceVersion: string; canonicalKey: string; brand: string | null; preparationState: string | null; sourcePriority: number; isActive: boolean; reviewStatus: 'verified' | 'needs_review'; }
+
+function prepareSeedFood(food:UsdaSeedFood):UsdaSeedFood{
+  const canonical=getSeedCanonicalOverride(food.fdcId);const presentation=seedPresentationOverrides[food.fdcId];
+  const legacySizeAliases=canonical?.canonicalKey==='food:banana:raw'?['банан s','банан m','банан l','маленький банан','средний банан','крупный банан']:canonical?.canonicalKey==='food:orange:raw'?['апельсин s','апельсин m','апельсин l','маленький апельсин','средний апельсин','крупный апельсин']:[];
+  return{...food,name:canonical?.name??presentation?.name??food.name,canonicalKey:canonical?.canonicalKey??food.canonicalKey,preparationState:canonical?.preparationState??food.preparationState,isActive:canonical?.isActive??food.isActive,aliases:[...new Set([...food.aliases,...(presentation?.aliases??[]),...(canonical?[canonical.name]:[]),...legacySizeAliases])]} as UsdaSeedFood;
+}
 
 const demoProducts = [
   ['khinkali-pp', 'Хинкали ПП', 'Сочное мясо и тонкое тесто', 'Мука, говядина, зелень, специи', 280, 420, 28, 14, 46, 390, 'khinkali', 'Основные блюда', ['lunch', 'dinner'], ['gain'], ['meat'], ['glutenFree'], 'TR-KHINKALI'],
@@ -45,7 +52,8 @@ export async function seedDatabase(db: SQLiteDatabase) {
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, '', ?, '[]', '[]', '[]', '[]', ?, 1, 'imported', 'usda', ?,
     'USDA FoodData Central', ?, ?, 'ru', 0, 'per100g', 100, 'g', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
   try {
-    for (const food of usdaFoods as UsdaSeedFood[]) {
+    for (const rawFood of usdaFoods as UsdaSeedFood[]) {
+      const food=prepareSeedFood(rawFood);
       const serving = food.servingSizeG || 100;
       await usdaStatement.executeAsync(`usda-${food.fdcId}`, food.name, food.originalName, 'Справочные данные на 100 г', serving,
         food.caloriesPer100g * serving / 100, food.proteinPer100g * serving / 100, food.fatPer100g * serving / 100,
@@ -60,7 +68,8 @@ export async function seedDatabase(db: SQLiteDatabase) {
     canonical_key=?, brand=?, preparation_state=?, source_priority=?, is_active=?, is_available=?, review_status=?, merged_into_id=NULL
     WHERE source_type='usda' AND source_id=?`);
   try {
-    for (const food of usdaFoods as UsdaSeedFood[]) {
+    for (const rawFood of usdaFoods as UsdaSeedFood[]) {
+      const food=prepareSeedFood(rawFood);
       const serving = food.servingSizeG || 100;
       const carbs = Math.max(0, food.carbsPer100g);
       await refreshUsdaStatement.executeAsync(food.name,food.originalName,food.category,serving,food.caloriesPer100g*serving/100,
@@ -71,6 +80,7 @@ export async function seedDatabase(db: SQLiteDatabase) {
     }
   } finally { await refreshUsdaStatement.finalizeAsync(); }
   await reconcileCanonicalCatalog(db, now);
+  for(const rawFood of usdaFoods as UsdaSeedFood[]){const food=prepareSeedFood(rawFood);if(!food.servingOptions?.length)continue;const product=await db.getFirstAsync<{id:number;merged_into_id:number|null}>("SELECT id,merged_into_id FROM products WHERE source_type='usda' AND source_id=?",String(food.fdcId));if(!product)continue;const productId=product.merged_into_id??product.id;for(const option of food.servingOptions){if(option.gramsEquivalent<=0)continue;const uuid=`serving-${productId}-${normalizeSearchText(option.label).replace(/\s+/g,'-')}-${Math.round(option.gramsEquivalent*10)}`;await db.runAsync(`INSERT OR IGNORE INTO product_serving_options(uuid,product_id,label,amount,unit,grams_equivalent,is_default,source_type,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?)`,uuid,productId,option.label,option.amount,option.unit,option.gramsEquivalent,option.isDefault?1:0,option.source??'USDA',now,now);}}
   await db.runAsync(`UPDATE products SET
     carbs_per_100g=MAX(0,carbs_per_100g),
     carbs_g=MAX(0,carbs_g),

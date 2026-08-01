@@ -156,8 +156,8 @@ function buildProductWhere(options: ProductPageOptions) {
   const normalized = normalizeSearchText(options.query ?? '');
   if (normalized) {
     const pattern = `%${normalized}%`;
-    conditions.push('(p.normalized_name LIKE ? OR p.normalized_name LIKE ? OR p.name LIKE ? COLLATE NOCASE OR COALESCE(p.original_name,\'\') LIKE ? COLLATE NOCASE OR COALESCE(p.aliases,\'\') LIKE ? COLLATE NOCASE)');
-    params.push(`${normalized}%`, pattern, pattern, pattern, pattern);
+    conditions.push('(p.normalized_name LIKE ? OR p.normalized_name LIKE ? OR p.name LIKE ? COLLATE NOCASE OR COALESCE(p.original_name,\'\') LIKE ? COLLATE NOCASE OR COALESCE(p.aliases,\'\') LIKE ? COLLATE NOCASE OR EXISTS(SELECT 1 FROM product_aliases pa WHERE pa.product_id=p.id AND pa.normalized_alias LIKE ?))');
+    params.push(`${normalized}%`, pattern, pattern, pattern, pattern, pattern);
   }
   return { where: conditions.join(' AND '), params, normalized };
 }
