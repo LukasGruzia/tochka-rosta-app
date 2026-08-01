@@ -104,6 +104,7 @@ const specificNames: [RegExp, string, string[]][] = [
   [/rice.*brown and wild/i, 'Рис бурый с диким', []], [/pasta.*vegetable/i, 'Макароны овощные', []],
   [/sandwich/i, 'Сэндвич', []],
   [/avocado/i, 'Авокадо', []],
+  [/eggplant/i, 'Баклажан', []],
 ];
 
 export function translateUsdaName(description: string, category?: string) {
@@ -118,6 +119,7 @@ export function translateUsdaName(description: string, category?: string) {
 
 function normalizeCanonicalPart(value: string) { return value.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
 function normalizeAlias(value: string) { return value.toLocaleLowerCase('ru').replace(/ё/g, 'е').replace(/\s+/g, ' ').trim(); }
+function normalizeDisplayName(value: string) { return normalizeAlias(value).replace(/[^a-zа-я0-9]+/gi, ' ').trim(); }
 function macroVector(food: CompactFood) { return [food.caloriesPer100g, food.proteinPer100g, food.fatPer100g, food.carbsPer100g]; }
 function macrosAreCompatible(left: CompactFood, right: CompactFood) {
   return macroVector(left).every((value, index) => Math.abs(value - macroVector(right)[index]) <= Math.max(0.5, Math.abs(value) * 0.03));
@@ -134,7 +136,7 @@ export function finalizeCatalogNames(input: CompactFood[]) {
   const displayGroups = Map.groupBy(foods, (food) => food.name.toLocaleLowerCase('ru'));
   for (const group of displayGroups.values()) {
     if (group.length < 2) continue;
-    for (const food of group) if (food._descriptor) food.name = `${food.name} — ${food._descriptor}`;
+    for (const food of group) if (food._descriptor && !normalizeDisplayName(food.name).includes(normalizeDisplayName(food._descriptor))) food.name = `${food.name} — ${food._descriptor}`;
   }
   const canonicalGroups = Map.groupBy(foods, (food) => food.canonicalKey);
   for (const group of canonicalGroups.values()) {
@@ -145,7 +147,13 @@ export function finalizeCatalogNames(input: CompactFood[]) {
       if (!macrosAreCompatible(primary, secondary)) {
         primary.reviewStatus = 'needs_review'; secondary.reviewStatus = 'needs_review'; secondary.isActive = false;
       } else secondary.isActive = false;
+      secondary.name = `${secondary.name} — справочник ${secondary.sourceVersion.includes('FNDDS') ? 'FNDDS' : 'USDA'}`;
     }
+  }
+  const normalizedDisplayGroups = Map.groupBy(foods, (food) => normalizeDisplayName(food.name));
+  for (const group of normalizedDisplayGroups.values()) {
+    if (group.length < 2) continue;
+    group.forEach((food, index) => { if (index > 0) food.name = `${food.name} — ${food.originalName}`; });
   }
   return foods.map(({ _descriptor: _ignored, ...food }) => food);
 }

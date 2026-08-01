@@ -8,6 +8,7 @@ describe('Reanimated safety regression', () => {
     expect(source).not.toContain('stickyHeaderIndices');
     expect(source).not.toContain('useAnimatedStyle');
     expect(source).not.toContain('useAnimatedScrollHandler');
-    expect(source).toContain('<View style={[styles.header');
+    expect(source).toContain('<AppScreenHeader');
+    expect(readFileSync(resolve(process.cwd(), 'src/components/AppScreenHeader.tsx'), 'utf8')).toContain('<View style={[styles.header');
   });
 });

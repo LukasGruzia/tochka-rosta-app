@@ -5482,7 +5482,7 @@
   },
   {
     "fdcId": 747447,
-    "name": "Брокколи, сырой — сырой",
+    "name": "Брокколи, сырой",
     "originalName": "Broccoli, raw",
     "category": "Овощи",
     "caloriesPer100g": 31,
@@ -5507,7 +5507,7 @@
   },
   {
     "fdcId": 2685577,
-    "name": "Яйцо, сырой — plant, сырой",
+    "name": "Баклажан, сырой",
     "originalName": "Eggplant, raw",
     "category": "Овощи",
     "caloriesPer100g": 26.1,
@@ -5521,7 +5521,8 @@
     "aliases": [
       "яйцо",
       "яйцо куриное",
-      "eggplant, raw"
+      "eggplant, raw",
+      "баклажан"
     ],
     "sourceVersion": "Foundation Foods · 2026-04-30",
     "canonicalKey": "usda:eggplant-raw",
@@ -5658,7 +5659,7 @@
   },
   {
     "fdcId": 2709643,
-    "name": "Брокколи, сырой — сырой",
+    "name": "Брокколи, сырой — справочник FNDDS",
     "originalName": "Broccoli, raw",
     "category": "Овощи",
     "caloriesPer100g": 39,
@@ -5683,7 +5684,7 @@
   },
   {
     "fdcId": 2709784,
-    "name": "Огурец, сырой — сырой",
+    "name": "Огурец, сырой",
     "originalName": "Cucumber, raw",
     "category": "Овощи",
     "caloriesPer100g": 16,
@@ -5708,7 +5709,7 @@
   },
   {
     "fdcId": 2709785,
-    "name": "Яйцо, сырой — plant, сырой",
+    "name": "Баклажан, сырой — справочник FNDDS",
     "originalName": "Eggplant, raw",
     "category": "Овощи",
     "caloriesPer100g": 25,
@@ -5722,7 +5723,8 @@
     "aliases": [
       "яйцо",
       "яйцо куриное",
-      "eggplant, raw"
+      "eggplant, raw",
+      "баклажан"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31",
     "canonicalKey": "usda:eggplant-raw",
@@ -6662,7 +6664,7 @@
   },
   {
     "fdcId": 2709215,
-    "name": "Яблоко, сырой — сырой",
+    "name": "Яблоко, сырой",
     "originalName": "Apple, raw",
     "category": "Фрукты",
     "caloriesPer100g": 61,
@@ -6687,7 +6689,7 @@
   },
   {
     "fdcId": 2709171,
-    "name": "Апельсин, сырой — сырой",
+    "name": "Апельсин, сырой",
     "originalName": "Orange, raw",
     "category": "Фрукты",
     "caloriesPer100g": 50,
@@ -6712,7 +6714,7 @@
   },
   {
     "fdcId": 2709224,
-    "name": "Банан, сырой — сырой",
+    "name": "Банан, сырой",
     "originalName": "Banana, raw",
     "category": "Фрукты",
     "caloriesPer100g": 97,
@@ -15025,7 +15027,7 @@
   },
   {
     "fdcId": 2709930,
-    "name": "Яйцо, приготовленный — plant, приготовленный, fat added",
+    "name": "Баклажан, приготовленный — приготовленный, fat added",
     "originalName": "Eggplant, cooked, fat added",
     "category": "Овощи",
     "caloriesPer100g": 51,
@@ -15039,7 +15041,8 @@
     "aliases": [
       "яйцо",
       "яйцо куриное",
-      "eggplant, cooked, fat added"
+      "eggplant, cooked, fat added",
+      "баклажан"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31",
     "canonicalKey": "usda:eggplant-cooked-fat-added",
@@ -15076,7 +15079,7 @@
   },
   {
     "fdcId": 2709929,
-    "name": "Яйцо, приготовленный — plant, приготовленный, no added fat",
+    "name": "Баклажан, приготовленный — приготовленный, no added fat",
     "originalName": "Eggplant, cooked, no added fat",
     "category": "Овощи",
     "caloriesPer100g": 27,
@@ -15090,7 +15093,8 @@
     "aliases": [
       "яйцо",
       "яйцо куриное",
-      "eggplant, cooked, no added fat"
+      "eggplant, cooked, no added fat",
+      "баклажан"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31",
     "canonicalKey": "usda:eggplant-cooked-no-added-fat",
@@ -15202,7 +15206,7 @@
   },
   {
     "fdcId": 2710802,
-    "name": "Яйцо, приготовленный — plant, приготовленный, as ingredient",
+    "name": "Баклажан, приготовленный — приготовленный, as ingredient",
     "originalName": "Eggplant, cooked, as ingredient",
     "category": "Овощи",
     "caloriesPer100g": 27,
@@ -15216,7 +15220,8 @@
     "aliases": [
       "яйцо",
       "яйцо куриное",
-      "eggplant, cooked, as ingredient"
+      "eggplant, cooked, as ingredient",
+      "баклажан"
     ],
     "sourceVersion": "FNDDS 2021–2023 · 2024-10-31",
     "canonicalKey": "usda:eggplant-cooked-as-ingredient",
@@ -19002,7 +19007,7 @@
   },
   {
     "fdcId": 2705709,
-    "name": "Сыр чеддер",
+    "name": "Сыр чеддер — справочник FNDDS",
     "originalName": "Cheese, Cheddar",
     "category": "Сыры",
     "caloriesPer100g": 409,

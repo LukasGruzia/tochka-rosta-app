@@ -95,6 +95,11 @@ async function reconcileCanonicalCatalog(db: SQLiteDatabase, now: string) {
     for (const table of ['meal_plan_items', 'meal_template_items', 'weekly_plan_items', 'recipe_ingredients', 'scan_history', 'rhythm_feedback']) {
       await db.runAsync(`UPDATE ${table} SET product_id=? WHERE product_id=?`, item.primary_id, item.id);
     }
+    await db.runAsync(`INSERT INTO rhythm_preferences(entity_type,entity_id,weight,last_decayed_at,updated_at)
+      SELECT 'product',?,weight,last_decayed_at,? FROM rhythm_preferences WHERE entity_type='product' AND entity_id=?
+      ON CONFLICT(entity_type,entity_id) DO UPDATE SET weight=rhythm_preferences.weight+excluded.weight,updated_at=excluded.updated_at`,
+      String(item.primary_id), now, String(item.id));
+    await db.runAsync("DELETE FROM rhythm_preferences WHERE entity_type='product' AND entity_id=?", String(item.id));
     await db.runAsync('UPDATE products SET merged_into_id=?,updated_at=? WHERE id=?', item.primary_id, now, item.id);
   }
   await db.runAsync(`UPDATE catalog_migration_reports SET
