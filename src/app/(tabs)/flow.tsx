@@ -52,6 +52,7 @@ import { getLocalDateKey } from "@/utils/date";
 import { RhythmCharacter } from "@/features/rhythm/components/RhythmCharacter";
 import { RhythmSuggestionCard } from "@/features/rhythm/components/RhythmSuggestionCard";
 import { RhythmOnboardingSheet } from "@/features/rhythm/components/RhythmOnboardingSheet";
+import { useRhythmOverlay } from "@/features/rhythm/components/RhythmOverlayProvider";
 
 export const ErrorBoundary = createSectionErrorBoundary("FlowScreen");
 
@@ -92,6 +93,7 @@ export default function FlowScreen() {
   const setDiaryDate = useAppStore((state) => state.setDiaryDate);
   const { colors } = useTheme();
   const { flags } = useFeatureFlags();
+  const { settings:rhythmSettings }=useRhythmOverlay();
   const [active, setActive] = useState(false);
   const [info, setInfo] = useState(false);
   const [prefs, setPrefs] = useState<FlowPreferences>({
@@ -179,6 +181,7 @@ export default function FlowScreen() {
         <View style={styles.hero}>
           <RhythmCharacter
             size="hero"
+            mode={rhythmSettings?.mode}
             emotion={streak >= 7 ? "celebrating" : streak > 0 ? "happy" : "idle"}
             action={streak >= 7 ? "celebrate" : streak > 0 ? "wave" : "none"}
             animated={active}

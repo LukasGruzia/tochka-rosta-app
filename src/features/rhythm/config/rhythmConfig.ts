@@ -2,7 +2,6 @@ import type { RhythmFeedbackType, RhythmMode } from '../types/rhythm';
 
 export const rhythmConfig = {
   queueLimit: 3,
-  initiativeCooldownMs: 2.5 * 60 * 60 * 1000,
   sameTemplateCooldownMs: 24 * 60 * 60 * 1000,
   rejectionSuppressionCount: 2,
   historyCaps: { messages: 200, events: 500, recommendations: 100, feedback: 500 },
@@ -16,7 +15,7 @@ export const rhythmConfig = {
   toastDurationMs: 5200,
 } as const;
 
-export const rhythmModeRank: Record<RhythmMode, number> = { off: 0, quiet: 1, balanced: 2, active: 3 };
+export const rhythmModeRank: Record<RhythmMode, number> = { quiet: 1, balanced: 2, active: 3 };
 
 export const defaultRhythmSettings = {
   mode: 'balanced', enabled: true, showOnOtherScreens: true,

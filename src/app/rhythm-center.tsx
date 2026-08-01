@@ -227,7 +227,7 @@ export default function RhythmCenterScreen() {
     <TabScreen title="Центр Ритма" subtitle="Локальный подбор — решение всегда за тобой">
       <GlassCard variant="accent">
         <View style={styles.hero}>
-          <RhythmCharacter size="medium" emotion="thinking" action="presentAdvice" />
+          <RhythmCharacter size="medium" mode={settings?.mode} emotion="thinking" action="presentAdvice" />
           <View style={styles.grow}>
             <AppText variant="heading">Что подойдёт сейчас</AppText>
             <AppText tone="secondary">

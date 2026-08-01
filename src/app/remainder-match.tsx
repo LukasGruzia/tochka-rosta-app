@@ -23,6 +23,7 @@ import { useFeatureFlags } from "@/contexts/FeatureFlagsContext";
 import { RhythmCharacter } from "@/features/rhythm/components/RhythmCharacter";
 import { publishRhythmEvent } from "@/features/rhythm/services/eventService";
 import { recordRhythmFeedback } from "@/features/rhythm/repositories/rhythmRepository";
+import { useRhythmOverlay } from "@/features/rhythm/components/RhythmOverlayProvider";
 
 export default function RemainderMatchScreen() {
   const params = useLocalSearchParams<{ meal?: MealType }>();
@@ -37,6 +38,7 @@ export default function RemainderMatchScreen() {
   );
   const { colors } = useTheme();
   const { flags } = useFeatureFlags();
+  const {settings:rhythmSettings}=useRhythmOverlay();
   const [budget, setBudget] = useState<BudgetSettings | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   useEffect(() => {
@@ -129,7 +131,7 @@ export default function RemainderMatchScreen() {
     >
       <GlassCard variant="accent">
         <View style={styles.rhythmHead}>
-          <RhythmCharacter size="compact" emotion="thinking" action="presentAdvice" />
+          <RhythmCharacter size="compact" mode={rhythmSettings?.mode} emotion="thinking" action="presentAdvice" />
           <AppText tone="secondary" style={styles.copy}>Ритм сравнил доступные варианты. Выбор и добавление остаются за тобой.</AppText>
         </View>
         <AppText variant="caption" tone="green">
