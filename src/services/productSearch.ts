@@ -33,6 +33,7 @@ function matchScore(product: Product, query: string) {
 }
 
 function sourcePriority(product: Product) {
+  if (typeof product.sourcePriority === 'number') return product.sourcePriority;
   if (product.sourceType === 'user_product' || product.sourceType === 'user_recipe') return 90;
   if (product.sourceType === 'tochka_rosta') return 70;
   if (product.isFavorite) return 60;

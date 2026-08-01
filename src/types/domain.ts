@@ -80,6 +80,13 @@ export interface Product {
   dietTags: string[];
   allergens: string[];
   aliases: string[];
+  canonicalKey?: string | null;
+  brand?: string | null;
+  preparationState?: string | null;
+  sourcePriority?: number;
+  isActive?: boolean;
+  mergedIntoId?: number | null;
+  reviewStatus?: 'verified' | 'needs_review';
   barcode: string | null;
   qrCode: string | null;
   isAvailable: boolean;

@@ -15,6 +15,7 @@ import {
   createDemoV3Data,
   createTestStreak,
   inspectDevelopmentDatabase,
+  loadCatalogDataQualityReport,
   recalculateAllDiaryAggregates,
   reseedForDevelopment,
 } from "@/database/repositories/developerRepository";
@@ -46,6 +47,7 @@ export default function DeveloperScreen() {
   const [inspection, setInspection] = useState<Awaited<
     ReturnType<typeof inspectDevelopmentDatabase>
   > | null>(null);
+  const [catalogQuality, setCatalogQuality] = useState<Awaited<ReturnType<typeof loadCatalogDataQualityReport>> | null>(null);
   const [busy, setBusy] = useState(false);
   const [rhythmDiagnostics, setRhythmDiagnostics] = useState<Record<string, number> | null>(null);
   const [showRhythmStates, setShowRhythmStates] = useState(false);
@@ -67,10 +69,10 @@ export default function DeveloperScreen() {
     getUiDiagnosticsSnapshot,
   );
   const rhythmAssetDiagnostics = useSyncExternalStore(subscribeRhythmAssetDiagnostics, getRhythmAssetDiagnostics, getRhythmAssetDiagnostics);
-  const refresh = useCallback(
-    async () => setInspection(await inspectDevelopmentDatabase()),
-    [],
-  );
+  const refresh = useCallback(async () => {
+    const [database, catalog] = await Promise.all([inspectDevelopmentDatabase(), loadCatalogDataQualityReport()]);
+    setInspection(database); setCatalogQuality(catalog);
+  }, []);
   useEffect(() => {
     if (__DEV__) void refresh().catch((error) => console.warn("[DeveloperScreen] inspect", error));
   }, [refresh]);
@@ -135,6 +137,15 @@ export default function DeveloperScreen() {
         <AppText tone={inspection?.duplicateCodes ? "warning" : "green"}>
           Дубли кодов: {inspection?.duplicateCodes ?? "—"}
         </AppText>
+      </GlassCard>
+      <GlassCard>
+        <AppText variant="heading">Catalog Data Quality</AppText>
+        <AppText tone="secondary">Всего {catalogQuality?.total ?? '—'} · активно {catalogQuality?.active ?? '—'} · объединено {catalogQuality?.merged ?? '—'}</AppText>
+        <AppText tone={catalogQuality?.technical ? 'warning' : 'green'}>Технические названия: {catalogQuality?.technical ?? '—'}</AppText>
+        <AppText tone={catalogQuality?.duplicateCanonical ? 'warning' : 'green'}>Активные canonical-дубли: {catalogQuality?.duplicateCanonical ?? '—'}</AppText>
+        <AppText tone={catalogQuality?.invalidMacros || catalogQuality?.missingCategories ? 'warning' : 'green'}>Некорректные КБЖУ: {catalogQuality?.invalidMacros ?? '—'} · без категории: {catalogQuality?.missingCategories ?? '—'}</AppText>
+        <AppText tone={catalogQuality?.needsReview ? 'warning' : 'secondary'}>Нужна ручная проверка: {catalogQuality?.needsReview ?? '—'}</AppText>
+        {catalogQuality?.migration ? <AppText variant="caption" tone="muted">Миграция: {catalogQuality.migration.before_count} → {catalogQuality.migration.after_count}; «вариант N»: {catalogQuality.migration.technical_names_before} → {catalogQuality.migration.technical_names_after}</AppText> : null}
       </GlassCard>
       <GlassCard>
         <AppText variant="heading">Навигация и устройство</AppText>
