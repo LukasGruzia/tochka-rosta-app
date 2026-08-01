@@ -9,7 +9,8 @@ import { dirname, resolve } from 'node:path';
 import { mkdirSync } from 'node:fs';
 
 type RawFood = { fdcId: number; description: string; dataType?: string; publicationDate?: string; foodNutrients?: { nutrient?: { id?: number; name?: string; unitName?: string }; amount?: number }[]; foodPortions?: { gramWeight?: number; portionDescription?: string }[]; wweiaFoodCategory?: { wweiaFoodCategoryDescription?: string } };
-export type CompactFood = { fdcId: number; name: string; originalName: string; category: string; caloriesPer100g: number; proteinPer100g: number; fatPer100g: number; carbsPer100g: number; fiberPer100g: number | null; sugarPer100g: number | null; sodiumPer100g: number | null; servingSizeG: number; aliases: string[]; sourceVersion: string; canonicalKey?: string; brand?: string | null; preparationState?: string | null; sourcePriority?: number; isActive?: boolean; reviewStatus?: 'verified' | 'needs_review' };
+export type CompactServingOption={label:string;amount:number;unit:'g'|'ml'|'piece'|'serving';gramsEquivalent:number;isDefault?:boolean;source?:string};
+export type CompactFood = { fdcId: number; name: string; originalName: string; category: string; caloriesPer100g: number; proteinPer100g: number; fatPer100g: number; carbsPer100g: number; fiberPer100g: number | null; sugarPer100g: number | null; sodiumPer100g: number | null; servingSizeG: number; aliases: string[]; servingOptions?:CompactServingOption[]; sourceVersion: string; canonicalKey?: string; brand?: string | null; preparationState?: string | null; sourcePriority?: number; isActive?: boolean; reviewStatus?: 'verified' | 'needs_review' };
 
 const categories = [
   ['Спортивное питание', /\b(protein powder|protein bar|sports drink|energy gel|whey protein)\b/i],
@@ -127,11 +128,18 @@ function macrosAreCompatible(left: CompactFood, right: CompactFood) {
 function preparationState(description: string) { return modifiers.find(([pattern]) => pattern.test(description))?.[1] ?? null; }
 function sourcePriority(version: string) { return version.includes('Foundation') ? 80 : 60; }
 function extractBrand(description: string) { const value = description.match(/\(([^)]+)\)/)?.[1]?.trim(); return value && /[A-Z]/.test(value) ? value : null; }
+function servingVariant(description:string,grams:number){
+  const marker=description.match(/(?:^|[,\s])(small|medium|large|S|M|L)(?=$|[,\s])/i)?.[1]?.toLowerCase();
+  const labels:Record<string,string>={s:'Маленькая порция',small:'Маленькая порция',m:'Средняя порция',medium:'Средняя порция',l:'Крупная порция',large:'Крупная порция'};
+  const canonicalDescription=description.replace(/(?:^|[,\s])(small|medium|large|S|M|L)(?=$|[,\s])/ig,' ').replace(/\s*,\s*/g,', ').replace(/\s+/g,' ').replace(/^,\s*|,\s*$/g,'').trim();
+  return{canonicalDescription,label:marker?labels[marker]:'Типичная порция',option:{label:marker?labels[marker]:'Типичная порция',amount:1,unit:'serving' as const,gramsEquivalent:grams,isDefault:false,source:'USDA'}};
+}
 
 export function finalizeCatalogNames(input: CompactFood[]) {
   const foods: (CompactFood & { _descriptor: string })[] = input.map((food) => {
     const translated = translateUsdaName(food.originalName, food.category);
-    return { ...food, name: translated.name, aliases: [...new Set([...food.aliases, ...translated.aliases, food.originalName.toLowerCase()].flatMap((alias) => [alias, normalizeAlias(alias)]))], canonicalKey: `usda:${normalizeCanonicalPart(food.originalName)}`, brand: extractBrand(food.originalName), preparationState: preparationState(food.originalName), sourcePriority: sourcePriority(food.sourceVersion), isActive: true, reviewStatus: 'verified', _descriptor: translated.descriptor };
+    const variant=servingVariant(food.originalName,food.servingSizeG);
+    return { ...food, name: translated.name, aliases: [...new Set([...food.aliases, ...translated.aliases, food.originalName.toLowerCase()].flatMap((alias) => [alias, normalizeAlias(alias)]))], servingOptions:[variant.option],canonicalKey: `usda:${normalizeCanonicalPart(variant.canonicalDescription)}`, brand: extractBrand(food.originalName), preparationState: preparationState(food.originalName), sourcePriority: sourcePriority(food.sourceVersion), isActive: true, reviewStatus: 'verified', _descriptor: translated.descriptor };
   });
   const displayGroups = Map.groupBy(foods, (food) => food.name.toLocaleLowerCase('ru'));
   for (const group of displayGroups.values()) {
@@ -143,6 +151,7 @@ export function finalizeCatalogNames(input: CompactFood[]) {
     if (group.length < 2) continue;
     group.sort((left, right) => (right.sourcePriority ?? 0) - (left.sourcePriority ?? 0) || left.fdcId - right.fdcId);
     const primary = group[0];
+    primary.servingOptions=[...new Map(group.flatMap(food=>food.servingOptions??[]).map(option=>[`${option.label}:${option.gramsEquivalent}`,option])).values()];
     for (const secondary of group.slice(1)) {
       if (!macrosAreCompatible(primary, secondary)) {
         primary.reviewStatus = 'needs_review'; secondary.reviewStatus = 'needs_review'; secondary.isActive = false;

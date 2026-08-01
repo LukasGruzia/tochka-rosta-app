@@ -19,4 +19,11 @@ describe('USDA import normalization', () => {
     expect(result.map((food) => food.name)).toEqual(['Сыр — Gruyere', 'Сыр — Brie']);
     expect(result.every((food) => !food.name.includes('вариант'))).toBe(true);
   });
+  it('turns imported size variants into serving options under one canonical key',()=>{
+    const base={category:'Фрукты',caloriesPer100g:89,proteinPer100g:1.1,fatPer100g:.3,carbsPer100g:23,fiberPer100g:2.6,sugarPer100g:12,sodiumPer100g:1,aliases:[],sourceVersion:'Foundation Foods'};
+    const result=finalizeCatalogNames([{...base,fdcId:10,name:'Банан',originalName:'Banana, small, raw',servingSizeG:90},{...base,fdcId:11,name:'Банан',originalName:'Banana, medium, raw',servingSizeG:120}]);
+    expect(new Set(result.map(food=>food.canonicalKey)).size).toBe(1);
+    expect(result.filter(food=>food.isActive)).toHaveLength(1);
+    expect(result.find(food=>food.isActive)?.servingOptions?.map(option=>option.gramsEquivalent)).toEqual(expect.arrayContaining([90,120]));
+  });
 });

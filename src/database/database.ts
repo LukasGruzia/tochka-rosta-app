@@ -4,9 +4,10 @@ import { seedDatabase } from './seed';
 import { profileQuery } from '@/performance/queryProfiler';
 import { setPerformanceMetric } from '@/performance/performanceLogger';
 import { normalizeSearchText } from '@/services/productSearch';
+import { ensureCatalogCanonicalization } from './repositories/catalogCanonicalizationRepository';
 
 let databasePromise: Promise<SQLite.SQLiteDatabase> | null = null;
-export const seedDataVersion = 'usda-common-2026-08-v3';
+export const seedDataVersion = 'usda-common-2026-08-v4';
 
 export function getDatabase() {
   databasePromise ??= SQLite.openDatabaseAsync(databaseName);
@@ -54,5 +55,6 @@ export async function initializeDatabase() {
         ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at`, seedDataVersion);
     }));
   }
+  await profileQuery('catalog:canonicalize-v9',()=>ensureCatalogCanonicalization(db));
   return db;
 }

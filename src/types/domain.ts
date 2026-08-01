@@ -102,6 +102,32 @@ export interface Product {
   updatedAt: string | null;
 }
 
+export type ServingUnit = 'g' | 'ml' | 'piece' | 'serving';
+
+export interface ServingOption {
+  id: number;
+  uuid: string;
+  productId: number;
+  label: string;
+  amount: number;
+  unit: ServingUnit;
+  gramsEquivalent: number;
+  isDefault: boolean;
+  sourceType: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UserProductServingPreference {
+  id: number;
+  productId: number;
+  lastAmount: number;
+  lastUnit: ServingUnit;
+  lastGramsEquivalent: number;
+  usageCount: number;
+  updatedAt: string;
+}
+
 export interface ProductDraft {
   id?: number;
   name: string;
