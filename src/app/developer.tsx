@@ -38,6 +38,7 @@ import { RhythmCharacter } from "@/features/rhythm/components/RhythmCharacter";
 import { rhythmEmotionValues, resolveRhythmAsset } from "@/features/rhythm/config/rhythmAssets";
 import { getRhythmAssetDiagnostics, subscribeRhythmAssetDiagnostics } from "@/features/rhythm/services/assetDiagnostics";
 import { betaChecklist } from "@/config/betaChecklist";
+import { getPerformanceSnapshot, subscribePerformance } from '@/performance/performanceLogger';
 
 export default function DeveloperScreen() {
   const initialize = useAppStore((state) => state.initialize);
@@ -69,6 +70,7 @@ export default function DeveloperScreen() {
     getUiDiagnosticsSnapshot,
   );
   const rhythmAssetDiagnostics = useSyncExternalStore(subscribeRhythmAssetDiagnostics, getRhythmAssetDiagnostics, getRhythmAssetDiagnostics);
+  const performanceDiagnostics = useSyncExternalStore(subscribePerformance, getPerformanceSnapshot, getPerformanceSnapshot);
   const refresh = useCallback(async () => {
     const [database, catalog] = await Promise.all([inspectDevelopmentDatabase(), loadCatalogDataQualityReport()]);
     setInspection(database); setCatalogQuality(catalog);
@@ -286,6 +288,8 @@ export default function DeveloperScreen() {
         <AppText variant="caption" tone="secondary">asset: {rhythmAssetDiagnostics.assetKey} · requested: {rhythmAssetDiagnostics.requestedKey}</AppText>
         <AppText variant="caption" tone="secondary">source: {rhythmAssetDiagnostics.fileName} · {rhythmAssetDiagnostics.pixelSize} · {(rhythmAssetDiagnostics.fileBytes/1024).toFixed(1)} KB</AppText>
         <AppText variant="caption" tone={rhythmAssetDiagnostics.fallbackUsed?'warning':'green'}>fallback: {rhythmAssetDiagnostics.fallbackUsed?'да':'нет'} · error: {rhythmAssetDiagnostics.loadError??'нет'} · performance: {rhythmAssetDiagnostics.performanceMode}</AppText>
+        <AppText variant="caption" tone="secondary">FPS ≈ {rhythmAssetDiagnostics.approximateFps ?? '—'} · blink timers: {rhythmAssetDiagnostics.activeBlinkTimers} · renders: {performanceDiagnostics.renderCounts.RhythmCharacter ?? 0}</AppText>
+        <AppText variant="caption" tone={rhythmAssetDiagnostics.animationPausedReason?'muted':'green'}>Пауза: {rhythmAssetDiagnostics.animationPausedReason ?? 'нет'}</AppText>
         <PrimaryButton label={showRhythmStates?'Скрыть состояния Ритма':'Показать все состояния Ритма'} secondary onPress={()=>setShowRhythmStates(value=>!value)}/>
         {showRhythmStates?<View style={styles.rhythmStates}>{rhythmEmotionValues.map(emotion=>{const asset=resolveRhythmAsset(emotion,'compact');return <View key={emotion} style={[styles.rhythmState,{borderColor:colors.glassBorder}]}><RhythmCharacter size="compact" emotion={emotion} animated={false}/><AppText variant="caption">{emotion}</AppText><AppText variant="caption" tone={asset.fallbackUsed?'warning':'muted'}>{asset.key}{asset.fallbackUsed?' · fallback':''}</AppText></View>;})}</View>:null}
         <PrimaryButton label="Симулировать добавление блюда" secondary onPress={() => publishRhythmEvent({type:'MEAL_ADDED',route:'/developer',payload:{simulation:true}})} />
