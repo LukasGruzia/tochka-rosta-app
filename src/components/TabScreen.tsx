@@ -1,27 +1,28 @@
 import type { PropsWithChildren, ReactNode } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
+import { useSegments } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTabBarLayout } from '@/contexts/TabBarLayoutContext';
 import { spacing } from '@/theme/tokens';
-import { useTheme } from '@/theme/ThemeProvider';
 import { AppBackground } from './AppBackground';
-import { AppText } from './AppText';
+import { AppScreenHeader } from './AppScreenHeader';
 
 interface Props extends PropsWithChildren {
   title?: string;
   subtitle?: string;
   headerRight?: ReactNode;
   collapsible?: boolean;
+  showBack?: boolean;
+  fallbackRoute?: string;
 }
 
-export function TabScreen({ title, subtitle, headerRight, children }: Props) {
+export function TabScreen({ title, subtitle, headerRight, showBack, fallbackRoute, children }: Props) {
   const { contentInset } = useTabBarLayout();
-  const { colors } = useTheme();
+  const segments = useSegments();
+  const isRootTab = segments[0] === '(tabs)';
+  const shouldShowBack = showBack ?? !isRootTab;
   return <AppBackground><SafeAreaView style={styles.safe} edges={['top']}>
-    {title ? <View style={[styles.header, { backgroundColor: colors.backgroundPrimary, borderBottomColor: colors.glassBorder }]}>
-      <View style={styles.copy}><AppText variant="title">{title}</AppText>{subtitle ? <AppText tone="secondary">{subtitle}</AppText> : null}</View>
-      {headerRight}
-    </View> : null}
+    {title ? <AppScreenHeader title={title} subtitle={subtitle} showBack={shouldShowBack} fallbackRoute={fallbackRoute} right={isRootTab ? headerRight : undefined} /> : null}
     <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.scroll, { paddingBottom: contentInset }]}>
       {children}
     </ScrollView>
@@ -30,7 +31,5 @@ export function TabScreen({ title, subtitle, headerRight, children }: Props) {
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
-  header: { minHeight: 72, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth },
-  copy: { flex: 1, gap: 4 },
   scroll: { flexGrow: 1, paddingHorizontal: spacing.lg, paddingTop: spacing.md, gap: spacing.md },
 });

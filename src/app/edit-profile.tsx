@@ -26,7 +26,7 @@ export default function EditProfileScreen() {
     try { setSaving(true); await updateProfile({ ...draft, name }); router.back(); }
     catch { setSaving(false); Alert.alert('Ошибка', 'Не удалось сохранить изменения.'); }
   };
-  return <OnboardingShell keyboard eyebrow="Локальное редактирование" title="Изменить данные" description="После сохранения дневная норма обновится автоматически."
+  return <OnboardingShell keyboard showBack fallbackRoute="/(tabs)/profile" eyebrow="Локальное редактирование" title="Изменить данные" description="После сохранения дневная норма обновится автоматически."
     footer={<View style={styles.actions}><PrimaryButton label={saving ? 'Сохраняем…' : 'Сохранить изменения'} disabled={saving} onPress={save}/><PrimaryButton label="Отмена" secondary onPress={() => router.back()}/></View>}>
     <View style={styles.field}><AppText variant="caption" tone="secondary">Имя</AppText><TextInput value={draft.name} onChangeText={(value) => patch('name', value)} style={[styles.input, { borderColor: colors.glassBorder, backgroundColor: colors.surfaceStrong, color: colors.textPrimary }]} accessibilityLabel="Имя" /></View>
     <AppText variant="heading">Пол для расчёта</AppText><ChoiceCard title="Женский" selected={draft.calculationSex === 'female'} onPress={() => patch('calculationSex', 'female')}/><ChoiceCard title="Мужской" selected={draft.calculationSex === 'male'} onPress={() => patch('calculationSex', 'male')}/>

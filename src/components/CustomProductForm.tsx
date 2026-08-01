@@ -4,6 +4,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import { AppBackground } from "./AppBackground";
+import { AppBackButton } from './AppBackButton';
 import { AppText } from "./AppText";
 import { FilterChip } from "./FilterChip";
 import { FormField } from "./FormField";
@@ -166,6 +167,7 @@ export function CustomProductForm({ productId }: { productId?: number }) {
         contentContainerStyle={styles.content}
       >
         <View style={styles.header}>
+          <AppBackButton fallbackRoute="/(tabs)/catalog" />
           <View style={styles.headerCopy}>
             <AppText variant="title">
               {productId ? "Редактировать продукт" : "Новый продукт"}
@@ -372,7 +374,7 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
     gap: spacing.md,
   },
-  header: { flexDirection: "row" },
+  header: { flexDirection: "row", alignItems: 'flex-start', gap: spacing.md },
   headerCopy: { flex: 1, gap: spacing.xs },
   form: { gap: spacing.md },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },

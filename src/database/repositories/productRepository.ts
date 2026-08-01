@@ -35,6 +35,13 @@ interface ProductRow {
   diet_tags: string;
   allergens: string;
   aliases: string;
+  canonical_key: string | null;
+  brand: string | null;
+  preparation_state: string | null;
+  source_priority: number;
+  is_active: number;
+  merged_into_id: number | null;
+  review_status: 'verified' | 'needs_review';
   barcode: string | null;
   qr_code: string | null;
   is_available: number;
@@ -92,6 +99,13 @@ export function mapProductRow(row: ProductRow): Product {
     dietTags: parseList(row.diet_tags),
     allergens: parseList(row.allergens),
     aliases: parseList(row.aliases),
+    canonicalKey: row.canonical_key,
+    brand: row.brand,
+    preparationState: row.preparation_state,
+    sourcePriority: row.source_priority,
+    isActive: row.is_active === 1,
+    mergedIntoId: row.merged_into_id,
+    reviewStatus: row.review_status,
     barcode: row.barcode,
     qrCode: row.qr_code,
     isAvailable: row.is_available === 1,
@@ -132,7 +146,7 @@ export interface ProductPageOptions {
 }
 
 function buildProductWhere(options: ProductPageOptions) {
-  const conditions = ['p.deleted_at IS NULL'];
+  const conditions = ['p.deleted_at IS NULL', 'p.is_active=1'];
   const params: (string | number)[] = [];
   if (!options.includeUnavailable) conditions.push('p.is_available=1');
   if (options.category && options.category !== 'Все') { conditions.push('p.category=?'); params.push(options.category); }
@@ -189,13 +203,13 @@ export async function countProducts(options: ProductPageOptions = {}) {
 
 export async function loadProductCategories() {
   const db = await getDatabase();
-  const rows = await profileQuery('products:categories', () => db.getAllAsync<{ category: string }>(`SELECT DISTINCT category FROM products WHERE deleted_at IS NULL AND is_available=1 AND category<>'' ORDER BY category COLLATE NOCASE LIMIT 40`));
+  const rows = await profileQuery('products:categories', () => db.getAllAsync<{ category: string }>(`SELECT DISTINCT category FROM products WHERE deleted_at IS NULL AND is_active=1 AND is_available=1 AND category<>'' ORDER BY category COLLATE NOCASE LIMIT 40`));
   return rows.map((row) => row.category);
 }
 
 export async function loadProducts(options?: { includeUnavailable?: boolean; sourceType?: FoodSourceType }) {
   const db = await getDatabase();
-  const conditions = ['p.deleted_at IS NULL'];
+  const conditions = ['p.deleted_at IS NULL', 'p.is_active=1'];
   const params: (string | number)[] = [];
   if (!options?.includeUnavailable) conditions.push('p.is_available = 1');
   if (options?.sourceType) { conditions.push('p.source_type = ?'); params.push(options.sourceType); }
@@ -208,13 +222,18 @@ export async function loadProducts(options?: { includeUnavailable?: boolean; sou
 export async function getProductById(id: number) {
   const db = await getDatabase();
   const row = await profileQuery('products:by_id', () => db.getFirstAsync<ProductRow>(`${productSelect} WHERE p.id = ? AND p.deleted_at IS NULL`, id));
-  return row ? mapProductRow(row) : null;
+  if (!row) return null;
+  if (row.merged_into_id) {
+    const primary = await db.getFirstAsync<ProductRow>(`${productSelect} WHERE p.id=? AND p.deleted_at IS NULL`, row.merged_into_id);
+    if (primary) return mapProductRow(primary);
+  }
+  return mapProductRow(row);
 }
 
 export async function findProductByCode(code: string) {
   const db = await getDatabase();
   const normalized = code.trim();
-  const row = await db.getFirstAsync<ProductRow>(`${productSelect} WHERE p.deleted_at IS NULL AND (p.qr_code = ? OR p.barcode = ?) LIMIT 1`, normalized, normalized);
+  const row = await db.getFirstAsync<ProductRow>(`${productSelect} WHERE p.deleted_at IS NULL AND p.is_active=1 AND (p.qr_code = ? OR p.barcode = ?) LIMIT 1`, normalized, normalized);
   return row ? mapProductRow(row) : null;
 }
 
@@ -245,6 +264,7 @@ export async function createCustomProduct(draft: ProductDraft) {
     normalized.fiberG, normalized.sugarG, normalized.sodiumMg, draft.imageUri ?? null, draft.category,
     JSON.stringify(draft.allergens), draft.barcode?.trim() || null, draft.barcode?.trim() || null, slug,
     draft.basisType, draft.basisAmount, draft.basisUnit, draft.note?.trim() || null, now, now, normalizeSearchText(draft.name));
+  await db.runAsync('UPDATE products SET canonical_key=?,brand=?,source_priority=100,is_active=1 WHERE id=?', `user:${slug}`, draft.brand?.trim() || null, Number(result.lastInsertRowId));
   invalidateProductSearchCache();
   return getProductById(Number(result.lastInsertRowId));
 }
@@ -267,6 +287,7 @@ export async function updateCustomProduct(id: number, draft: ProductDraft) {
     draft.imageUri ?? null, draft.category, JSON.stringify(draft.allergens), draft.barcode?.trim() || null,
     draft.barcode?.trim() || null, draft.basisType, draft.basisAmount, draft.basisUnit, draft.note?.trim() || null,
     new Date().toISOString(), normalizeSearchText(draft.name), id);
+  await db.runAsync('UPDATE products SET brand=? WHERE id=?', draft.brand?.trim() || null, id);
   invalidateProductSearchCache();
   return getProductById(id);
 }
@@ -290,7 +311,7 @@ export async function deleteCustomProduct(id: number) {
   const db = await getDatabase();
   await db.withExclusiveTransactionAsync(async (txn) => {
     await txn.runAsync('DELETE FROM favorites WHERE product_id = ?', id);
-    await txn.runAsync('UPDATE products SET deleted_at=?, is_available=0, updated_at=? WHERE id=?', new Date().toISOString(), new Date().toISOString(), id);
+    await txn.runAsync('UPDATE products SET deleted_at=?, is_available=0, is_active=0, updated_at=? WHERE id=?', new Date().toISOString(), new Date().toISOString(), id);
     if (product.sourceType === 'user_recipe') await txn.runAsync('UPDATE recipes SET deleted_at=?, updated_at=? WHERE product_id=?', new Date().toISOString(), new Date().toISOString(), id);
   });
   invalidateProductSearchCache();
@@ -317,7 +338,7 @@ export async function restoreCustomProduct(id: number) {
   if (!product) throw new Error('Продукт уже недоступен для восстановления');
   const now = new Date().toISOString();
   await db.withExclusiveTransactionAsync(async (txn) => {
-    await txn.runAsync("UPDATE products SET deleted_at=NULL,is_available=1,sync_status='pending',updated_at=? WHERE id=?", now, id);
+    await txn.runAsync("UPDATE products SET deleted_at=NULL,is_available=1,is_active=1,sync_status='pending',updated_at=? WHERE id=?", now, id);
     if (product.source_type === 'user_recipe') await txn.runAsync("UPDATE recipes SET deleted_at=NULL,sync_status='pending',updated_at=? WHERE product_id=?", now, id);
   });
   invalidateProductSearchCache();
@@ -351,6 +372,7 @@ export async function saveExternalFoodProduct(preview: ExternalFoodPreview, corr
     carbsPer100g, preview.imageUrl, JSON.stringify(preview.allergens), preview.barcode, preview.barcode, preview.barcode,
     now, now, now, normalizeSearchText(corrections?.name?.trim() || preview.name));
   const id = Number(result.lastInsertRowId);
+  await db.runAsync('UPDATE products SET canonical_key=?,brand=?,source_priority=70,is_active=1 WHERE id=?', `off:${preview.barcode}`, preview.brand ?? null, id);
   invalidateProductSearchCache();
   await db.runAsync(`INSERT OR IGNORE INTO food_sources (product_id, source_type, source_id, source_name, original_name,
     source_version, source_locale, source_updated_at, imported_at) VALUES (?, 'open_food_facts', ?, 'Open Food Facts', ?,

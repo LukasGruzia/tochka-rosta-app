@@ -15,6 +15,7 @@ import {
   createDemoV3Data,
   createTestStreak,
   inspectDevelopmentDatabase,
+  loadCatalogDataQualityReport,
   recalculateAllDiaryAggregates,
   reseedForDevelopment,
 } from "@/database/repositories/developerRepository";
@@ -37,6 +38,7 @@ import { RhythmCharacter } from "@/features/rhythm/components/RhythmCharacter";
 import { rhythmEmotionValues, resolveRhythmAsset } from "@/features/rhythm/config/rhythmAssets";
 import { getRhythmAssetDiagnostics, subscribeRhythmAssetDiagnostics } from "@/features/rhythm/services/assetDiagnostics";
 import { betaChecklist } from "@/config/betaChecklist";
+import { getPerformanceSnapshot, subscribePerformance } from '@/performance/performanceLogger';
 
 export default function DeveloperScreen() {
   const initialize = useAppStore((state) => state.initialize);
@@ -46,6 +48,7 @@ export default function DeveloperScreen() {
   const [inspection, setInspection] = useState<Awaited<
     ReturnType<typeof inspectDevelopmentDatabase>
   > | null>(null);
+  const [catalogQuality, setCatalogQuality] = useState<Awaited<ReturnType<typeof loadCatalogDataQualityReport>> | null>(null);
   const [busy, setBusy] = useState(false);
   const [rhythmDiagnostics, setRhythmDiagnostics] = useState<Record<string, number> | null>(null);
   const [showRhythmStates, setShowRhythmStates] = useState(false);
@@ -67,10 +70,11 @@ export default function DeveloperScreen() {
     getUiDiagnosticsSnapshot,
   );
   const rhythmAssetDiagnostics = useSyncExternalStore(subscribeRhythmAssetDiagnostics, getRhythmAssetDiagnostics, getRhythmAssetDiagnostics);
-  const refresh = useCallback(
-    async () => setInspection(await inspectDevelopmentDatabase()),
-    [],
-  );
+  const performanceDiagnostics = useSyncExternalStore(subscribePerformance, getPerformanceSnapshot, getPerformanceSnapshot);
+  const refresh = useCallback(async () => {
+    const [database, catalog] = await Promise.all([inspectDevelopmentDatabase(), loadCatalogDataQualityReport()]);
+    setInspection(database); setCatalogQuality(catalog);
+  }, []);
   useEffect(() => {
     if (__DEV__) void refresh().catch((error) => console.warn("[DeveloperScreen] inspect", error));
   }, [refresh]);
@@ -135,6 +139,15 @@ export default function DeveloperScreen() {
         <AppText tone={inspection?.duplicateCodes ? "warning" : "green"}>
           Дубли кодов: {inspection?.duplicateCodes ?? "—"}
         </AppText>
+      </GlassCard>
+      <GlassCard>
+        <AppText variant="heading">Catalog Data Quality</AppText>
+        <AppText tone="secondary">Всего {catalogQuality?.total ?? '—'} · активно {catalogQuality?.active ?? '—'} · объединено {catalogQuality?.merged ?? '—'}</AppText>
+        <AppText tone={catalogQuality?.technical ? 'warning' : 'green'}>Технические названия: {catalogQuality?.technical ?? '—'}</AppText>
+        <AppText tone={catalogQuality?.duplicateCanonical ? 'warning' : 'green'}>Активные canonical-дубли: {catalogQuality?.duplicateCanonical ?? '—'}</AppText>
+        <AppText tone={catalogQuality?.invalidMacros || catalogQuality?.missingCategories ? 'warning' : 'green'}>Некорректные КБЖУ: {catalogQuality?.invalidMacros ?? '—'} · без категории: {catalogQuality?.missingCategories ?? '—'}</AppText>
+        <AppText tone={catalogQuality?.needsReview ? 'warning' : 'secondary'}>Нужна ручная проверка: {catalogQuality?.needsReview ?? '—'}</AppText>
+        {catalogQuality?.migration ? <AppText variant="caption" tone="muted">Миграция: {catalogQuality.migration.before_count} → {catalogQuality.migration.after_count}; «вариант N»: {catalogQuality.migration.technical_names_before} → {catalogQuality.migration.technical_names_after}</AppText> : null}
       </GlassCard>
       <GlassCard>
         <AppText variant="heading">Навигация и устройство</AppText>
@@ -275,6 +288,8 @@ export default function DeveloperScreen() {
         <AppText variant="caption" tone="secondary">asset: {rhythmAssetDiagnostics.assetKey} · requested: {rhythmAssetDiagnostics.requestedKey}</AppText>
         <AppText variant="caption" tone="secondary">source: {rhythmAssetDiagnostics.fileName} · {rhythmAssetDiagnostics.pixelSize} · {(rhythmAssetDiagnostics.fileBytes/1024).toFixed(1)} KB</AppText>
         <AppText variant="caption" tone={rhythmAssetDiagnostics.fallbackUsed?'warning':'green'}>fallback: {rhythmAssetDiagnostics.fallbackUsed?'да':'нет'} · error: {rhythmAssetDiagnostics.loadError??'нет'} · performance: {rhythmAssetDiagnostics.performanceMode}</AppText>
+        <AppText variant="caption" tone="secondary">FPS ≈ {rhythmAssetDiagnostics.approximateFps ?? '—'} · blink timers: {rhythmAssetDiagnostics.activeBlinkTimers} · renders: {performanceDiagnostics.renderCounts.RhythmCharacter ?? 0}</AppText>
+        <AppText variant="caption" tone={rhythmAssetDiagnostics.animationPausedReason?'muted':'green'}>Пауза: {rhythmAssetDiagnostics.animationPausedReason ?? 'нет'}</AppText>
         <PrimaryButton label={showRhythmStates?'Скрыть состояния Ритма':'Показать все состояния Ритма'} secondary onPress={()=>setShowRhythmStates(value=>!value)}/>
         {showRhythmStates?<View style={styles.rhythmStates}>{rhythmEmotionValues.map(emotion=>{const asset=resolveRhythmAsset(emotion,'compact');return <View key={emotion} style={[styles.rhythmState,{borderColor:colors.glassBorder}]}><RhythmCharacter size="compact" emotion={emotion} animated={false}/><AppText variant="caption">{emotion}</AppText><AppText variant="caption" tone={asset.fallbackUsed?'warning':'muted'}>{asset.key}{asset.fallbackUsed?' · fallback':''}</AppText></View>;})}</View>:null}
         <PrimaryButton label="Симулировать добавление блюда" secondary onPress={() => publishRhythmEvent({type:'MEAL_ADDED',route:'/developer',payload:{simulation:true}})} />

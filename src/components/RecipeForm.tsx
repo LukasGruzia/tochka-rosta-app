@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { AppBackground } from "./AppBackground";
+import { AppBackButton } from './AppBackButton';
 import { AppText } from "./AppText";
 import { FormField } from "./FormField";
 import { GlassCard } from "./GlassCard";
@@ -144,12 +145,7 @@ export function RecipeForm({ productId }: { productId?: number }) {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.content}
       >
-        <AppText variant="title">
-          {productId ? "Редактировать рецепт" : "Новый рецепт"}
-        </AppText>
-        <AppText tone="secondary">
-          КБЖУ рассчитываются из веса ингредиентов автоматически.
-        </AppText>
+        <View style={styles.screenHeader}><AppBackButton fallbackRoute="/(tabs)/catalog" /><View style={styles.screenHeaderCopy}><AppText variant="title">{productId ? "Редактировать рецепт" : "Новый рецепт"}</AppText><AppText tone="secondary">КБЖУ рассчитываются из веса ингредиентов автоматически.</AppText></View></View>
         <GlassCard style={styles.form}>
           <FormField
             label="Название *"
@@ -424,6 +420,8 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   form: { gap: spacing.md },
+  screenHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md },
+  screenHeaderCopy: { flex: 1, gap: spacing.xs },
   photo: { width: "100%", aspectRatio: 1.8, borderRadius: radii.md },
   headingRow: {
     flexDirection: "row",

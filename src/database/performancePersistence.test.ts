@@ -7,7 +7,7 @@ const read = (file: string) => readFileSync(resolve(process.cwd(), file), 'utf8'
 describe('database performance persistence', () => {
   it('versions the product seed instead of importing it on every startup', () => {
     const source = read('src/database/database.ts');
-    expect(source).toContain("seedDataVersion = 'usda-common-2026-07-v2'");
+    expect(source).toContain("seedDataVersion = 'usda-common-2026-08-v3'");
     expect(source).toContain("seeded?.value !== seedDataVersion");
     expect(source).toContain("'seed_data_version'");
   });
