@@ -39,6 +39,10 @@ import { rhythmEmotionValues, resolveRhythmAsset } from "@/features/rhythm/confi
 import { getRhythmAssetDiagnostics, subscribeRhythmAssetDiagnostics } from "@/features/rhythm/services/assetDiagnostics";
 import { betaChecklist } from "@/config/betaChecklist";
 import { getPerformanceSnapshot, subscribePerformance } from '@/performance/performanceLogger';
+import { getDatabase } from '@/database/database';
+import { loadCatalogCanonicalizationDiagnostics } from '@/database/repositories/catalogCanonicalizationRepository';
+import { rhythmModes, rhythmModeValues } from '@/features/rhythm/config/rhythmModes';
+import type { RhythmMode } from '@/features/rhythm/types/rhythm';
 
 export default function DeveloperScreen() {
   const initialize = useAppStore((state) => state.initialize);
@@ -49,9 +53,12 @@ export default function DeveloperScreen() {
     ReturnType<typeof inspectDevelopmentDatabase>
   > | null>(null);
   const [catalogQuality, setCatalogQuality] = useState<Awaited<ReturnType<typeof loadCatalogDataQualityReport>> | null>(null);
+  const [canonicalDiagnostics,setCanonicalDiagnostics]=useState<Awaited<ReturnType<typeof loadCatalogCanonicalizationDiagnostics>>|null>(null);
   const [busy, setBusy] = useState(false);
   const [rhythmDiagnostics, setRhythmDiagnostics] = useState<Record<string, number> | null>(null);
   const [showRhythmStates, setShowRhythmStates] = useState(false);
+  const [previewMode,setPreviewMode]=useState<RhythmMode>('balanced');
+  const [previewSequence,setPreviewSequence]=useState(0);
   const [completedBetaItems, setCompletedBetaItems] = useState<string[]>([]);
   const insets = useSafeAreaInsets();
   const { tabBarHeight } = useTabBarLayout();
@@ -72,8 +79,8 @@ export default function DeveloperScreen() {
   const rhythmAssetDiagnostics = useSyncExternalStore(subscribeRhythmAssetDiagnostics, getRhythmAssetDiagnostics, getRhythmAssetDiagnostics);
   const performanceDiagnostics = useSyncExternalStore(subscribePerformance, getPerformanceSnapshot, getPerformanceSnapshot);
   const refresh = useCallback(async () => {
-    const [database, catalog] = await Promise.all([inspectDevelopmentDatabase(), loadCatalogDataQualityReport()]);
-    setInspection(database); setCatalogQuality(catalog);
+    const db=await getDatabase();const [database, catalog,canonical] = await Promise.all([inspectDevelopmentDatabase(), loadCatalogDataQualityReport(),loadCatalogCanonicalizationDiagnostics(db)]);
+    setInspection(database); setCatalogQuality(catalog);setCanonicalDiagnostics(canonical);
   }, []);
   useEffect(() => {
     if (__DEV__) void refresh().catch((error) => console.warn("[DeveloperScreen] inspect", error));
@@ -148,6 +155,11 @@ export default function DeveloperScreen() {
         <AppText tone={catalogQuality?.invalidMacros || catalogQuality?.missingCategories ? 'warning' : 'green'}>Некорректные КБЖУ: {catalogQuality?.invalidMacros ?? '—'} · без категории: {catalogQuality?.missingCategories ?? '—'}</AppText>
         <AppText tone={catalogQuality?.needsReview ? 'warning' : 'secondary'}>Нужна ручная проверка: {catalogQuality?.needsReview ?? '—'}</AppText>
         {catalogQuality?.migration ? <AppText variant="caption" tone="muted">Миграция: {catalogQuality.migration.before_count} → {catalogQuality.migration.after_count}; «вариант N»: {catalogQuality.migration.technical_names_before} → {catalogQuality.migration.technical_names_after}</AppText> : null}
+        <AppText variant="heading">Catalog Canonicalization</AppText>
+        <AppText tone="secondary">records: {canonicalDiagnostics?.totalRecords??'—'} · canonical: {canonicalDiagnostics?.canonicalProducts??'—'} · duplicates: {canonicalDiagnostics?.duplicateRecords??'—'}</AppText>
+        <AppText tone="secondary">serving options: {canonicalDiagnostics?.servingOptions??'—'} · aliases: {canonicalDiagnostics?.aliases??'—'}</AppText>
+        <AppText tone={canonicalDiagnostics?.unresolvedConflicts?'warning':'green'}>unresolved: {canonicalDiagnostics?.unresolvedConflicts??'—'} · diversity: {canonicalDiagnostics?.productsAddedForDiversity??'—'} · migration: {canonicalDiagnostics?.migrationStatus??'—'}</AppText>
+        <AppText variant="caption" tone="muted" numberOfLines={3}>dry-run: {canonicalDiagnostics?.dryRunMigration??'—'}</AppText>
       </GlassCard>
       <GlassCard>
         <AppText variant="heading">Навигация и устройство</AppText>
@@ -290,6 +302,9 @@ export default function DeveloperScreen() {
         <AppText variant="caption" tone={rhythmAssetDiagnostics.fallbackUsed?'warning':'green'}>fallback: {rhythmAssetDiagnostics.fallbackUsed?'да':'нет'} · error: {rhythmAssetDiagnostics.loadError??'нет'} · performance: {rhythmAssetDiagnostics.performanceMode}</AppText>
         <AppText variant="caption" tone="secondary">FPS ≈ {rhythmAssetDiagnostics.approximateFps ?? '—'} · blink timers: {rhythmAssetDiagnostics.activeBlinkTimers} · renders: {performanceDiagnostics.renderCounts.RhythmCharacter ?? 0}</AppText>
         <AppText variant="caption" tone={rhythmAssetDiagnostics.animationPausedReason?'muted':'green'}>Пауза: {rhythmAssetDiagnostics.animationPausedReason ?? 'нет'}</AppText>
+        <AppText variant="heading">Rhythm Mode Preview</AppText>
+        <View style={styles.future}><RhythmCharacter key={`${previewMode}-${previewSequence}`} size="compact" mode={previewMode} emotion={rhythmModes[previewMode].previewEmotion} action={rhythmModes[previewMode].previewAction}/><View style={styles.flex}><AppText>{rhythmModes[previewMode].label}</AppText><AppText variant="caption" tone="secondary">intensity {rhythmModes[previewMode].animationIntensity} · {rhythmModes[previewMode].bodyMotion} · glow {rhythmModes[previewMode].glowIntensity} · emotion {rhythmModes[previewMode].previewEmotion} · action {rhythmModes[previewMode].previewAction}</AppText></View></View>
+        <View style={[styles.row,styles.wrap]}>{rhythmModeValues.map(value=><View key={value} style={styles.half}><PrimaryButton label={`${rhythmModes[value].label} preview`} secondary={previewMode!==value} onPress={()=>{setPreviewMode(value);setPreviewSequence(sequence=>sequence+1);}}/></View>)}</View>
         <PrimaryButton label={showRhythmStates?'Скрыть состояния Ритма':'Показать все состояния Ритма'} secondary onPress={()=>setShowRhythmStates(value=>!value)}/>
         {showRhythmStates?<View style={styles.rhythmStates}>{rhythmEmotionValues.map(emotion=>{const asset=resolveRhythmAsset(emotion,'compact');return <View key={emotion} style={[styles.rhythmState,{borderColor:colors.glassBorder}]}><RhythmCharacter size="compact" emotion={emotion} animated={false}/><AppText variant="caption">{emotion}</AppText><AppText variant="caption" tone={asset.fallbackUsed?'warning':'muted'}>{asset.key}{asset.fallbackUsed?' · fallback':''}</AppText></View>;})}</View>:null}
         <PrimaryButton label="Симулировать добавление блюда" secondary onPress={() => publishRhythmEvent({type:'MEAL_ADDED',route:'/developer',payload:{simulation:true}})} />

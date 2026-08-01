@@ -12,24 +12,26 @@ import { GlassCard } from '@/components/GlassCard';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { productAssets } from '@/constants/productAssets';
 import { cloneCustomProduct, deleteCustomProduct, getProductById, restoreCustomProduct } from '@/database/repositories/productRepository';
+import { loadProductServingOptions, loadProductServingPreference } from '@/database/repositories/servingRepository';
 import { calculateForWeight } from '@/services/foodMath';
 import { formatProductUpdatedAt, getProductSourceLabel } from '@/services/productPresentation';
 import { useAppStore } from '@/store/appStore';
 import { useTheme } from '@/theme/ThemeProvider';
 import { radii, spacing } from '@/theme/tokens';
-import type { Product } from '@/types/domain';
+import type { Product, ServingOption, UserProductServingPreference } from '@/types/domain';
 
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>(); const insets = useSafeAreaInsets(); const { colors } = useTheme();
   const addToDiary = useAppStore((state) => state.addToDiary); const diaryDate = useAppStore((state) => state.diaryDate); const refreshProducts = useAppStore((state) => state.refreshProducts); const toggleFavorite = useAppStore((state) => state.toggleFavorite);
-  const [product, setProduct] = useState<Product | null>(null); const [loaded, setLoaded] = useState(false); const [loadError, setLoadError] = useState<string | null>(null); const [sheet, setSheet] = useState(false); const [basis, setBasis] = useState<'100' | 'serving'>('100');
+  const [product, setProduct] = useState<Product | null>(null); const [loaded, setLoaded] = useState(false); const [loadError, setLoadError] = useState<string | null>(null); const [sheet, setSheet] = useState(false); const [basis, setBasis] = useState<'100' | 'serving'>('100'); const [portionGrams,setPortionGrams]=useState(100); const [servingOptions,setServingOptions]=useState<ServingOption[]>([]); const [servingPreference,setServingPreference]=useState<UserProductServingPreference|null>(null);
   useEffect(() => {
     const productId = Number(id);
     if (!id || id === 'new' || !Number.isInteger(productId) || productId <= 0) { setLoaded(true); setProduct(null); return; }
     setLoaded(false); setLoadError(null);
     void getProductById(productId).then(setProduct).catch((error) => setLoadError(error instanceof Error ? error.message : 'Не удалось загрузить продукт')).finally(() => setLoaded(true));
   }, [id]);
-  const weight = basis === '100' ? 100 : product?.servingSizeG ?? 100; const values = useMemo(() => product ? calculateForWeight(product, weight) : null, [product, weight]);
+  useEffect(()=>{if(!product)return;let cancelled=false;void Promise.all([loadProductServingOptions(product.id),loadProductServingPreference(product.id)]).then(([options,preference])=>{if(cancelled)return;setServingOptions(options);setServingPreference(preference);setPortionGrams(preference?.lastGramsEquivalent??options.find(option=>option.isDefault)?.gramsEquivalent??product.servingSizeG);});return()=>{cancelled=true;};},[product]);
+  const weight = basis === '100' ? 100 : portionGrams; const values = useMemo(() => product ? calculateForWeight(product, weight) : null, [product, weight]);
   if (!loaded) return <AppBackground><SafeAreaView style={styles.loading}><AppText tone="secondary">Загружаем продукт…</AppText></SafeAreaView></AppBackground>;
   if (!product) return <AppBackground><SafeAreaView style={styles.loading}><AppText variant="heading">Продукт не найден или был удалён.</AppText>{loadError ? <AppText tone="secondary">{loadError}</AppText> : null}<PrimaryButton label="Вернуться назад" onPress={() => router.back()} /></SafeAreaView></AppBackground>;
   const imageSource = product.imageUri ? { uri: product.imageUri } : productAssets[product.imageKey];
@@ -41,7 +43,7 @@ export default function ProductDetailScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.content, { paddingBottom: 94 + Math.max(insets.bottom, 8) }]}>
         {imageSource ? <Image source={imageSource} contentFit="cover" style={styles.hero} transition={180} /> : <View style={[styles.hero, styles.placeholder, { backgroundColor: colors.greenDark }]}><AppText variant="display" tone="green">{product.name.slice(0, 1)}</AppText></View>}
         <View style={styles.titleBlock}><View style={[styles.status, { backgroundColor: colors.greenGlow }]}><AppText variant="caption" tone="green">{status}</AppText></View><AppText variant="title">{product.name}</AppText>{product.brand ? <AppText tone="secondary">{product.brand}</AppText> : null}<AppText variant="caption" tone="muted">{product.category}{product.preparationState ? ` · ${product.preparationState}` : ''}</AppText></View>
-        <View style={styles.chips}><FilterChip label="На 100 г" selected={basis === '100'} onPress={() => setBasis('100')} /><FilterChip label={`Порция ${Math.round(product.servingSizeG)} г`} selected={basis === 'serving'} onPress={() => setBasis('serving')} /></View>
+        <GlassCard variant="compact"><View style={styles.quantityTitle}><AppText variant="heading">Количество</AppText>{servingPreference?<AppText variant="caption" tone="green">Последний раз: {Math.round(servingPreference.lastGramsEquivalent)} г</AppText>:null}</View><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}><FilterChip label="100 г" selected={basis === '100'} onPress={() => setBasis('100')} />{servingOptions.filter(option=>Math.abs(option.gramsEquivalent-100)>.1).slice(0,5).map(option=><FilterChip key={option.id} label={option.unit==='g'||option.unit==='ml'?option.label:`${option.label} · ${Math.round(option.gramsEquivalent)} г`} selected={basis==='serving'&&Math.abs(portionGrams-option.gramsEquivalent)<.5} onPress={()=>{setPortionGrams(option.gramsEquivalent);setBasis('serving');}}/>)}</ScrollView></GlassCard>
         <GlassCard variant="accent"><View style={styles.calories}><AppText variant="display" tone="green">{Math.round(values?.calories ?? 0)}</AppText><AppText tone="secondary">ккал · {Math.round(weight)} г</AppText></View><View style={styles.macros}><Macro label="Белки" value={values?.proteinG} /><Macro label="Жиры" value={values?.fatG} /><Macro label="Углеводы" value={values?.carbsG} /></View></GlassCard>
         <GlassCard variant="compact"><AppText variant="heading">О продукте</AppText><AppText tone="secondary">{product.description || 'Описание пока не добавлено.'}</AppText>{product.ingredients ? <><AppText style={styles.sectionTitle}>Состав</AppText><AppText tone="secondary">{product.ingredients}</AppText></> : null}{product.note ? <><AppText style={styles.sectionTitle}>Заметка</AppText><AppText tone="secondary">{product.note}</AppText></> : null}</GlassCard>
         <GlassCard variant="compact"><AppText variant="heading">Дополнительно · на 100 г</AppText><Info label="Клетчатка" value={product.fiberPer100g} unit="г" /><Info label="Сахара" value={product.sugarPer100g} unit="г" /><Info label="Натрий" value={product.sodiumPer100g} unit="мг" /><Info label="Аллергены" text={product.allergens.length ? product.allergens.join(', ') : 'Не указаны'} /></GlassCard>
@@ -59,7 +61,7 @@ function Info({ label, value, unit, text }: { label: string; value?: number | nu
 
 const styles = StyleSheet.create({
   safe: { flex: 1 }, loading: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.md, padding: spacing.lg }, topBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.md, paddingVertical: spacing.sm, gap: spacing.sm }, circle: { width: 44, height: 44, borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center' }, topTitle: { flex: 1, textAlign: 'center' },
-  content: { paddingHorizontal: spacing.md, gap: spacing.md }, hero: { width: '100%', aspectRatio: 1.45, borderRadius: radii.xl }, placeholder: { alignItems: 'center', justifyContent: 'center' }, titleBlock: { gap: spacing.xs }, status: { alignSelf: 'flex-start', borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs }, chips: { flexDirection: 'row', gap: spacing.sm },
+  content: { paddingHorizontal: spacing.md, gap: spacing.md }, hero: { width: '100%', aspectRatio: 1.45, borderRadius: radii.xl }, placeholder: { alignItems: 'center', justifyContent: 'center' }, titleBlock: { gap: spacing.xs }, status: { alignSelf: 'flex-start', borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs }, chips: { flexDirection: 'row', gap: spacing.sm }, quantityTitle:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:spacing.sm,marginBottom:spacing.sm},
   calories: { alignItems: 'center', marginBottom: spacing.lg }, macros: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm }, macro: { flex: 1, alignItems: 'center', gap: spacing.xs }, sectionTitle: { marginTop: spacing.md, fontWeight: '700' }, info: { minHeight: 44, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md },
   sticky: { position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', gap: spacing.md, borderTopWidth: 1, paddingHorizontal: spacing.md, paddingTop: spacing.sm }, stickyCopy: { minWidth: 86 }, stickyButton: { flex: 1 }, bold: { fontWeight: '800' },
 });
