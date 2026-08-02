@@ -1,122 +1,77 @@
-import { useEffect, useMemo, useState } from "react";
-import { router } from "expo-router";
-import { StyleSheet, View } from "react-native";
-import { AppText } from "@/components/AppText";
-import { GlassCard } from "@/components/GlassCard";
-import { OnboardingShell } from "@/components/OnboardingShell";
-import { PrimaryButton } from "@/components/PrimaryButton";
-import { ProgressRing } from "@/components/ProgressRing";
-import { activityLabels, goalLabels } from "@/constants/options";
-import {
-  calculateNutrition,
-  roundNutrition,
-} from "@/services/nutritionCalculator";
-import { useAppStore } from "@/store/appStore";
-import { spacing } from "@/theme/tokens";
-import { useTheme } from "@/theme/ThemeProvider";
-import { safelyRunHaptic } from "@/services/haptics";
-import { useFeatureFlags } from "@/contexts/FeatureFlagsContext";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { router } from 'expo-router';
+import { AppText } from '@/components/AppText';
+import { GlassCard } from '@/components/GlassCard';
+import { OnboardingShell } from '@/components/OnboardingShell';
+import { PrimaryButton } from '@/components/PrimaryButton';
+import { RhythmCharacter } from '@/features/rhythm/components/RhythmCharacter';
+import { recordOnboardingEvent } from '@/features/onboarding/onboardingAnalytics';
+import { goalLabels } from '@/constants/options';
+import { calculateNutrition, roundNutrition } from '@/services/nutritionCalculator';
+import { useAppStore } from '@/store/appStore';
+import { spacing } from '@/theme/tokens';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function CalculationScreen() {
   const { colors } = useTheme();
-  const { flags } = useFeatureFlags();
   const draft = useAppStore((state) => state.draft);
   const setCalculatedTarget = useAppStore((state) => state.setCalculatedTarget);
-  const completeOnboarding = useAppStore((state) => state.completeOnboarding);
+  const prepareOnboardingProfile = useAppStore((state) => state.prepareOnboardingProfile);
   const target = useMemo(() => calculateNutrition(draft), [draft]);
   const values = roundNutrition(target);
-  const [saving, setSaving] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  useEffect(() => setCalculatedTarget(target), [setCalculatedTarget, target]);
-  const open = async () => {
+  const viewed = useRef(false);
+
+  useEffect(() => {
+    setCalculatedTarget(target);
+    if (!viewed.current) {
+      viewed.current = true;
+      void recordOnboardingEvent('result_viewed', { step: 'result' });
+    }
+  }, [setCalculatedTarget, target]);
+
+  const firstEntry = async () => {
+    setBusy(true);
+    setError(null);
     try {
-      setSaving(true);
-      setError(null);
-      await completeOnboarding();
-      if (flags.enableHaptics) await safelyRunHaptic("success");
-      router.replace("/(onboarding)/finish");
+      await prepareOnboardingProfile();
+      router.push('/(onboarding)/first-entry' as never);
     } catch (cause) {
-      setError(
-        cause instanceof Error ? cause.message : "Не удалось сохранить профиль",
-      );
-      setSaving(false);
+      setError(cause instanceof Error ? cause.message : 'Не удалось сохранить ориентир');
+    } finally {
+      setBusy(false);
     }
   };
+
   return (
-    <OnboardingShell
-      progress={92}
-      eyebrow="Персональный ориентир"
-      title={`Твой ориентир готов, ${draft.name}.`}
-      footer={
-        <PrimaryButton
-          label={saving ? "Сохраняем…" : "Открыть Точку Роста"}
-          disabled={saving}
-          onPress={open}
-        />
-      }
-    >
-      <GlassCard variant="accent" style={styles.hero}>
-        <ProgressRing
-          progress={1}
-          size={190}
-          value={values.calories.toLocaleString("ru-RU")}
-          label="ккал в день"
-        />
-        <AppText variant="caption" tone="secondary">
-          BMR {values.bmr} · TDEE {values.tdee}
-        </AppText>
+    <OnboardingShell showBack fallbackRoute="/(onboarding)/preferences" step={{ current: 4, total: 5 }} eyebrow="Персональный результат" title={draft.name ? `${draft.name}, твой ориентир готов` : 'Твой ориентир готов'}
+      footer={<View style={styles.actions}><PrimaryButton label="Сделать первую запись" loading={busy} onPress={firstEntry} /><PrimaryButton label="Изменить данные" secondary disabled={busy} onPress={() => router.replace('/(onboarding)/personal-data')} /></View>}>
+      <View style={styles.rhythm}><RhythmCharacter size="medium" emotion="motivated" action="celebrate" label="Ритм радуется готовому ориентиру" /></View>
+      <GlassCard variant="accent" style={styles.hero} accessibilityLabel={`Дневной ориентир ${values.calories} килокалорий`}>
+        <AppText variant="caption" tone="secondary">Дневной ориентир</AppText>
+        <AppText variant="metric" style={styles.calories}>{values.calories.toLocaleString('ru-RU')}</AppText>
+        <AppText tone="secondary">килокалорий</AppText>
       </GlassCard>
       <View style={styles.macros}>
-        <Macro
-          title="Белки"
-          value={values.proteinG}
-          color={colors.greenBright}
-        />
+        <Macro title="Белки" value={values.proteinG} color={colors.greenBright} />
         <Macro title="Жиры" value={values.fatG} color={colors.gold} />
-        <Macro title="Углеводы" value={values.carbsG} color={colors.warning} />
+        <Macro title="Углеводы" value={values.carbsG} color={colors.carbs} />
       </View>
-      <GlassCard variant="compact">
-        <AppText variant="caption" tone="secondary">
-          Цель: {goalLabels[draft.goal]}
-        </AppText>
-        <AppText variant="caption" tone="secondary">
-          Активность: {activityLabels[draft.activityLevel]}
-        </AppText>
-      </GlassCard>
-      <AppText variant="caption" tone="secondary">
-        Это стартовая оценка, а не медицинская рекомендация. Позже показатели
-        можно изменить в профиле.
-      </AppText>
-      {error ? (
-        <AppText variant="caption" tone="warning">
-          {error}
-        </AppText>
-      ) : null}
+      <GlassCard variant="compact"><AppText variant="caption" tone="secondary">Цель: {goalLabels[draft.goal]}</AppText></GlassCard>
+      <AppText>«Это отправная точка, а не строгий предел. Ориентир можно изменить в любой момент.»</AppText>
+      {draft.age < 18 ? <AppText variant="caption" tone="warning">Для возраста младше 18 лет применена только мягкая корректировка ориентира.</AppText> : null}
+      {error ? <AppText accessibilityLiveRegion="polite" variant="caption" tone="warning">{error}</AppText> : null}
     </OnboardingShell>
   );
 }
-function Macro({
-  title,
-  value,
-  color,
-}: {
-  title: string;
-  value: number;
-  color: string;
-}) {
-  return (
-    <GlassCard variant="compact" style={styles.macro}>
-      <View style={[styles.macroDot, { backgroundColor: color }]} />
-      <AppText variant="caption" tone="secondary">
-        {title}
-      </AppText>
-      <AppText variant="heading">{value} г</AppText>
-    </GlassCard>
-  );
+
+function Macro({ title, value, color }: { title: string; value: number; color: string }) {
+  return <GlassCard variant="compact" style={styles.macro} accessibilityLabel={`${title} ${value} граммов`}><View style={[styles.dot, { backgroundColor: color }]} /><AppText variant="caption" tone="secondary">{title}</AppText><AppText variant="heading" style={styles.tabular}>{value} г</AppText></GlassCard>;
 }
+
 const styles = StyleSheet.create({
-  hero: { alignItems: "center", gap: spacing.sm },
-  macros: { flexDirection: "row", gap: spacing.sm },
-  macro: { flex: 1, minWidth: 0 },
-  macroDot: { width: 8, height: 8, borderRadius: 4, marginBottom: 6 },
+  actions: { gap: spacing.xs }, rhythm: { position: 'absolute', right: 4, top: -18, zIndex: 2 }, hero: { alignItems: 'flex-start', paddingRight: 110 }, calories: { marginTop: spacing.xs },
+  macros: { flexDirection: 'row', gap: spacing.xs }, macro: { flex: 1, minWidth: 0 }, dot: { width: 8, height: 8, borderRadius: 4, marginBottom: spacing.xs }, tabular: { fontVariant: ['tabular-nums'] },
 });
