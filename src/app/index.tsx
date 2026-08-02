@@ -21,7 +21,7 @@ export default function SplashRoute() {
   const reducedMotion = useReducedMotion();
   useEffect(() => {
     if (status !== 'ready') return;
-    const delay = reducedMotion ? 0 : 420;
+    const delay = 0;
     const timer = setTimeout(() => {
       const destination = onboardingCompleted ? '/(tabs)' : (onboardingRouteByStep[onboardingStep] ?? '/(onboarding)/welcome');
       router.replace(destination as Href);
@@ -34,7 +34,7 @@ export default function SplashRoute() {
       <View style={styles.root}>
         <Animated.View entering={reducedMotion ? undefined : FadeIn.duration(550)} style={styles.markWrap}>
           <View style={[styles.halo, { borderColor: colors.greenBright, shadowColor: colors.greenBright }]} />
-          <Image source={require('../../assets/brand/logo-mark.png')} contentFit="contain" style={styles.logo} accessibilityLabel="Логотип Точки Роста" />
+          <Image source={require('../../assets/rhythm/rhythm-idle-medium.png')} contentFit="contain" style={styles.logo} accessibilityLabel="Ритм — огонёк Точки Роста" />
         </Animated.View>
         <Animated.View entering={reducedMotion ? undefined : FadeInDown.delay(350).duration(500)} style={styles.copy}>
           <AppText variant="heading" style={styles.brand}>ТОЧКА РОСТА</AppText>
@@ -49,6 +49,6 @@ export default function SplashRoute() {
 const styles = StyleSheet.create({
   root: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.lg }, markWrap: { width: 176, height: 176, alignItems: 'center', justifyContent: 'center' },
   halo: { position: 'absolute', width: 152, height: 152, borderRadius: 76, borderWidth: 1, shadowOpacity: 0.65, shadowRadius: 24 },
-  logo: { width: 174, height: 120 }, copy: { alignItems: 'center', gap: spacing.xs, marginTop: spacing.lg }, brand: { letterSpacing: 2.8 }, loader: { position: 'absolute', bottom: 70 },
+  logo: { width: 174, height: 174 }, copy: { alignItems: 'center', gap: spacing.xs, marginTop: spacing.lg }, brand: { letterSpacing: 2.8 }, loader: { position: 'absolute', bottom: 70 },
   error: { position: 'absolute', left: spacing.lg, right: spacing.lg, bottom: 50, gap: spacing.md },
 });
