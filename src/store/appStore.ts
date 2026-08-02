@@ -19,6 +19,23 @@ import { setPerformanceMetric } from '@/performance/performanceLogger';
 import { invalidateCalendarMonth } from '@/database/repositories/calendarRepository';
 import { publishRhythmEvent } from '@/features/rhythm/services/eventService';
 import { recordRhythmFeedback } from '@/features/rhythm/repositories/rhythmRepository';
+import {
+  addValidationErrors,
+  advanceFirstMinute,
+  beginFirstMinute,
+  completeFirstMinute,
+  createFirstMinuteState,
+  hasFiniteNutritionResult,
+  incrementResumeCount,
+  mapLegacyOnboardingStep,
+  markFirstEntry,
+  parseFirstMinuteState,
+  validateProfileDraft,
+  type FirstMinuteState,
+  type OnboardingSource,
+  type OnboardingStep,
+} from '@/features/onboarding/onboardingState';
+import { recordOnboardingEvent } from '@/features/onboarding/onboardingAnalytics';
 
 export const defaultDraft: ProfileDraft = {
   name: '', age: 30, calculationSex: 'male', heightCm: 175, weightKg: 70,
@@ -31,7 +48,8 @@ interface AppState {
   status: AppStatus;
   error: string | null;
   onboardingCompleted: boolean;
-  onboardingStep: string;
+  onboardingStep: OnboardingStep;
+  onboardingState: FirstMinuteState;
   draft: ProfileDraft;
   profile: SavedProfile | null;
   target: NutritionResult | null;
@@ -46,9 +64,13 @@ interface AppState {
   water: WaterSummary | null;
   avatarStatus: AvatarStatus;
   initialize: () => Promise<void>;
+  beginOnboarding: (source?: OnboardingSource) => Promise<void>;
   saveDraft: (patch: Partial<ProfileDraft>, completedStep?: string) => Promise<void>;
   setCalculatedTarget: (target: NutritionResult) => void;
-  completeOnboarding: () => Promise<void>;
+  prepareOnboardingProfile: () => Promise<void>;
+  markOnboardingFirstEntry: () => Promise<void>;
+  recordOnboardingValidationErrors: (count: number) => Promise<void>;
+  completeOnboarding: (options?: { firstEntryCompleted?: boolean; wasSkipped?: boolean }) => Promise<void>;
   updateProfile: (draft: ProfileDraft) => Promise<void>;
   recalculate: () => Promise<void>;
   refreshProducts: () => Promise<void>;
@@ -88,6 +110,7 @@ function parseDraft(value: string | null): ProfileDraft {
 let fullProductsPromise: Promise<Product[]> | null = null;
 let initializationPromise: Promise<void> | null = null;
 let diaryLoadGeneration = 0;
+let onboardingResumeCounted = false;
 
 async function prepareProfileAvatar(saved: Awaited<ReturnType<typeof loadProfileAndTarget>>) {
   if (!saved?.profile.avatarUri) return { saved, avatarStatus: 'empty' as const };
@@ -109,6 +132,7 @@ async function prepareProfileAvatar(saved: Awaited<ReturnType<typeof loadProfile
 
 export const useAppStore = create<AppState>((set, get) => ({
   status: 'booting', error: null, onboardingCompleted: false, onboardingStep: 'welcome',
+  onboardingState: createFirstMinuteState(defaultDraft),
   draft: defaultDraft, profile: null, target: null, products: [], productsFullyLoaded: false, diaryDate: getLocalDateKey(), diary: null,
   flow: null, mealPlan: null, themeMode: 'system', performanceMode: 'automatic', water: null, avatarStatus: 'loading',
 
@@ -117,20 +141,35 @@ export const useAppStore = create<AppState>((set, get) => ({
     initializationPromise = (async () => {
       try {
       await initializeDatabase();
-      const [completedValue, stepValue, draftValue, themeValue, performanceValue, saved, products, flow] = await Promise.all([
+      const [completedValue, stepValue, draftValue, firstMinuteValue, themeValue, performanceValue, saved, products, flow] = await Promise.all([
         getSetting('onboarding_completed'), getSetting('onboarding_step'), getSetting('onboarding_draft'),
+        getSetting('first_minute_state_v2'),
         getSetting('theme_mode'), getSetting('performance_mode'),
         loadProfileAndTarget(), loadProductsPage({ limit: PRODUCT_PAGE_SIZE }), loadFlowState(),
       ]);
        const preparedProfile = await prepareProfileAvatar(saved);
        const currentSaved = preparedProfile.saved;
-       const completed = completedValue === 'true' && currentSaved !== null;
+       const storedDraft = currentSaved?.profile ?? parseDraft(draftValue);
+       let firstMinute = parseFirstMinuteState(firstMinuteValue, storedDraft, stepValue);
+       const completed = currentSaved !== null && (completedValue === 'true' || firstMinute.completedAt !== null);
+       if (completed && currentSaved && !firstMinute.completedAt) {
+         firstMinute = {
+           ...advanceFirstMinute(firstMinute, 'first-entry', currentSaved.profile),
+           completedAt: currentSaved.profile.updatedAt,
+           source: 'existing-profile',
+         };
+         await setSetting('first_minute_state_v2', JSON.stringify(firstMinute));
+       } else if (!completed && firstMinute.startedAt && firstMinute.currentStep !== 'welcome' && !onboardingResumeCounted) {
+         firstMinute = incrementResumeCount(firstMinute);
+         onboardingResumeCounted = true;
+         await setSetting('first_minute_state_v2', JSON.stringify(firstMinute));
+       }
        if (completed && currentSaved) await ensureTodayDiary(currentSaved.target);
       const diaryDate = getLocalDateKey();
       const [diary, mealPlan, water] = completed ? await Promise.all([loadDiary(diaryDate), loadMealPlan(diaryDate), loadWaterSummary(diaryDate)]) : [null, null, null];
       set({
-        status: 'ready', onboardingCompleted: completed, onboardingStep: stepValue ?? 'welcome',
-         draft: currentSaved?.profile ?? parseDraft(draftValue), profile: currentSaved?.profile ?? null,
+        status: 'ready', onboardingCompleted: completed, onboardingStep: firstMinute.currentStep, onboardingState: firstMinute,
+         draft: storedDraft, profile: currentSaved?.profile ?? null,
          target: currentSaved?.target ?? null, products, productsFullyLoaded: false, diaryDate, diary, flow, mealPlan, water,
          avatarStatus: preparedProfile.avatarStatus,
         themeMode: themeValue === 'dark' || themeValue === 'light' ? themeValue : 'system',
@@ -148,23 +187,105 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
   },
 
+  beginOnboarding: async (source = 'organic') => {
+    const base = get().onboardingState.onboardingVersion
+      ? { ...get().onboardingState, source }
+      : createFirstMinuteState(get().draft, source);
+    const onboardingState = beginFirstMinute(base);
+    set({ onboardingState, onboardingStep: onboardingState.currentStep });
+    await Promise.all([
+      setSetting('first_minute_state_v2', JSON.stringify(onboardingState)),
+      setSetting('onboarding_step', onboardingState.currentStep),
+      setSetting('onboarding_draft', JSON.stringify(get().draft)),
+    ]);
+    await Promise.all([
+      recordOnboardingEvent('onboarding_started', { step: 'welcome' }),
+      recordOnboardingEvent('welcome_completed', { step: 'welcome' }),
+    ]);
+  },
+
   saveDraft: async (patch, completedStep) => {
     const draft = { ...get().draft, ...patch };
-    set({ draft, onboardingStep: completedStep ?? get().onboardingStep });
+    const nextStep = completedStep ? mapLegacyOnboardingStep(completedStep) : get().onboardingState.currentStep;
+    const onboardingState = advanceFirstMinute(get().onboardingState, nextStep, draft);
+    set({ draft, onboardingStep: nextStep, onboardingState });
     await setSetting('onboarding_draft', JSON.stringify(draft));
-    if (completedStep) await setSetting('onboarding_step', completedStep);
+    await setSetting('first_minute_state_v2', JSON.stringify(onboardingState));
+    if (completedStep) await setSetting('onboarding_step', nextStep);
+    const event = nextStep === 'profile' ? 'goal_selected'
+      : nextStep === 'preferences' ? 'profile_completed'
+        : nextStep === 'result' ? 'restrictions_completed'
+          : nextStep === 'first-entry' ? 'result_viewed'
+            : null;
+    if (event) await recordOnboardingEvent(event, { step: nextStep });
   },
 
   setCalculatedTarget: (target) => set({ target }),
 
-  completeOnboarding: async () => {
+  prepareOnboardingProfile: async () => {
     const draft = get().draft;
+    const errors = validateProfileDraft(draft);
+    if (Object.keys(errors).length) throw new Error('Проверь параметры перед расчётом');
     const target = get().target ?? calculateNutrition(draft);
+    if (!hasFiniteNutritionResult(target)) throw new Error('Не удалось рассчитать ориентир. Проверь параметры.');
     await saveProfileAndTarget(draft, target);
     await ensureTodayDiary(target);
-    await Promise.all([setSetting('onboarding_completed', 'true'), setSetting('onboarding_step', 'finish')]);
     const saved = await loadProfileAndTarget();
-    set({ onboardingCompleted: true, profile: saved?.profile ?? null, target: saved?.target ?? target, diary: await loadDiary(getLocalDateKey()), water: await loadWaterSummary(getLocalDateKey()) });
+    const onboardingState = advanceFirstMinute(get().onboardingState, 'first-entry', draft);
+    await Promise.all([
+      setSetting('onboarding_step', 'first-entry'),
+      setSetting('first_minute_state_v2', JSON.stringify(onboardingState)),
+    ]);
+    set({
+      onboardingStep: 'first-entry',
+      onboardingState,
+      profile: saved?.profile ?? null,
+      target: saved?.target ?? target,
+      diary: await loadDiary(getLocalDateKey()),
+      water: await loadWaterSummary(getLocalDateKey()),
+    });
+    await recordOnboardingEvent('first_entry_started', { step: 'first-entry' });
+  },
+
+  markOnboardingFirstEntry: async () => {
+    if (get().onboardingState.firstEntryCompleted) return;
+    const onboardingState = markFirstEntry(get().onboardingState);
+    set({ onboardingState });
+    await setSetting('first_minute_state_v2', JSON.stringify(onboardingState));
+    await recordOnboardingEvent('first_entry_completed', { step: 'first-entry' });
+  },
+
+  recordOnboardingValidationErrors: async (count) => {
+    if (count <= 0) return;
+    const onboardingState = addValidationErrors(get().onboardingState, count);
+    set({ onboardingState });
+    await setSetting('first_minute_state_v2', JSON.stringify(onboardingState));
+  },
+
+  completeOnboarding: async (options = {}) => {
+    if (get().onboardingCompleted) return;
+    const draft = get().draft;
+    const target = get().target ?? calculateNutrition(draft);
+    if (Object.keys(validateProfileDraft(draft)).length || !hasFiniteNutritionResult(target)) {
+      throw new Error('Не удалось завершить настройку. Проверь параметры.');
+    }
+    await saveProfileAndTarget(draft, target);
+    await ensureTodayDiary(target);
+    const onboardingState = completeFirstMinute(get().onboardingState, options);
+    await Promise.all([
+      setSetting('onboarding_completed', 'true'),
+      setSetting('onboarding_step', 'first-entry'),
+      setSetting('first_minute_state_v2', JSON.stringify(onboardingState)),
+      setSetting('first_minute_handoff', options.firstEntryCompleted ? 'added' : 'skipped'),
+    ]);
+    const saved = await loadProfileAndTarget();
+    set({ onboardingCompleted: true, onboardingState, profile: saved?.profile ?? null, target: saved?.target ?? target, diary: await loadDiary(getLocalDateKey()), water: await loadWaterSummary(getLocalDateKey()) });
+    await recordOnboardingEvent('onboarding_completed', {
+      step: 'first-entry',
+      skipped: onboardingState.wasSkipped,
+      durationMs: onboardingState.durationMs ?? undefined,
+      errorCount: onboardingState.validationErrorsCount,
+    });
   },
 
   updateProfile: async (draft) => {
@@ -332,7 +453,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   reset: async () => {
     await deleteStoredAvatar(get().profile?.avatarUri);
     await resetApplicationData();
-    set({ onboardingCompleted: false, onboardingStep: 'welcome', draft: defaultDraft, profile: null, target: null,
+    set({ onboardingCompleted: false, onboardingStep: 'welcome', onboardingState: createFirstMinuteState(defaultDraft), draft: defaultDraft, profile: null, target: null,
       diaryDate: getLocalDateKey(), diary: null, flow: await loadFlowState(), mealPlan: null, products: await loadProductsPage({ limit: PRODUCT_PAGE_SIZE }), productsFullyLoaded: false, water:null, themeMode:'system', performanceMode:'automatic', avatarStatus:'empty' });
   },
 }));

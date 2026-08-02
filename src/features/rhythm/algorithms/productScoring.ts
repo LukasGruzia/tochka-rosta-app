@@ -28,6 +28,7 @@ export function isRhythmProductAllowed(product: Product, profile: ProfileDraft) 
   const haystack = [product.name, product.category, product.ingredients ?? '', ...product.allergens, ...product.dietTags].join(' ').toLocaleLowerCase('ru-RU');
   if (profile.restrictions.some((restriction) => restrictionTerms[restriction].some((term) => haystack.includes(term)))) return false;
   if (profile.dietPreference === 'vegetarian' && /meat|fish|мяс|рыб|poultry|chicken/.test(haystack)) return false;
+  if (profile.dietPreference === 'plant' && /meat|fish|мяс|рыб|poultry|chicken|egg|яйц|milk|молок|cheese|сыр/.test(haystack)) return false;
   if (profile.dietPreference === 'fish' && /meat|мяс|poultry|chicken/.test(haystack) && !/fish|рыб/.test(haystack)) return false;
   return true;
 }

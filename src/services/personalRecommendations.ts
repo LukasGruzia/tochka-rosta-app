@@ -9,6 +9,7 @@ export function rankPersonalRecommendations(products: Product[], profile: Profil
     const allergenText = product.allergens.join(' ').toLocaleLowerCase('ru-RU');
     if (profile.restrictions.some((restriction) => restrictedTerms[restriction].some((term) => allergenText.includes(term)))) return null;
     if (profile.dietPreference === 'vegetarian' && (product.dietTags.includes('meat') || product.dietTags.includes('fish'))) return null;
+    if (profile.dietPreference === 'plant' && (product.dietTags.includes('meat') || product.dietTags.includes('fish') || product.dietTags.includes('dairy') || product.dietTags.includes('egg'))) return null;
     const servingCalories = product.caloriesPer100g * product.servingSizeG / 100;
     let score = product.isFavorite ? 50 : 0;
     score += product.goalTags.includes(profile.goal) ? 35 : 0;
