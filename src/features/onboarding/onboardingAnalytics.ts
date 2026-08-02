@@ -56,7 +56,6 @@ export async function loadOnboardingEvents() {
 export async function clearOnboardingResearchData() {
   await setSetting(ANALYTICS_KEY, '[]');
   await setSetting('first_minute_demo_state', '{}');
-  await setSetting('beta_checklist_v1', '[]');
 }
 
 export function buildOnboardingResearchSummary(events: LocalOnboardingEvent[]) {
