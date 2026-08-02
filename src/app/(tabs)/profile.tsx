@@ -18,6 +18,7 @@ import { createSectionErrorBoundary } from '@/components/ScreenErrorFallback';
 import { useRenderTracker } from '@/performance/renderTracker';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { getProfileAvatarSize } from '@/services/avatarLayout';
+import { getBuildInfo, isInternalBuild } from '@/config/buildInfo';
 
 export const ErrorBoundary = createSectionErrorBoundary('ProfileScreen');
 
@@ -34,6 +35,7 @@ export default function ProfileScreen() {
   const { width } = useWindowDimensions();
   const avatarSize = getProfileAvatarSize(width);
   const [overview, setOverview] = useState({ trackedDays: 0, entryCount: 0, currentWeight: null as number | null });
+  const buildInfo = getBuildInfo();
 
   useEffect(() => {
     let active = true;
@@ -91,6 +93,8 @@ export default function ProfileScreen() {
       <ProfileMenuRow icon="◇" label="Качество эффектов" value={performanceModeLabels[performanceMode]} onPress={() => router.push('/performance-effects' as never)} />
       <ProfileMenuRow icon="▦" label="Источники данных" onPress={() => router.push('/data-sources' as never)} />
       <ProfileMenuRow icon="⇅" label="Резервная копия" onPress={() => router.push('/data-management' as never)} />
+      <ProfileMenuRow icon="i" label="О приложении" value={buildInfo.version} onPress={() => router.push('/about' as never)} />
+      {isInternalBuild(buildInfo) ? <ProfileMenuRow icon="β" label="Beta Center" value={buildInfo.appVariant} onPress={() => router.push('/beta-center' as never)} /> : null}
       {__DEV__ ? <ProfileMenuRow icon="⌘" label="Диагностика" onPress={() => router.push('/developer' as never)} /> : null}
       {__DEV__ ? <ProfileMenuRow icon="⌁" label="Performance Diagnostics" onPress={() => router.push('/performance-diagnostics' as never)} /> : null}
     </ProfileMenuSection>
@@ -98,7 +102,7 @@ export default function ProfileScreen() {
     <ProfileMenuSection title="Другое">
       <ProfileMenuRow icon="!" label="Сбросить данные" danger onPress={confirmReset} />
     </ProfileMenuSection>
-    <AppText variant="caption" tone="muted" style={styles.version}>Точка Роста · APP v0.3 · данные хранятся локально</AppText>
+    <AppText variant="caption" tone="muted" style={styles.version}>Точка Роста · APP v{buildInfo.version} · данные хранятся локально</AppText>
   </TabScreen>;
 }
 

@@ -8,13 +8,15 @@ export const activityOptions: readonly { value: ActivityLevel; title: string; de
   { value: 'veryHigh', title: 'Очень высокая активность', description: 'Ежедневные тренировки или физическая работа' },
 ];
 export const goalOptions: readonly { value: Goal; title: string; description: string }[] = [
-  { value: 'loss', title: 'Снизить вес', description: 'Мягкий дефицит без экстремальных значений' },
-  { value: 'balance', title: 'Сохранить баланс', description: 'Поддерживать привычный ритм и самочувствие' },
-  { value: 'gain', title: 'Набрать массу', description: 'Умеренно увеличить дневную калорийность' },
+  { value: 'balance', title: 'Поддерживать форму', description: 'Сохранять комфортный баланс и привычный ритм' },
+  { value: 'loss', title: 'Снижать вес постепенно', description: 'Мягко скорректировать ориентир без экстремальных значений' },
+  { value: 'gain', title: 'Набирать массу', description: 'Умеренно увеличить дневной ориентир' },
+  { value: 'regular', title: 'Питаться более регулярно', description: 'Сфокусироваться на понятном ритме приёмов пищи' },
 ];
 export const dietOptions: readonly { value: DietPreference; title: string }[] = [
-  { value: 'all', title: 'Ем всё' }, { value: 'meat', title: 'Предпочитаю мясо' },
-  { value: 'fish', title: 'Предпочитаю рыбу' }, { value: 'vegetarian', title: 'Без мяса' },
+  { value: 'all', title: 'Ем всё' }, { value: 'meat', title: 'Больше мяса' },
+  { value: 'fish', title: 'Больше рыбы' }, { value: 'vegetarian', title: 'Без мяса' },
+  { value: 'plant', title: 'Растительное питание' },
 ];
 export const restrictionOptions: readonly { value: Restriction; title: string }[] = [
   { value: 'lactoseFree', title: 'Без лактозы' }, { value: 'glutenFree', title: 'Без глютена' },

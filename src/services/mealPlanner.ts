@@ -7,6 +7,7 @@ const sequences:Record<3|4|5,MealType[]>={3:['breakfast','lunch','dinner'],4:mea
 
 function conflictsWithProfile(product: Product, profile: ProfileDraft) {
   if (profile.dietPreference === 'vegetarian' && product.dietTags.includes('meat')) return true;
+  if (profile.dietPreference === 'plant' && product.dietTags.some((tag) => ['meat', 'fish', 'dairy', 'egg'].includes(tag))) return true;
   return profile.restrictions.some((restriction) => product.allergens.includes(restriction));
 }
 

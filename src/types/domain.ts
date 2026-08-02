@@ -1,7 +1,7 @@
 export type CalculationSex = 'female' | 'male';
 export type ActivityLevel = 'minimal' | 'light' | 'medium' | 'high' | 'veryHigh';
-export type Goal = 'loss' | 'balance' | 'gain';
-export type DietPreference = 'all' | 'meat' | 'fish' | 'vegetarian';
+export type Goal = 'loss' | 'balance' | 'gain' | 'regular';
+export type DietPreference = 'all' | 'meat' | 'fish' | 'vegetarian' | 'plant';
 export type Restriction = 'lactoseFree' | 'glutenFree' | 'sugarFree' | 'nutFree';
 export type MealType = 'breakfast' | 'lunch' | 'snack' | 'dinner';
 export type DataStatus = 'verified' | 'imported' | 'community' | 'custom' | 'demo';

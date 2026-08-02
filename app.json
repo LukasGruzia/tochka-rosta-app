@@ -2,22 +2,24 @@
   "expo": {
     "name": "Точка Роста",
     "slug": "tochka-rosta-app",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "orientation": "portrait",
-    "icon": "./assets/brand/app-icon.png",
+    "icon": "./assets/brand/app-icon-first-minute.png",
     "scheme": "tochkarostaapp",
     "userInterfaceStyle": "automatic",
     "backgroundColor": "#061009",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "ru.tochkarosta.app"
+      "bundleIdentifier": "ru.tochkarosta.app",
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#061009",
-        "foregroundImage": "./assets/brand/app-icon.png"
+        "foregroundImage": "./assets/brand/app-icon-first-minute.png"
       },
       "package": "ru.tochkarosta.app",
+      "versionCode": 2,
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -30,12 +32,12 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#061009",
-          "image": "./assets/brand/logo-mark.png",
+          "image": "./assets/rhythm/rhythm-idle-medium.png",
           "imageWidth": 160,
           "resizeMode": "contain",
           "dark": {
             "backgroundColor": "#061009",
-            "image": "./assets/brand/logo-mark.png"
+            "image": "./assets/rhythm/rhythm-idle-medium.png"
           }
         }
       ],
@@ -59,6 +61,9 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": false
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
