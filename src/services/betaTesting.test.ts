@@ -1,5 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { buildBetaFeedbackReport } from './betaTesting';
+
+vi.mock('@/database/repositories/settingsRepository', () => ({
+  getSetting: vi.fn(),
+  setSetting: vi.fn(),
+}));
 
 describe('beta feedback export', () => {
   it('attaches only the approved technical context', () => {

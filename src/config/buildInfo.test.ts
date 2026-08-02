@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createBuildInfo, normalizeAppVariant } from './buildInfo';
+import { createBuildInfo, normalizeAppVariant } from './buildInfoCore';
 
 describe('build information', () => {
   it('normalizes safe public variants', () => {

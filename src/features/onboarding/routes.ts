@@ -8,3 +8,7 @@ export const onboardingRouteByStep: Record<OnboardingStep, string> = {
   result: '/(onboarding)/calculation',
   'first-entry': '/(onboarding)/first-entry',
 };
+
+export function resolveInitialAppRoute(onboardingCompleted: boolean, step: OnboardingStep) {
+  return onboardingCompleted ? '/(tabs)' : onboardingRouteByStep[step];
+}

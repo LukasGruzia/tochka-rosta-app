@@ -1,5 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { buildOnboardingResearchSummary, type LocalOnboardingEvent } from './onboardingAnalytics';
+
+vi.mock('@/database/repositories/settingsRepository', () => ({
+  getSetting: vi.fn(),
+  setSetting: vi.fn(),
+}));
 
 describe('local onboarding research report', () => {
   it('contains technical counters without personal profile fields', () => {

@@ -6,7 +6,7 @@ import Animated, { FadeIn, FadeInDown, useReducedMotion } from 'react-native-rea
 import { AppBackground } from '@/components/AppBackground';
 import { AppText } from '@/components/AppText';
 import { PrimaryButton } from '@/components/PrimaryButton';
-import { onboardingRouteByStep } from '@/features/onboarding/routes';
+import { resolveInitialAppRoute } from '@/features/onboarding/routes';
 import { useAppStore } from '@/store/appStore';
 import { spacing } from '@/theme/tokens';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -23,7 +23,7 @@ export default function SplashRoute() {
     if (status !== 'ready') return;
     const delay = 0;
     const timer = setTimeout(() => {
-      const destination = onboardingCompleted ? '/(tabs)' : (onboardingRouteByStep[onboardingStep] ?? '/(onboarding)/welcome');
+      const destination = resolveInitialAppRoute(onboardingCompleted, onboardingStep);
       router.replace(destination as Href);
     }, delay);
     return () => clearTimeout(timer);
