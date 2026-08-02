@@ -21,7 +21,7 @@ export default function SplashRoute() {
   const reducedMotion = useReducedMotion();
   useEffect(() => {
     if (status !== 'ready') return;
-    const delay = reducedMotion ? 120 : onboardingCompleted ? 650 : 1750;
+    const delay = reducedMotion ? 0 : 420;
     const timer = setTimeout(() => {
       const destination = onboardingCompleted ? '/(tabs)' : (onboardingRouteByStep[onboardingStep] ?? '/(onboarding)/welcome');
       router.replace(destination as Href);

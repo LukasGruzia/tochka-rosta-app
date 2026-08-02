@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from 'react';
-import { Platform, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Platform, StyleSheet, View, type AccessibilityState, type StyleProp, type ViewStyle } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
@@ -18,10 +18,11 @@ interface Props extends PropsWithChildren {
   style?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
   accessibilityLabel?: string;
+  accessibilityState?: AccessibilityState;
   haptic?: AppHaptic;
 }
 
-export function OptimizedGlassSurface({ children, variant = 'base', selected = false, nativeBlur = false, onPress, style, contentStyle, accessibilityLabel, haptic = 'light' }: Props) {
+export function OptimizedGlassSurface({ children, variant = 'base', selected = false, nativeBlur = false, onPress, style, contentStyle, accessibilityLabel, accessibilityState, haptic = 'light' }: Props) {
   const { colors, isDark } = useTheme();
   const { flags, resolvedPerformanceMode } = useFeatureFlags();
   const level = glass[variant];
@@ -66,7 +67,7 @@ export function OptimizedGlassSurface({ children, variant = 'base', selected = f
   </>;
 
   if (onPress) {
-    return <AppPressable accessibilityRole="button" accessibilityLabel={accessibilityLabel} actionLabel={accessibilityLabel ?? `glass_${variant}`} haptic={haptic} onPress={onPress} style={shellStyle} pressedStyle={styles.pressed}>{content}</AppPressable>;
+    return <AppPressable accessibilityRole="button" accessibilityLabel={accessibilityLabel} accessibilityState={accessibilityState} actionLabel={accessibilityLabel ?? `glass_${variant}`} haptic={haptic} onPress={onPress} style={shellStyle} pressedStyle={styles.pressed}>{content}</AppPressable>;
   }
   return <View accessibilityLabel={accessibilityLabel} style={shellStyle}>{content}</View>;
 }

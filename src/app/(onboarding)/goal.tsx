@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
-import { AppText } from '@/components/AppText';
 import { ChoiceCard } from '@/components/ChoiceCard';
 import { OnboardingShell } from '@/components/OnboardingShell';
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -8,16 +7,34 @@ import { goalOptions } from '@/constants/options';
 import { useAppStore } from '@/store/appStore';
 import type { Goal } from '@/types/domain';
 
+const goalIcons: Record<Goal, string> = { balance: '◎', loss: '↘', gain: '↗', regular: '◷' };
+
 export default function GoalScreen() {
-  const draft = useAppStore((state) => state.draft);
+  const persistedGoal = useAppStore((state) => state.onboardingState.selectedGoal);
   const saveDraft = useAppStore((state) => state.saveDraft);
-  const [goal, setGoal] = useState<Goal>(draft.goal);
-  const next = async () => { await saveDraft({ goal }, 'preferences'); router.push('/(onboarding)/preferences'); };
+  const [goal, setGoal] = useState<Goal | null>(persistedGoal);
+  const [busy, setBusy] = useState(false);
+
+  const select = (value: Goal) => {
+    setGoal(value);
+    void saveDraft({ goal: value });
+  };
+
+  const next = async () => {
+    if (!goal) return;
+    setBusy(true);
+    try {
+      await saveDraft({ goal }, 'profile');
+      router.push('/(onboarding)/personal-data');
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
-    <OnboardingShell progress={67} title="К чему ты стремишься?" description="Мы используем мягкую корректировку — без экстремального дефицита или профицита."
-      footer={<PrimaryButton label="Продолжить" onPress={next} />}>
-      {goalOptions.map((option) => <ChoiceCard key={option.value} title={option.title} description={option.description} selected={goal === option.value} onPress={() => setGoal(option.value)} />)}
-      {draft.age < 18 ? <AppText variant="caption" tone="warning">Для пользователей младше 18 лет корректировка ограничена 5%. Обсуди изменение веса со специалистом.</AppText> : null}
+    <OnboardingShell showBack fallbackRoute="/(onboarding)/welcome" step={{ current: 1, total: 5 }} title="Что для тебя сейчас важнее?" description="Выбор можно изменить позже в профиле."
+      footer={<PrimaryButton label="Продолжить к параметрам" loading={busy} disabled={!goal} onPress={next} />}>
+      {goalOptions.map((option) => <ChoiceCard key={option.value} icon={goalIcons[option.value]} title={option.title} description={option.description} selected={goal === option.value} onPress={() => select(option.value)} />)}
     </OnboardingShell>
   );
 }
