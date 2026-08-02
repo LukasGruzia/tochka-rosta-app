@@ -12,6 +12,8 @@ import { NutritionHeroCard } from '@/components/NutritionHeroCard';
 import { TabScreen } from '@/components/TabScreen';
 import { WaterCard } from '@/components/WaterCard';
 import { QuickAddSheet } from '@/components/QuickAddSheet';
+import { RhythmCharacter } from '@/features/rhythm/components/RhythmCharacter';
+import { ProgressiveOnboardingCard } from '@/components/ProgressiveOnboardingCard';
 import { useTabBarLayout } from '@/contexts/TabBarLayoutContext';
 import { loadProductsPage } from '@/database/repositories/productRepository';
 import { useRenderTracker } from '@/performance/renderTracker';
@@ -21,7 +23,7 @@ import { roundNutrition } from '@/services/nutritionCalculator';
 import { rankPersonalRecommendations } from '@/services/personalRecommendations';
 import { getCachedRecommendation, hasCachedRecommendation, setCachedRecommendation } from '@/services/recommendationCache';
 import { seedDataVersion } from '@/database/database';
-import { getSmartNextStep } from '@/services/smartNextStep';
+import { getNextBestAction, getSmartNextStep } from '@/services/smartNextStep';
 import { useAppStore } from '@/store/appStore';
 import { useTheme } from '@/theme/ThemeProvider';
 import { getHomeLayout } from '@/theme/layout';
@@ -38,6 +40,8 @@ export default function HomeScreen() {
   const target = useAppStore((state) => state.target);
   const diary = useAppStore((state) => state.diary);
   const flow = useAppStore((state) => state.flow);
+  const water = useAppStore((state) => state.water);
+  const onboardingState = useAppStore((state) => state.onboardingState);
   const setDiaryDate = useAppStore((state) => state.setDiaryDate);
   const refreshFlow = useAppStore((state) => state.refreshFlow);
   const { colors } = useTheme();
@@ -78,12 +82,23 @@ export default function HomeScreen() {
   const remaining = rounded.calories - consumed;
   const progress = rounded.calories ? consumed / rounded.calories : 0;
   const layout = getHomeLayout(width);
+  const nextBest = getNextBestAction({ diary, hour: new Date().getHours(), waterTotalMl: water?.totalMl, recommendationAvailable: Boolean(recommendation) });
+  const runNextBest = () => {
+    if (nextBest.kind === 'add-water') router.push('/water-tracker' as never);
+    else if (nextBest.kind === 'close-remainder') router.push({ pathname: '/remainder-match' as never, params: { meal: nextBest.meal } } as never);
+    else if (nextBest.kind === 'recommendation' && recommendation) router.push(`/product/${recommendation.id}` as never);
+    else if (nextBest.kind === 'close-day') router.push('/(tabs)/diary');
+    else if (nextBest.kind === 'continue-flow') router.push('/(tabs)/flow');
+    else setQuickAdd(true);
+  };
+  const completedFirstMinuteRecently = onboardingState.completedAt && Date.now() - new Date(onboardingState.completedAt).getTime() < 24 * 60 * 60 * 1000;
 
   return <>
     <HomeBackground><SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.scroll, { paddingHorizontal: layout.horizontalPadding, paddingBottom: contentInset }]}>
       <HomeHeader greeting={getDayGreeting()} onProfile={() => router.push('/(tabs)/profile')} />
       <AppText tone="secondary">Небольшие действия складываются в устойчивый результат.</AppText>
+      {completedFirstMinuteRecently ? <GlassCard variant="compact"><View style={styles.handoff}><RhythmCharacter size="compact" emotion="supportive" action="lookAtCard" /><View style={styles.nextCopy}><AppText style={styles.bold}>{onboardingState.firstEntryCompleted ? 'Отличное начало' : 'Можно начать в удобный момент'}</AppText><AppText variant="caption" tone="secondary">{onboardingState.firstEntryCompleted ? 'Сегодняшний баланс уже считается.' : 'Начни с одной записи, когда будешь готов.'}</AppText></View></View></GlassCard> : null}
       <NutritionHeroCard
         compact={layout.compact}
         consumed={consumed}
@@ -100,11 +115,12 @@ export default function HomeScreen() {
         onDetails={() => setDetails(true)}
       />
 
-      <HomeQuickActions actions={quickActions} />
-
-      <GlassCard variant="interactive" onPress={() => router.push({ pathname: '/food-search' as never, params: { meal: next.meal } } as never)} accessibilityLabel={next.title}>
-        <View style={styles.next}><View style={[styles.nextIcon, { backgroundColor: colors.greenGlow }]}><AppText tone="green">→</AppText></View><View style={styles.nextCopy}><AppText variant="heading">{next.title}</AppText><AppText tone="secondary">{next.description}</AppText></View><AppText tone="muted">›</AppText></View>
+      <GlassCard variant="accent" onPress={runNextBest} accessibilityLabel={`Следующий шаг: ${nextBest.title}`}>
+        <AppText variant="caption" tone="green">СЛЕДУЮЩИЙ ШАГ</AppText>
+        <View style={styles.next}><View style={[styles.nextIcon, { backgroundColor: colors.greenGlow }]}><AppText tone="green">→</AppText></View><View style={styles.nextCopy}><AppText variant="heading">{nextBest.title}</AppText><AppText tone="secondary">{nextBest.description}</AppText></View><AppText tone="muted">›</AppText></View>
       </GlassCard>
+
+      <HomeQuickActions actions={quickActions} />
 
       <View style={styles.sectionTitle}><AppText variant="heading">Сегодня</AppText><Pressable onPress={() => router.push('/(tabs)/diary')}><AppText variant="caption" tone="green">Открыть дневник</AppText></Pressable></View>
       {diary?.entries.length && remaining > 120 && remaining < 1200 ? <GlassCard variant="interactive" onPress={() => router.push({ pathname: '/remainder-match' as never, params: { meal: next.meal } } as never)}><View style={styles.next}><View style={[styles.nextIcon,{backgroundColor:colors.greenGlow}]}><AppText tone="green">◎</AppText></View><View style={styles.nextCopy}><AppText variant="heading">Закрыть остаток</AppText><AppText tone="secondary">Подобрать еду на оставшиеся {remaining} ккал и КБЖУ.</AppText></View><AppText tone="muted">›</AppText></View></GlassCard> : null}
@@ -115,6 +131,7 @@ export default function HomeScreen() {
       <GlassCard variant="compact" onPress={() => router.push('/(tabs)/flow')}><View style={styles.flow}><View style={[styles.flowIcon, { backgroundColor: colors.greenGlow }]}><AppIcon name="flow" size={32} color={colors.greenBright} /></View><View style={styles.nextCopy}><AppText style={styles.bold}>Поток · {flow?.currentStreak ?? 0} дней</AppText><AppText variant="caption" tone="secondary">{flow?.currentStreak ? `Лучшая серия — ${flow.longestStreak}` : 'Закрой первый день, чтобы начать серию'}</AppText></View><AppText tone="muted">›</AppText></View></GlassCard>
 
       {recommendation ? <GlassCard variant="compact" onPress={() => router.push(`/product/${recommendation.id}` as never)}><AppText variant="caption" tone="green">РЕКОМЕНДАЦИЯ ДНЯ</AppText><AppText variant="heading">{recommendation.name}</AppText><AppText tone="secondary">{Math.round(recommendation.caloriesPer100g)} ккал на 100 г · открыть карточку</AppText></GlassCard> : null}
+      <ProgressiveOnboardingCard entryCount={diary?.entries.length ?? 0} />
       </ScrollView>
     </SafeAreaView></HomeBackground>
     {details ? <CalorieDetails visible onClose={() => setDetails(false)} consumed={consumed} target={rounded.calories} bmr={target.bmr} tdee={target.tdee} /> : null}
@@ -130,6 +147,6 @@ function CalorieDetails({ visible, onClose, consumed, target, bmr, tdee }: { vis
 const styles = StyleSheet.create({
   safe: { flex: 1 }, scroll: { flexGrow: 1, paddingTop: spacing.sm, gap: spacing.md }, bold: { fontWeight: '700' },
   next: { flexDirection: 'row', alignItems: 'center', gap: spacing.md }, nextIcon: { width: 44, height: 44, borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center' }, nextCopy: { flex: 1, gap: 3 }, sectionTitle: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.sm }, plan: { gap: 0 }, meal: { minHeight: 62, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  flow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md }, flowIcon: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center' },
+  flow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md }, handoff: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm }, flowIcon: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center' },
   scrim: { ...StyleSheet.absoluteFillObject }, sheet: { position: 'absolute', left: 0, right: 0, bottom: 0, gap: spacing.md, padding: spacing.lg, paddingBottom: spacing.xl, borderTopLeftRadius: radii.xl, borderTopRightRadius: radii.xl, borderWidth: 1 }, sheetHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, detailRow: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md },
 });
